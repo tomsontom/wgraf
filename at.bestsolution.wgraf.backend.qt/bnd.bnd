@@ -1,0 +1,2 @@
+-classpath: lib/qtjambi-4.6.3.jar, lib/qtjambi-win32-msvc2005-4.6.3.jar
+-buildpath: at.bestsolution.wgraf.api;version=latest

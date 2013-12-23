@@ -1,0 +1,8 @@
+Export-Package: at.bestsolution.wgraf,\
+	at.bestsolution.wgraf.properties,\
+	at.bestsolution.wgraf.properties.simple,\
+	at.bestsolution.wgraf.scene,\
+	at.bestsolution.wgraf.scene.shapes,\
+	at.bestsolution.wgraf.events,\
+	at.bestsolution.wgraf.paint,\
+	at.bestsolution.wgraf.style
