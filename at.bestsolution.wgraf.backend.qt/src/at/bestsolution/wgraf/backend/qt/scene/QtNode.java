@@ -1,5 +1,7 @@
 package at.bestsolution.wgraf.backend.qt.scene;
 
+import at.bestsolution.wgraf.backend.qt.QtBinder;
+import at.bestsolution.wgraf.backend.qt.QtSync;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.TransitionProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleTransitionProperty;
@@ -32,16 +34,10 @@ public abstract class QtNode<N extends QGraphicsItemInterface> implements Backin
 	public TransitionProperty<Double> x() {
 		if (x == null) {
 			x = new SimpleTransitionProperty<Double>(node.x());
-			x.registerChangeListener(new ChangeListener<Double>() {
+			QtBinder.uniBind(x, new QtBinder.QtSetter<Double>() {
 				@Override
-				public void onChange(Double oldValue, Double newValue) {
-					if (QApplication.instance().thread() == Thread.currentThread()) {
-						node.setX(newValue);
-					}
-					else {
-						System.err.println("need sync to main thread!");
-						node.setX(newValue);
-					}
+				public void doSet(Double value) {
+					node.setX(value);
 				}
 			});
 		}
@@ -53,10 +49,10 @@ public abstract class QtNode<N extends QGraphicsItemInterface> implements Backin
 	public TransitionProperty<Double> y() {
 		if (y == null) {
 			y = new SimpleTransitionProperty<Double>(node.y());
-			y.registerChangeListener(new ChangeListener<Double>() {
+			QtBinder.uniBind(y, new QtBinder.QtSetter<Double>() {
 				@Override
-				public void onChange(Double oldValue, Double newValue) {
-					node.setY(newValue);
+				public void doSet(Double value) {
+					node.setY(value);
 				}
 			});
 		}

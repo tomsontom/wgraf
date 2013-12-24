@@ -1,5 +1,6 @@
 package at.bestsolution.wgraf.backend.qt.scene;
 
+import at.bestsolution.wgraf.backend.qt.QtBinder;
 import at.bestsolution.wgraf.events.MouseEventSupport;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.Property;
@@ -44,10 +45,10 @@ public class QtContainer extends QtNode<QGraphicsContainerItem> implements Backi
 	public Property<Double> width() {
 		if (width == null) {
 			width = new SimpleProperty<Double>(node.rect().width());
-			width.registerChangeListener(new ChangeListener<Double>() {
+			QtBinder.uniBind(width, new QtBinder.QtSetter<Double>() {
 				@Override
-				public void onChange(Double oldValue, Double newValue) {
-					node.setRect(0, 0, newValue, node.rect().height());
+				public void doSet(Double value) {
+					node.setRect(0, 0, value, node.rect().height());
 				}
 			});
 		}
@@ -60,10 +61,10 @@ public class QtContainer extends QtNode<QGraphicsContainerItem> implements Backi
 	public TransitionProperty<Double> height() {
 		if (height == null) {
 			height = new SimpleTransitionProperty<Double>(node.rect().height());
-			height.registerChangeListener(new ChangeListener<Double>() {
+			QtBinder.uniBind(height, new QtBinder.QtSetter<Double>() {
 				@Override
-				public void onChange(Double oldValue, Double newValue) {
-					node.setRect(0, 0, node.rect().width(), newValue);
+				public void doSet(Double value) {
+					node.setRect(0, 0, node.rect().width(), value);
 				}
 			});
 		}
