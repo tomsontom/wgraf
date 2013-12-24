@@ -1,26 +1,10 @@
 package at.bestsolution.wgraf.backend.javafx.scene;
 
-import java.util.Arrays;
-
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
-import javafx.geometry.VPos;
 import javafx.scene.Node;
-import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextBoundsType;
+import at.bestsolution.wgraf.backend.javafx.JavaFxBinder;
 import at.bestsolution.wgraf.backend.javafx.JavaFxConverter;
-import at.bestsolution.wgraf.events.MouseEventSupport;
-import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.TransitionProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
@@ -106,12 +90,11 @@ public class JavaFxContainer extends JavaFxNode<javafx.scene.layout.Region> impl
 	public Property<Background> background() {
 		if (background == null) {
 			background = new SimpleProperty<Background>();
-			background.registerChangeListener(new ChangeListener<Background>() {
+			JavaFxBinder.uniBind(background, new JavaFxBinder.JfxSetter<Background>() {
 				@Override
-				public void onChange(Background oldValue, Background newValue) {
-					node.setBackground(JavaFxConverter.convert(newValue));
+				public void doSet(Background value) {
+					node.setBackground(JavaFxConverter.convert(value));
 				}
-				
 			});
 		}
 		return background;
@@ -122,11 +105,11 @@ public class JavaFxContainer extends JavaFxNode<javafx.scene.layout.Region> impl
 	public Property<Double> width() {
 		if (width == null) {
 			width = new SimpleProperty<Double>(node.getWidth());
-			width.registerChangeListener(new ChangeListener<Double>() {
+			JavaFxBinder.uniBind(width, new JavaFxBinder.JfxSetter<Double>() {
 				@Override
-				public void onChange(Double oldValue, Double newValue) {
-					node.setMinWidth(newValue);
-					node.setMaxWidth(newValue);
+				public void doSet(Double value) {
+					node.setMinWidth(value);
+					node.setMaxWidth(value);
 				}
 			});
 		}
@@ -139,11 +122,11 @@ public class JavaFxContainer extends JavaFxNode<javafx.scene.layout.Region> impl
 	public TransitionProperty<Double> height() {
 		if (height == null) {
 			height = new SimpleTransitionProperty<Double>(node.getHeight());
-			height.registerChangeListener(new ChangeListener<Double>() {
+			JavaFxBinder.uniBind(height, new JavaFxBinder.JfxSetter<Double>() {
 				@Override
-				public void onChange(Double oldValue, Double newValue) {
-					node.setMinHeight(newValue);
-					node.setMaxHeight(newValue);
+				public void doSet(Double value) {
+					node.setMinHeight(value);
+					node.setMaxHeight(value);
 				}
 			});
 		}

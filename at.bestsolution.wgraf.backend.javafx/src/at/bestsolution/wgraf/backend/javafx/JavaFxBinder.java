@@ -1,0 +1,42 @@
+package at.bestsolution.wgraf.backend.javafx;
+
+import javafx.application.Platform;
+import at.bestsolution.wgraf.properties.ChangeListener;
+import at.bestsolution.wgraf.properties.Property;
+
+public class JavaFxBinder {
+
+	public static interface Setter<Type> {
+		void set(Type value);
+	}
+	
+	public abstract static class JfxSetter<Type> implements Setter<Type> {
+		@Override
+		public final void set(final Type value) {
+			if (Platform.isFxApplicationThread()) {
+				doSet(value);
+			}
+			else {
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						doSet(value);
+					}
+				});
+			}
+		}
+		
+		public abstract void doSet(Type value);
+	}
+	
+	public static <Type> void uniBind(Property<Type> property, final Setter<Type> setter) {
+		property.registerChangeListener(new ChangeListener<Type>() {
+			@Override
+			public void onChange(Type oldValue, Type newValue) {
+				setter.set(newValue);
+			}
+		});
+		setter.set(property.get());
+	}
+	
+}

@@ -74,7 +74,10 @@ public class JavaFxConverter {
 	}
 
 	public static javafx.scene.layout.Background convert(Background background) {
-		if (background instanceof Backgrounds) {
+		if (background == null) {
+			return null;
+		}
+		else if (background instanceof Backgrounds) {
 			List<BackgroundFill> bfs = new ArrayList<BackgroundFill>();
 			for (BaseBackground b : ((Backgrounds) background).backgrounds) {
 				if (b instanceof FillBackground) {

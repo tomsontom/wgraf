@@ -1,12 +1,12 @@
 package at.bestsolution.wgraf.backend.javafx.scene;
 
-import at.bestsolution.wgraf.properties.ChangeListener;
-import at.bestsolution.wgraf.properties.Property;
-import at.bestsolution.wgraf.properties.simple.SimpleProperty;
-import at.bestsolution.wgraf.scene.BackingText;
 import javafx.geometry.VPos;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.Text;
+import at.bestsolution.wgraf.backend.javafx.JavaFxBinder;
+import at.bestsolution.wgraf.properties.Property;
+import at.bestsolution.wgraf.properties.simple.SimpleProperty;
+import at.bestsolution.wgraf.scene.BackingText;
 
 public class JavaFxText extends JavaFxNode<javafx.scene.text.Text> implements BackingText {
 
@@ -15,13 +15,12 @@ public class JavaFxText extends JavaFxNode<javafx.scene.text.Text> implements Ba
 	public Property<String> text() {
 		if (text == null) {
 			text = new SimpleProperty<String>();
-			text.registerChangeListener(new ChangeListener<String>() {
+			JavaFxBinder.uniBind(text, new JavaFxBinder.JfxSetter<String>() {
 				@Override
-				public void onChange(String oldValue, String newValue) {
-					node.setText(newValue);
+				public void doSet(String value) {
+					node.setText(value);
 				}
 			});
-			
 		}
 		return text;
 	}
@@ -30,10 +29,10 @@ public class JavaFxText extends JavaFxNode<javafx.scene.text.Text> implements Ba
 	public Property<Double> fontSize() {
 		if (fontSize == null) {
 			fontSize = new SimpleProperty<Double>();
-			fontSize.registerChangeListener(new ChangeListener<Double>() {
+			JavaFxBinder.uniBind(fontSize, new JavaFxBinder.JfxSetter<Double>() {
 				@Override
-				public void onChange(Double oldValue, Double newValue) {
-					node.setStyle("-fx-font-size: " + newValue + "pt");
+				public void doSet(Double value) {
+					node.setStyle("-fx-font-size: " + value + "pt");
 				}
 			});
 		}
