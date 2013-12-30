@@ -5,3 +5,4 @@ Service-Component: *
 	junit.osgi
 Private-Package: org.example
 -sub: *.bnd
+-runee: JavaSE-1.6

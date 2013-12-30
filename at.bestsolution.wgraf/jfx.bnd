@@ -1,3 +1,0 @@
-Export-Package: at.bestsolution.wgraf.backend.javafx,\
-	at.bestsolution.wgraf.backend.javafx.scene,\
-	at.bestsolution.wgraf.backend.javafx.scene.shape

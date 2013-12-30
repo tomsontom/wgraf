@@ -4,4 +4,12 @@
 	<!-- -->
 
 	<import file="../cnf/build.xml" />
+	
+	<target name="download-libs">
+		<mkdir dir="lib"/>
+		<get dest="lib" src="http://wgraf.redrezo.net/lib/qtjambi-4.6.3.jar"/>
+		<get dest="lib" src="http://wgraf.redrezo.net/lib/qtjambi-linux64-gcc-4.6.3.jar"/>
+		<get dest="lib" src="http://wgraf.redrezo.net/lib/qtjambi-linux32-gcc-4.6.3.jar"/>
+		<get dest="lib" src="http://wgraf.redrezo.net/lib/qtjambi-win32-msvc2005-4.6.3.jar"/>
+	</target>
 </project>
