@@ -2,6 +2,7 @@ package at.bestsolution.wgraf.test;
 
 import at.bestsolution.wgraf.Application;
 import at.bestsolution.wgraf.events.TapEvent;
+import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.paint.LinearGradient;
 import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
@@ -9,11 +10,13 @@ import at.bestsolution.wgraf.paint.LinearGradient.Spread;
 import at.bestsolution.wgraf.paint.LinearGradient.Stop;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.scene.Container;
+import at.bestsolution.wgraf.scene.Region;
 import at.bestsolution.wgraf.scene.Text;
 import at.bestsolution.wgraf.scene.shapes.Rectangle;
 import at.bestsolution.wgraf.style.Backgrounds;
 import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.FillBackground;
+import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.style.Insets;
 import at.bestsolution.wgraf.transition.LinearDoubleTransition;
 
@@ -131,14 +134,25 @@ public class TestIt {
 				}
 				
 				{
+					Font myFont = new Font("Arial", 20);
+					Vec2d stringExtent = myFont.stringExtent("Hallo yj");
+					
+					Container r = new Container();
+					r.x().set(10.0);
+					r.y().set(200.0);
+					r.width().set(stringExtent.x);
+					r.height().set(stringExtent.y);
+					r.setParent(region);
+					r.background().set(new FillBackground(new Color(255, 0, 0, 50), new CornerRadii(0), new Insets(0, 0, 0, 0)));
+					
 					Text text = new Text();
 					
 					text.fontSize().set(20.0);
 					
-					text.x().set(75.0);
-					text.y().set(10.0);
+					text.x().set(10.0);
+					text.y().set(200.0);
 					
-					text.text().set("Hallo Text");
+					text.text().set("Hallo yj");
 					
 					text.setParent(region);
 					

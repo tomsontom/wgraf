@@ -5,6 +5,7 @@ import at.bestsolution.wgraf.events.FlingEvent;
 import at.bestsolution.wgraf.events.MouseEventSupport;
 import at.bestsolution.wgraf.events.ScrollEvent;
 import at.bestsolution.wgraf.events.TapEvent;
+import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.TransitionProperty;
 
@@ -22,7 +23,9 @@ public abstract class Node<Backend extends BackingNode> extends Frontend<Backend
 	public final TransitionProperty<Double> y() { return backend.y(); }
 	
 	
-	
+	public Vec2d computePreferredSize() {
+		return new Vec2d(10, 10);
+	}
 	
 	public final Signal<TapEvent> onTap() { return events.tap(); }
 	public final Signal<TapEvent> onLongTap() { return events.longTap(); }

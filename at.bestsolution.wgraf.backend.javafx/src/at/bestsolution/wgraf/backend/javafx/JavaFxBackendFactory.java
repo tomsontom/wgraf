@@ -6,11 +6,13 @@ import at.bestsolution.wgraf.BackingApplication;
 import at.bestsolution.wgraf.backend.javafx.scene.JavaFxContainer;
 import at.bestsolution.wgraf.backend.javafx.scene.JavaFxText;
 import at.bestsolution.wgraf.backend.javafx.scene.shape.JavaFxRectangle;
+import at.bestsolution.wgraf.backend.javafx.util.JavaFxFontUtil;
 import at.bestsolution.wgraf.scene.BackingContainer;
 import at.bestsolution.wgraf.scene.BackingText;
 import at.bestsolution.wgraf.scene.Container;
 import at.bestsolution.wgraf.scene.shapes.BackingRectangle;
 import at.bestsolution.wgraf.scene.shapes.Rectangle;
+import at.bestsolution.wgraf.util.FontUtil;
 
 public class JavaFxBackendFactory extends BackendFactory {
 
@@ -27,6 +29,9 @@ public class JavaFxBackendFactory extends BackendFactory {
 		}
 		else if (frontendType == BackingText.class) {
 			return (Backend) new JavaFxText();
+		}
+		else if (frontendType == FontUtil.class) {
+			return (Backend) new JavaFxFontUtil();
 		}
 		throw new UnsupportedOperationException("not implemented! " + frontendType);
 	}

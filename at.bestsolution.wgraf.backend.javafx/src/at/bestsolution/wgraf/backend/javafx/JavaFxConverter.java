@@ -2,27 +2,30 @@ package at.bestsolution.wgraf.backend.javafx;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.CycleMethod;
-import javafx.scene.shape.Arc;
 import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.paint.LinearGradient;
 import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
 import at.bestsolution.wgraf.paint.LinearGradient.Spread;
-import at.bestsolution.wgraf.paint.Paint;
 import at.bestsolution.wgraf.paint.LinearGradient.Stop;
+import at.bestsolution.wgraf.paint.Paint;
 import at.bestsolution.wgraf.style.Background;
 import at.bestsolution.wgraf.style.Backgrounds;
 import at.bestsolution.wgraf.style.BaseBackground;
 import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.FillBackground;
+import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.style.Insets;
 
 public class JavaFxConverter {
 
+	public static javafx.scene.text.Font convert(Font font) {
+		return javafx.scene.text.Font.font(font.name, font.pointSize/0.75);
+	}
+	
 	public static javafx.scene.paint.Color convert(Color color) {
 		return new javafx.scene.paint.Color(color.red/255.0, color.green/255.0, color.blue/255.0, color.alpha/255.0);
 	}

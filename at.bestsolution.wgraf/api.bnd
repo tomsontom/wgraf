@@ -5,4 +5,7 @@ Export-Package: at.bestsolution.wgraf,\
 	at.bestsolution.wgraf.scene.shapes,\
 	at.bestsolution.wgraf.events,\
 	at.bestsolution.wgraf.paint,\
-	at.bestsolution.wgraf.style
+	at.bestsolution.wgraf.style,\
+	at.bestsolution.wgraf.transition,\
+	at.bestsolution.wgraf.math,\
+	at.bestsolution.wgraf.util

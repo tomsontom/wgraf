@@ -49,7 +49,6 @@ public class QGraphicsContainerItem extends QGraphicsRectItem {
 	
 	@Override
 	public void paint(QPainter painter, QStyleOptionGraphicsItem option, QWidget widget) {
-		System.err.println("REPAINT");
 		painter.setBrush(brush());
 		painter.setPen(pen());
 		painter.drawRoundedRect(rect(), xRadius, yRadius);

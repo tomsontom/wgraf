@@ -2,6 +2,8 @@ package at.bestsolution.wgraf.backend.javafx.scene;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import at.bestsolution.wgraf.backend.javafx.JavaFxBinder;
 import at.bestsolution.wgraf.backend.javafx.JavaFxConverter;
@@ -19,6 +21,16 @@ public class JavaFxContainer extends JavaFxNode<javafx.scene.layout.Region> impl
 		
 		public FxRegion() {
 			
+			
+			Image img = new Image("https://d3oaxc4q5k2d6q.cloudfront.net/m/c4f05e63beb6/img/language-avatars/java_64.png");
+			
+			ImageView imgView = new ImageView();
+			imgView.setImage(img);
+			
+			imgView.setLayoutX(10);
+			imgView.setLayoutY(100);
+			
+			getChildren().add(imgView);
 			
 //			final Rectangle r = new Rectangle();
 //			this.setClip(new Rectangle(getWidth(), getHeight()));
