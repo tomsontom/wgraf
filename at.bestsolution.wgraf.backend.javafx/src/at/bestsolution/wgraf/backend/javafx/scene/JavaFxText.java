@@ -4,12 +4,30 @@ import javafx.geometry.VPos;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.Text;
 import at.bestsolution.wgraf.backend.javafx.JavaFxBinder;
+import at.bestsolution.wgraf.backend.javafx.JavaFxBinder.Setter;
+import at.bestsolution.wgraf.backend.javafx.JavaFxConverter;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.scene.BackingText;
+import at.bestsolution.wgraf.style.Font;
 
 public class JavaFxText extends JavaFxNode<javafx.scene.text.Text> implements BackingText {
 
+	private Property<Font> font = null;
+	@Override
+	public Property<Font> font() {
+		if (font == null) {
+			font = new SimpleProperty<Font>();
+			JavaFxBinder.uniBind(font, new Setter<Font>()  {
+				@Override
+				public void set(Font value) {
+					node.setFont(JavaFxConverter.convert(value));
+				}
+			});
+		}
+		return font;
+	}
+	
 	private Property<String> text = null;
 	@Override
 	public Property<String> text() {

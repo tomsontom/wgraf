@@ -8,7 +8,7 @@ import at.bestsolution.wgraf.style.Font;
 public class Text extends Node<BackingText> {
 
 	
-	public final Property<Font> font() { return null; }
+	public final Property<Font> font() { return backend.font(); }
 	
 	public final Property<Double> fontSize() { return backend.fontSize(); }
 	

@@ -23,6 +23,7 @@ import at.bestsolution.wgraf.style.Insets;
 public class JavaFxConverter {
 
 	public static javafx.scene.text.Font convert(Font font) {
+		if (font == null) return null;
 		return javafx.scene.text.Font.font(font.name, font.pointSize/0.75);
 	}
 	
