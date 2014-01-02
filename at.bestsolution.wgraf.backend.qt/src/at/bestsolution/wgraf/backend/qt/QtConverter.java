@@ -8,10 +8,12 @@ import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
 import at.bestsolution.wgraf.paint.LinearGradient.Spread;
 import at.bestsolution.wgraf.paint.LinearGradient.Stop;
 import at.bestsolution.wgraf.paint.Paint;
+import at.bestsolution.wgraf.style.Font;
 
 import com.trolltech.qt.core.Qt.BrushStyle;
 import com.trolltech.qt.gui.QBrush;
 import com.trolltech.qt.gui.QColor;
+import com.trolltech.qt.gui.QFont;
 import com.trolltech.qt.gui.QGradient.CoordinateMode;
 import com.trolltech.qt.gui.QLinearGradient;
 
@@ -65,6 +67,13 @@ public class QtConverter {
 		}
 	
 		throw new UnsupportedOperationException("paint not supported: " + paint);
+	}
+
+	public static QFont convert(Font font) {
+		if (font == null) return null;
+		QFont f = new QFont(font.name);
+		f.setPointSizeF(font.pointSize);
+		return f;
 	}
 	
 	

@@ -13,4 +13,5 @@ public interface Transition<Type> {
 	 * @return true if the transition is finished
 	 */
 	boolean update(long time);
+	void startIncrement(ValueUpdater<Double> updater, ValueReader<Double> reader, double delta);
 }

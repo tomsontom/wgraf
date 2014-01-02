@@ -1,15 +1,20 @@
 package at.bestsolution.wgraf.backend.qt.scene;
 
 import at.bestsolution.wgraf.backend.qt.QtBinder;
-import at.bestsolution.wgraf.backend.qt.QtSync;
-import at.bestsolution.wgraf.properties.ChangeListener;
+import at.bestsolution.wgraf.events.KeyEvent;
+import at.bestsolution.wgraf.geom.shape.Shape;
+import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
+import at.bestsolution.wgraf.properties.Property;
+import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.TransitionProperty;
+import at.bestsolution.wgraf.properties.simple.SimpleDoubleTransitionProperty;
+import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleTransitionProperty;
 import at.bestsolution.wgraf.scene.BackingContainer;
 import at.bestsolution.wgraf.scene.BackingNode;
 
-import com.trolltech.qt.core.QEventLoop.ProcessEventsFlag;
-import com.trolltech.qt.gui.QApplication;
+import com.trolltech.qt.core.Qt.MouseButton;
+import com.trolltech.qt.core.Qt.MouseButtons;
 import com.trolltech.qt.gui.QGraphicsItemInterface;
 import com.trolltech.qt.gui.QGraphicsItem.GraphicsItemFlag;
 
@@ -19,8 +24,61 @@ public abstract class QtNode<N extends QGraphicsItemInterface> implements Backin
 	
 	public QtNode() {
 		node = createNode();
-		node.setFlag(GraphicsItemFlag.ItemIsMovable, true);
+		node.setAcceptedMouseButtons(new MouseButtons());
+		
+//		node.setFlag(GraphicsItemFlag.ItemIsMovable, true);
 	}
+	
+	protected abstract void applyClippingShape(Shape s);
+	
+	private Property<Boolean> acceptFocus = null;
+	@Override
+	public Property<Boolean> acceptFocus() {
+		if (acceptFocus == null) {
+			acceptFocus = new SimpleProperty<Boolean>(false);
+			QtBinder.uniBind(acceptFocus, new QtBinder.QtSetter<Boolean>() {
+				@Override
+				public void doSet(Boolean value) {
+					node.setFlag(GraphicsItemFlag.ItemIsFocusable, value);
+				}
+			});
+		}
+		return acceptFocus;
+	}
+	
+	private Property<Boolean> acceptTapEvents = null;
+	@Override
+	public Property<Boolean> acceptTapEvents() {
+		if (acceptTapEvents == null) {
+			acceptTapEvents = new SimpleProperty<Boolean>(false);
+			QtBinder.uniBind(acceptTapEvents, new QtBinder.QtSetter<Boolean>() {
+				@Override
+				public void doSet(Boolean value) {
+					node.setAcceptedMouseButtons(value ?
+							new MouseButtons(MouseButton.LeftButton):
+								new MouseButtons());
+				}
+			});
+		}
+		return acceptTapEvents;
+	}
+	
+	private Property<Shape> clippingShape = null;
+	@Override
+	public Property<Shape> clippingShape() {
+		if (clippingShape == null) {
+			clippingShape = new SimpleProperty<Shape>();
+			QtBinder.uniBind(clippingShape, new QtBinder.QtSetter<Shape>() {
+				@Override
+				public void doSet(Shape value) {
+					applyClippingShape(value);
+				}
+				
+			});
+		}
+		return clippingShape;
+	}
+	
 	
 	public N getNode() {
 		return node;
@@ -29,11 +87,11 @@ public abstract class QtNode<N extends QGraphicsItemInterface> implements Backin
 	protected abstract N createNode();
 	
 	
-	private TransitionProperty<Double> x = null;
+	private DoubleTransitionProperty x = null;
 	@Override
-	public TransitionProperty<Double> x() {
+	public DoubleTransitionProperty x() {
 		if (x == null) {
-			x = new SimpleTransitionProperty<Double>(node.x());
+			x = new SimpleDoubleTransitionProperty(node.x());
 			QtBinder.uniBind(x, new QtBinder.QtSetter<Double>() {
 				@Override
 				public void doSet(Double value) {
@@ -44,11 +102,11 @@ public abstract class QtNode<N extends QGraphicsItemInterface> implements Backin
 		return x;
 	}
 	
-	private TransitionProperty<Double> y = null;
+	private DoubleTransitionProperty y = null;
 	@Override
-	public TransitionProperty<Double> y() {
+	public DoubleTransitionProperty y() {
 		if (y == null) {
-			y = new SimpleTransitionProperty<Double>(node.y());
+			y = new SimpleDoubleTransitionProperty(node.y());
 			QtBinder.uniBind(y, new QtBinder.QtSetter<Double>() {
 				@Override
 				public void doSet(Double value) {
@@ -65,4 +123,5 @@ public abstract class QtNode<N extends QGraphicsItemInterface> implements Backin
 		node.setParentItem(((QtContainer)parent).node);
 	}
 
+	
 }

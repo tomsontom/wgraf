@@ -88,11 +88,14 @@ public class QtApplication implements BackingApplication {
 //		
 //		scene.addItem(rect);
 		
-		view.setRenderHints(RenderHint.Antialiasing, RenderHint.TextAntialiasing);
+		view.setRenderHints(RenderHint.HighQualityAntialiasing, RenderHint.Antialiasing, RenderHint.TextAntialiasing);
 		
 		view.setVisible(true);
 		
 		view.setStyleSheet( "QGraphicsView { border-style: none; }" );
+		
+		
+		
 		
 		scene.addItem(((QtContainer)root().get().internal_getBackend()).getNode());
 		

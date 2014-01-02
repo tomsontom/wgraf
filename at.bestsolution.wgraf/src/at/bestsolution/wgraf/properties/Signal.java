@@ -4,7 +4,7 @@ public interface Signal<Type> {
 
 	void signal(Type data);
 	
-	void registerSignalListner(SignalListener<Type> listener);
+	void registerSignalListener(SignalListener<Type> listener);
 	void unregisterSignalListener(SignalListener<Type> listener);
 	
 }

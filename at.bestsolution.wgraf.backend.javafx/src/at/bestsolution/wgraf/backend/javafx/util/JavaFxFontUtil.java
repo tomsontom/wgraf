@@ -22,4 +22,6 @@ public class JavaFxFontUtil extends FontUtil {
 		FontMetrics fm = Toolkit.getToolkit().getFontLoader().getFontMetrics(JavaFxConverter.convert(font));
 		return new Vec2d(fm.computeStringWidth(string), fm.getLineHeight());
 	}
+	
+	
 }

@@ -5,8 +5,11 @@ import java.util.Collections;
 import java.util.List;
 
 import at.bestsolution.wgraf.backend.qt.QtConverter;
+import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.MouseEventSupport;
 import at.bestsolution.wgraf.events.MouseEventSupport.MouseCoords;
+import at.bestsolution.wgraf.properties.Signal;
+import at.bestsolution.wgraf.properties.simple.SimpleSignal;
 import at.bestsolution.wgraf.style.Background;
 import at.bestsolution.wgraf.style.Backgrounds;
 import at.bestsolution.wgraf.style.BaseBackground;
@@ -18,6 +21,8 @@ import com.trolltech.qt.gui.QGraphicsRectItem;
 import com.trolltech.qt.gui.QGraphicsSceneMouseEvent;
 import com.trolltech.qt.gui.QPainter;
 import com.trolltech.qt.gui.QPainter.CompositionMode;
+import com.trolltech.qt.gui.QFocusEvent;
+import com.trolltech.qt.gui.QKeyEvent;
 import com.trolltech.qt.gui.QPainterPath;
 import com.trolltech.qt.gui.QPen;
 import com.trolltech.qt.gui.QStyleOptionGraphicsItem;
@@ -25,13 +30,15 @@ import com.trolltech.qt.gui.QWidget;
 
 public class QGraphicsContainerItem extends QGraphicsRectItem {
 
+	private QPainterPath shape;
+	
 	private Background background;
 	
 	public QGraphicsContainerItem() {
-		setFlag(GraphicsItemFlag.ItemSendsGeometryChanges, true);
-		setFlag(GraphicsItemFlag.ItemIsFocusable, true);
-		setFlag(GraphicsItemFlag.ItemIsSelectable, true);
-		setFlag(GraphicsItemFlag.ItemClipsChildrenToShape, true);
+//		setFlag(GraphicsItemFlag.ItemSendsGeometryChanges, true);
+//		setFlag(GraphicsItemFlag.ItemIsFocusable, true);
+//		setFlag(GraphicsItemFlag.ItemIsSelectable, true);
+//		setFlag(GraphicsItemFlag.ItemClipsChildrenToShape, true);
 		
 		setPen(QPen.NoPen);
 	}
@@ -159,4 +166,56 @@ public class QGraphicsContainerItem extends QGraphicsRectItem {
 	public void setBackground(Background background) {
 		this.background = background;
 	}
+	
+	public void setShape(QPainterPath shape) {
+		this.shape = shape;
+	}
+	
+	@Override
+	public QPainterPath shape() {
+		if (shape == null) {
+			return super.shape();
+		}
+		else {
+			return shape;
+		}
+	}
+	
+	@Override
+	public void keyPressEvent(QKeyEvent event) {
+		if (onKeyPress != null) {
+			onKeyPress.signal(new KeyEvent(event.key(), event.text()));
+		}
+	}
+
+	private Signal<KeyEvent> onKeyPress = null;
+	public Signal<KeyEvent> onKeyPress() {
+		if (onKeyPress == null) {
+			onKeyPress = new SimpleSignal<KeyEvent>();
+		}
+		return onKeyPress;
+	}
+	
+	private Signal<Boolean> focus = null;
+	public Signal<Boolean> focus() {
+		if (focus == null) {
+			focus = new SimpleSignal<Boolean>();
+		}
+		return focus;
+	}
+	
+	@Override
+	public void focusInEvent(QFocusEvent event) {
+		if (focus != null) {
+			focus.signal(true);
+		}
+	}
+	
+	@Override
+	public void focusOutEvent(QFocusEvent event) {
+		if (focus != null) {
+			focus.signal(false);
+		}
+	}
+	
 }

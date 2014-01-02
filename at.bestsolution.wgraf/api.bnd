@@ -8,4 +8,5 @@ Export-Package: at.bestsolution.wgraf,\
 	at.bestsolution.wgraf.style,\
 	at.bestsolution.wgraf.transition,\
 	at.bestsolution.wgraf.math,\
-	at.bestsolution.wgraf.util
+	at.bestsolution.wgraf.util,\
+	at.bestsolution.wgraf.geom.shape

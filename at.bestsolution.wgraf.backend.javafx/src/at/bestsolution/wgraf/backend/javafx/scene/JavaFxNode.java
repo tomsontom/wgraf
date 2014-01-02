@@ -4,20 +4,35 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import at.bestsolution.wgraf.backend.javafx.JavaFxBinder;
+import at.bestsolution.wgraf.backend.javafx.JavaFxBinder.Setter;
 import at.bestsolution.wgraf.events.MouseEventSupport;
+import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.events.MouseEventSupport.MouseCoords;
+import at.bestsolution.wgraf.geom.shape.Rectangle;
+import at.bestsolution.wgraf.geom.shape.Shape;
+import at.bestsolution.wgraf.properties.ChangeListener;
+import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
+import at.bestsolution.wgraf.properties.Property;
+import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.TransitionProperty;
+import at.bestsolution.wgraf.properties.simple.SimpleDoubleTransitionProperty;
+import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleTransitionProperty;
 import at.bestsolution.wgraf.scene.BackingContainer;
 import at.bestsolution.wgraf.scene.BackingNode;
 
 public abstract class JavaFxNode<N extends Node> implements BackingNode {
 	
+	private MouseEventSupport support;
+	
 	protected final N node;
 	
 	public JavaFxNode() {
 		node = createNode();
 //		node.setBlendMode(BlendMode.COLOR_BURN);
+		
+		node.setFocusTraversable(false);
+		
 	}
 	
 	protected abstract N createNode();
@@ -26,9 +41,55 @@ public abstract class JavaFxNode<N extends Node> implements BackingNode {
 		return node;
 	}
 	
+	private Property<Boolean> acceptFocus = null;
+	@Override
+	public Property<Boolean> acceptFocus() {
+		if (acceptFocus == null) {
+			acceptFocus = new SimpleProperty<Boolean>(false);
+			JavaFxBinder.uniBind(acceptFocus, new JavaFxBinder.JfxSetter<Boolean>() {
+				@Override
+				public void doSet(Boolean value) {
+					node.setFocusTraversable(value);
+				}
+			});
+		}
+		return acceptFocus;
+	}
+	
+	private final SignalListener<TapEvent> focusListener = new SignalListener<TapEvent>() {
+		@Override
+		public void onSignal(TapEvent data) {
+			node.requestFocus();
+		}
+	};
+	
+	private Property<Boolean> acceptTapEvents = null;
+	
+	@Override
+	public Property<Boolean> acceptTapEvents() {
+		if (acceptTapEvents == null) {
+			acceptTapEvents = new SimpleProperty<Boolean>(false);
+			acceptTapEvents.registerChangeListener(new ChangeListener<Boolean>() {
+				@Override
+				public void onChange(Boolean oldValue, Boolean newValue) {
+					if (newValue) {
+						support.tap().registerSignalListener(focusListener);
+					}
+					else {
+						support.tap().unregisterSignalListener(focusListener);
+					}
+				}
+			});
+		}
+		return acceptTapEvents;
+	}
+	
+	
 	@Override
 	public void setEventSupport(final MouseEventSupport support) {
+		if (this.support != null) return;
 		
+		this.support = support;
 		node.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -51,11 +112,11 @@ public abstract class JavaFxNode<N extends Node> implements BackingNode {
 		});
 	}
 	
-	private TransitionProperty<Double> x = null;
+	private DoubleTransitionProperty x = null;
 	@Override
-	public TransitionProperty<Double> x() {
+	public DoubleTransitionProperty x() {
 		if (x == null) {
-			x = new SimpleTransitionProperty<Double>(node.getLayoutX());
+			x = new SimpleDoubleTransitionProperty(node.getLayoutX());
 			JavaFxBinder.uniBind(x, new JavaFxBinder.JfxSetter<Double>() {
 				@Override
 				public void doSet(Double value) {
@@ -66,11 +127,11 @@ public abstract class JavaFxNode<N extends Node> implements BackingNode {
 		return x;
 	}
 	
-	private TransitionProperty<Double> y = null;
+	private DoubleTransitionProperty y = null;
 	@Override
-	public TransitionProperty<Double> y() {
+	public DoubleTransitionProperty y() {
 		if (y == null) {
-			y = new SimpleTransitionProperty<Double>(node.getLayoutY());
+			y = new SimpleDoubleTransitionProperty(node.getLayoutY());
 			JavaFxBinder.uniBind(y, new JavaFxBinder.JfxSetter<Double>() {
 				@Override
 				public void doSet(Double value) {
@@ -88,4 +149,33 @@ public abstract class JavaFxNode<N extends Node> implements BackingNode {
 		p.addChild(node);
 	}
 
+	
+	private Property<Shape> clippingShape = null;
+	@Override
+	public Property<Shape> clippingShape() {
+		if (clippingShape == null) {
+			clippingShape = new SimpleProperty<Shape>();
+			JavaFxBinder.uniBind(clippingShape, new JavaFxBinder.JfxSetter<Shape>() {
+				@Override
+				public void doSet(Shape value) {
+					if (value == null) {
+						node.setClip(null);
+					}
+					if (value instanceof Rectangle) {
+						
+						javafx.scene.shape.Rectangle jfx = 
+								new javafx.scene.shape.Rectangle(((Rectangle) value).x, ((Rectangle) value).y,
+										((Rectangle) value).width, ((Rectangle) value).height);
+						jfx.setArcWidth(((Rectangle) value).r*2);
+						jfx.setArcHeight(((Rectangle) value).r*2);
+						
+						node.setClip(jfx);
+						
+					}
+					
+				}
+			});
+		}
+		return clippingShape;
+	}
 }

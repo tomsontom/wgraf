@@ -34,8 +34,20 @@ public class LinearDoubleTransition implements Transition<Double> {
 		this.reader = reader;
 		this.timePassed = 0;
 		startValue = reader.read();
-		step = (newValue - startValue) / duration;
+		step = (targetValue - startValue) / duration;
 		Interpolator.Access.getInterpolator().interpolate(this);
+	}
+	
+	@Override
+	public void startIncrement(ValueUpdater<Double> updater, ValueReader<Double> reader, double delta) {
+		targetValue = reader.read() + delta;
+		this.updater = updater;
+		this.reader = reader;
+		this.timePassed = 0;
+		startValue = reader.read();
+		step = (targetValue - startValue) / duration;
+		Interpolator.Access.getInterpolator().interpolate(this);
+		
 	}
 
 }

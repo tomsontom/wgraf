@@ -2,31 +2,30 @@ package at.bestsolution.wgraf.backend.qt;
 
 import at.bestsolution.wgraf.BackendFactory;
 import at.bestsolution.wgraf.BackingApplication;
+import at.bestsolution.wgraf.backend.qt.internal.util.QtFontUtil;
 import at.bestsolution.wgraf.backend.qt.scene.QtContainer;
 import at.bestsolution.wgraf.backend.qt.scene.QtText;
-import at.bestsolution.wgraf.backend.qt.scene.shapes.QtRectangle;
-import at.bestsolution.wgraf.scene.BackingNode;
 import at.bestsolution.wgraf.scene.BackingContainer;
 import at.bestsolution.wgraf.scene.BackingText;
-import at.bestsolution.wgraf.scene.shapes.BackingRectangle;
+import at.bestsolution.wgraf.util.FontUtil;
 
 public class QtBackendFactory extends BackendFactory{
 
 	@Override
-	public <Backend> Backend create(Class<?> frontendType) {
-		if (frontendType == BackingApplication.class) {
-			return (Backend) new QtApplication();
+	public <Type> Type create(Class<?> type) {
+		if (type == BackingApplication.class) {
+			return (Type) new QtApplication();
 		}
-		else if (frontendType == BackingContainer.class) {
-			return (Backend) new QtContainer();
+		else if (type == BackingContainer.class) {
+			return (Type) new QtContainer();
 		}
-		else if (frontendType == BackingRectangle.class) {
-			return (Backend) new QtRectangle();
+		else if (type == BackingText.class) {
+			return (Type) new QtText();
 		}
-		else if (frontendType == BackingText.class) {
-			return (Backend) new QtText();
+		else if (type == FontUtil.class) {
+			return (Type) new QtFontUtil();
 		}
-		throw new UnsupportedOperationException(frontendType + " not supported");
+		throw new UnsupportedOperationException(type + " not supported");
 	}
 
 	

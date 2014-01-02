@@ -30,7 +30,7 @@ public class MouseEventSupport {
 	
 	public MouseEventSupport() {
 		// wire events
-		mousePressed().registerSignalListner(new SignalListener<MouseEventSupport.MouseCoords>() {
+		mousePressed().registerSignalListener(new SignalListener<MouseEventSupport.MouseCoords>() {
 			@Override
 			public void onSignal(MouseCoords event) {
 				final long now = System.currentTimeMillis();
@@ -46,7 +46,7 @@ public class MouseEventSupport {
 			}
 		});
 		
-		mouseReleased().registerSignalListner(new SignalListener<MouseEventSupport.MouseCoords>() {
+		mouseReleased().registerSignalListener(new SignalListener<MouseEventSupport.MouseCoords>() {
 			@Override
 			public void onSignal(MouseCoords e) {
 				final long now = System.currentTimeMillis();
@@ -77,7 +77,7 @@ public class MouseEventSupport {
 			
 		});
 		
-		mouseDragged().registerSignalListner(new SignalListener<MouseEventSupport.MouseCoords>() {
+		mouseDragged().registerSignalListener(new SignalListener<MouseEventSupport.MouseCoords>() {
 
 			@Override
 			public void onSignal(MouseCoords e) {
@@ -170,12 +170,12 @@ public class MouseEventSupport {
 	
 	private void emitTap(MouseCoords e) {
 		if (debug) System.err.println("emitTap");
-		tap().signal(new TapEvent());
+		tap().signal(new TapEvent(e.x, e.y));
 	}
 	
 	private void emitLongTap(MouseCoords e) {
 		if (debug) System.err.println("emitLongTap");
-		longTap().signal(new TapEvent());
+		longTap().signal(new TapEvent(e.x, e.y));
 	}
 	
 	private void emitTScroll(MouseCoords e, ScrollLock l, double x, double y) {

@@ -1,8 +1,8 @@
 Service-Component: *
--buildpath: osgi.core,\
-	osgi.cmpn,\
+-buildpath: osgi.cmpn,\
 	biz.aQute.bnd.annotation,\
-	junit.osgi
+	junit.osgi,\
+	osgi.core
 Private-Package: org.example
 -sub: *.bnd
 -runee: JavaSE-1.6

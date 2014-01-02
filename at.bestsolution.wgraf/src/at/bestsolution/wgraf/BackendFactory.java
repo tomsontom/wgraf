@@ -6,7 +6,7 @@ public abstract class BackendFactory {
 
 	private static String factory = System.getProperty("wgraf.factory");
 	
-	public abstract <Backend> Backend create(Class<?> frontendType);
+	public abstract <Type> Type create(Class<?> type);
 	
 	public static BackendFactory get() {
 		try {

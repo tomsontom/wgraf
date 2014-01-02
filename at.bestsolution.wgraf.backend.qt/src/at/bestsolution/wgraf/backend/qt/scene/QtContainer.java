@@ -1,14 +1,21 @@
 package at.bestsolution.wgraf.backend.qt.scene;
 
 import at.bestsolution.wgraf.backend.qt.QtBinder;
+import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.MouseEventSupport;
+import at.bestsolution.wgraf.geom.shape.Rectangle;
+import at.bestsolution.wgraf.geom.shape.Shape;
 import at.bestsolution.wgraf.properties.ChangeListener;
+import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.Property;
-import at.bestsolution.wgraf.properties.TransitionProperty;
+import at.bestsolution.wgraf.properties.Signal;
+import at.bestsolution.wgraf.properties.simple.SimpleDoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
-import at.bestsolution.wgraf.properties.simple.SimpleTransitionProperty;
 import at.bestsolution.wgraf.scene.BackingContainer;
 import at.bestsolution.wgraf.style.Background;
+
+import com.trolltech.qt.gui.QGraphicsItem.GraphicsItemFlag;
+import com.trolltech.qt.gui.QPainterPath;
 
 public class QtContainer extends QtNode<QGraphicsContainerItem> implements BackingContainer {
 
@@ -16,7 +23,25 @@ public class QtContainer extends QtNode<QGraphicsContainerItem> implements Backi
 	@Override
 	protected QGraphicsContainerItem createNode() {
 		final QGraphicsContainerItem it = new QGraphicsContainerItem();
+		
 		return it;
+	}
+	
+	@Override
+	protected void applyClippingShape(Shape s) {
+		QPainterPath path = null;
+		if (s instanceof Rectangle) {
+			path = new QPainterPath();
+			path.addRoundedRect(((Rectangle) s).x, ((Rectangle) s).y, ((Rectangle) s).width, ((Rectangle) s).height, ((Rectangle) s).r, ((Rectangle) s).r);
+		}
+		node.setFlag(GraphicsItemFlag.ItemClipsToShape, path != null);
+		node.setFlag(GraphicsItemFlag.ItemClipsChildrenToShape, path != null);
+		node.setShape(path);
+	}
+	
+	@Override
+	public Signal<KeyEvent> onKeyPress() {
+		return node.onKeyPress();
 	}
 	
 	@Override
@@ -40,11 +65,11 @@ public class QtContainer extends QtNode<QGraphicsContainerItem> implements Backi
 		return background;
 	}
 
-	private Property<Double> width = null;
+	private DoubleTransitionProperty width = null;
 	@Override
-	public Property<Double> width() {
+	public DoubleTransitionProperty width() {
 		if (width == null) {
-			width = new SimpleProperty<Double>(node.rect().width());
+			width = new SimpleDoubleTransitionProperty(node.rect().width());
 			QtBinder.uniBind(width, new QtBinder.QtSetter<Double>() {
 				@Override
 				public void doSet(Double value) {
@@ -56,11 +81,11 @@ public class QtContainer extends QtNode<QGraphicsContainerItem> implements Backi
 	}
 	
 	
-	private TransitionProperty<Double> height = null;
+	private DoubleTransitionProperty height = null;
 	@Override
-	public TransitionProperty<Double> height() {
+	public DoubleTransitionProperty height() {
 		if (height == null) {
-			height = new SimpleTransitionProperty<Double>(node.rect().height());
+			height = new SimpleDoubleTransitionProperty(node.rect().height());
 			QtBinder.uniBind(height, new QtBinder.QtSetter<Double>() {
 				@Override
 				public void doSet(Double value) {
@@ -69,5 +94,10 @@ public class QtContainer extends QtNode<QGraphicsContainerItem> implements Backi
 			});
 		}
 		return height;
+	}
+	
+	@Override
+	public Signal<Boolean> focus() {
+		return node.focus();
 	}
 }

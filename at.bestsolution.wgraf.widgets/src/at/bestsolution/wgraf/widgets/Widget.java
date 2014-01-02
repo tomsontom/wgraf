@@ -1,5 +1,6 @@
 package at.bestsolution.wgraf.widgets;
 
+import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.scene.Container;
 
@@ -22,5 +23,9 @@ public abstract class Widget {
 	
 	public Property<Double> height() {
 		return null;
+	}
+	
+	public Vec2d computePreferredSize() {
+		return area.computePreferredSize();
 	}
 }

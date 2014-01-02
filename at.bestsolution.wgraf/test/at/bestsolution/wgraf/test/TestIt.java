@@ -183,7 +183,7 @@ public class TestIt {
 				
 				r.height().setTransition(new LinearDoubleTransition(500));
 				
-				r.onTap().registerSignalListner(new SignalListener<TapEvent>() {
+				r.onTap().registerSignalListener(new SignalListener<TapEvent>() {
 					
 					@Override
 					public void onSignal(TapEvent data) {

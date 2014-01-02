@@ -2,6 +2,7 @@ package at.bestsolution.wgraf.test;
 
 import at.bestsolution.wgraf.events.ScrollEvent;
 import at.bestsolution.wgraf.events.TapEvent;
+import at.bestsolution.wgraf.geom.shape.Rectangle;
 import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.properties.SignalListener;
@@ -13,13 +14,20 @@ import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.style.Insets;
 import at.bestsolution.wgraf.transition.LinearDoubleTransition;
+import at.bestsolution.wgraf.transition.TouchScrollTransition;
 
+
+// TODO snap to on / off
+// TODO limit move to on / off
 public class CheckBox {
 
 	private Container area;
 	private Container slider;
 	private Text onText;
 	private Text offText;
+	
+	private final static String TEXT_ON = "on";
+	private final static String TEXT_OFF = "off";
 	
 	private boolean isSelected() {
 		return slider.x().get() > -30;
@@ -41,11 +49,16 @@ public class CheckBox {
 		area.width().set(100d);
 		area.height().set(40d);
 		
+		Rectangle clipRect = new Rectangle(2, 2, 96, 36, 10);
+		
+		area.clippingShape().set(clipRect);
+		
 		slider = new Container();
-		slider.x().setTransition(new LinearDoubleTransition(50));
+		slider.x().setTransition(new TouchScrollTransition());
 		slider.setParent(area);
 		slider.width().set(160d);
 		slider.height().set(40d);
+		slider.acceptTapEvents().set(false);
 		slider.background().set(new Backgrounds(
 				// slider
 				new FillBackground(new Color(125, 125, 125, 255), new CornerRadii(10d, 10d, 10d, 10d, 10d, 10d, 10d, 10d), new Insets(2, 60, 2, 60)),
@@ -56,34 +69,48 @@ public class CheckBox {
 				
 				));
 		
-		onText = new Text();
-		onText.text().set("on");
-		onText.x().set(60/2d);
-		onText.y().set(40/2d);
 		
+		Font font = new Font("Sans", 20);
+		
+		Vec2d onExtent = font.stringExtent(TEXT_ON);
+		Vec2d offExtent = font.stringExtent(TEXT_OFF);
+		
+		onText = new Text();
+		onText.font().set(font);
+		onText.text().set(TEXT_ON);
+		onText.x().set(60/2d - onExtent.x/2);
+		onText.y().set(40/2d - onExtent.y/2);
+		onText.acceptTapEvents().set(false);
 		onText.setParent(slider);
 		
+		onText.onTap().registerSignalListener(new SignalListener<TapEvent>() {
+			@Override
+			public void onSignal(TapEvent data) {
+				System.err.println("on tap");
+			}
+		});
+		
 		offText = new Text();
-		offText.text().set("off");
-		offText.x().set(100 + 60/2d);
-		offText.y().set(40/2d);
+		offText.font().set(font);
+		offText.text().set(TEXT_OFF);
+		offText.x().set(100 + 60/2d - offExtent.x/2);
+		offText.y().set(40/2d - offExtent.y/2);
 		
 		offText.setParent(slider);
+		offText.acceptTapEvents().set(false);
 		
-		
-		slider.onTap().registerSignalListner(new SignalListener<TapEvent>() {
+		area.onTap().registerSignalListener(new SignalListener<TapEvent>() {
 
 			@Override
 			public void onSignal(TapEvent data) {
-				System.err.println("slider ontap");
 				setSelected(!isSelected());
 			}
 		});
 		
-		area.onScroll().registerSignalListner(new SignalListener<ScrollEvent>() {
+		area.onScroll().registerSignalListener(new SignalListener<ScrollEvent>() {
 			@Override
 			public void onSignal(ScrollEvent data) {
-				slider.x().setWithoutTransition(slider.x().get() - data.deltaX);
+				slider.x().increment(- data.deltaX);
 			}
 		});
 	}

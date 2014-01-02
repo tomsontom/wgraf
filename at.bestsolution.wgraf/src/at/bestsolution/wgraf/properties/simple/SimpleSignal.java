@@ -24,7 +24,7 @@ public class SimpleSignal<Type> implements Signal<Type> {
 	}
 
 	@Override
-	public void registerSignalListner(SignalListener<Type> listener) {
+	public void registerSignalListener(SignalListener<Type> listener) {
 		listeners.add(listener);
 	}
 
