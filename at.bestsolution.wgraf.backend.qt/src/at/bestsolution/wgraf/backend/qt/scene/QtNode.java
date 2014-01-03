@@ -1,6 +1,7 @@
 package at.bestsolution.wgraf.backend.qt.scene;
 
 import at.bestsolution.wgraf.backend.qt.QtBinder;
+import at.bestsolution.wgraf.backend.qt.QtSync;
 import at.bestsolution.wgraf.geom.shape.Shape;
 import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.Property;
@@ -13,6 +14,7 @@ import at.bestsolution.wgraf.scene.BackingNode;
 import com.trolltech.qt.core.Qt.MouseButton;
 import com.trolltech.qt.core.Qt.MouseButtons;
 import com.trolltech.qt.gui.QGraphicsItem.GraphicsItemFlag;
+import com.trolltech.qt.gui.QApplication;
 import com.trolltech.qt.gui.QGraphicsItemInterface;
 
 public abstract class QtNode<N extends QGraphicsItemInterface> implements BackingNode {
@@ -116,8 +118,18 @@ public abstract class QtNode<N extends QGraphicsItemInterface> implements Backin
 	
 	
 	@Override
-	public void setParent(BackingContainer parent) {
-		node.setParentItem(((QtContainer)parent).node);
+	public void setParent(final BackingContainer parent) {
+		if (QApplication.instance().thread() == Thread.currentThread()) {
+			node.setParentItem(((QtContainer)parent).node);
+		}
+		else {
+			QtSync.runLater(new Runnable() {
+				@Override
+				public void run() {
+					node.setParentItem(((QtContainer)parent).node);
+				}
+			});
+		}
 	}
 	
 	
