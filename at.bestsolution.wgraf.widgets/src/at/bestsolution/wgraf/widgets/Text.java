@@ -7,6 +7,7 @@ import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.properties.Binder;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.Property;
+import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.scene.Container;
@@ -16,6 +17,11 @@ import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.style.Insets;
 
+// TODO add some kind of action menu - for copy, cut and paste
+// TODO implement selection
+// TODO filter keyboard events
+// TODO we need some kind of delayed text change listener
+//      to prevent model updates on every stroke
 public class Text extends Widget {
 	
 	protected final at.bestsolution.wgraf.scene.Text nodeText;
@@ -94,10 +100,31 @@ public class Text extends Widget {
 	
 	public Text() {
 		
+		// this should come from css:
 		area.background().set(new Backgrounds(
-				new FillBackground(new Color(255, 255, 255, 210), new CornerRadii(7), new Insets(3,3,3,3)),
-				new FillBackground(new Color(55, 55, 55, 100), new CornerRadii(10), new Insets(0,0,0,0))
+				new FillBackground(new Color(255, 255, 255, 210), new CornerRadii(7), new Insets(5,5,5,5)),
+				new FillBackground(new Color(55, 55, 55, 100), new CornerRadii(10), new Insets(2,2,2,2))
 				));
+		focus().registerChangeListener(new ChangeListener<Boolean>() {
+			@Override
+			public void onChange(Boolean oldValue, Boolean newValue) {
+				System.err.println("focus changed on " + Thread.currentThread());
+				if (newValue) {
+					area.background().set(new Backgrounds(
+							new FillBackground(new Color(255, 255, 255, 210), new CornerRadii(7), new Insets(5,5,5,5)),
+							new FillBackground(new Color(55, 55, 55, 100), new CornerRadii(10), new Insets(2,2,2,2)),
+							new FillBackground(new Color(255, 255, 0, 144), new CornerRadii(10), new Insets(0, 0, 0, 0))
+							));
+				}
+				else {
+					area.background().set(new Backgrounds(
+							new FillBackground(new Color(255, 255, 255, 210), new CornerRadii(7), new Insets(5,5,5,5)),
+							new FillBackground(new Color(55, 55, 55, 100), new CornerRadii(10), new Insets(2,2,2,2))
+							));
+				}
+			}
+		});
+		
 		
 		area.acceptFocus().set(true);
 		area.acceptTapEvents().set(true);
@@ -190,5 +217,9 @@ public class Text extends Widget {
 	
 	public Property<Font> font() {
 		return nodeText.font();
+	}
+	
+	public ReadOnlyProperty<Boolean> focus() {
+		return area.focus();
 	}
 }

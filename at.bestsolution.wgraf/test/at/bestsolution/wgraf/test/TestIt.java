@@ -10,9 +10,7 @@ import at.bestsolution.wgraf.paint.LinearGradient.Spread;
 import at.bestsolution.wgraf.paint.LinearGradient.Stop;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.scene.Container;
-import at.bestsolution.wgraf.scene.Region;
 import at.bestsolution.wgraf.scene.Text;
-import at.bestsolution.wgraf.scene.shapes.Rectangle;
 import at.bestsolution.wgraf.style.Backgrounds;
 import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.FillBackground;
@@ -32,10 +30,6 @@ public class TestIt {
 				region.width().set(300.0);
 				region.height().set(300.0);
 				
-				CheckBox test = new CheckBox();
-				test.setParent(region);
-				test.setX(10);
-				test.setY(10);
 				
 				{
 					Container solidFill = new Container();
@@ -159,6 +153,7 @@ public class TestIt {
 				}
 				
 				final Container r = new Container();
+				r.acceptTapEvents().set(true);
 				r.setParent(region);
 				
 				r.x().set(75.0);

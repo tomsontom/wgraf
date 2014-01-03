@@ -10,6 +10,7 @@ import at.bestsolution.wgraf.properties.GroupBinding;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.transition.TouchScrollTransition;
 
+// TODO scrollbar visibility
 public class ScrollPane extends Pane {
 
 	private Widget content;
@@ -32,11 +33,13 @@ public class ScrollPane extends Pane {
 		hBar = new ScrollBar(Orientation.HORIZONTAL);
 		vBar = new ScrollBar(Orientation.VERTICAL);
 		
+		hBar.area.addStyleClass("hbar");
 		hBar.sliderSizeFactor().set(0.2);
 		hBar.minValue().set(0);
 		hBar.maxValue().set(100);
 		hBar.value().set(0);
 		
+		vBar.area.addStyleClass("vbar");
 		vBar.sliderSizeFactor().set(0.2);
 		vBar.minValue().set(0);
 		vBar.maxValue().set(100);

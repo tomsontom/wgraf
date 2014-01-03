@@ -59,13 +59,12 @@ public class QGraphicsContainerItem extends QGraphicsRectItem {
 	
 	@Override
 	public void paint(QPainter painter, QStyleOptionGraphicsItem option, QWidget widget) {
-		painter.setBrush(brush());
-		painter.setPen(pen());
-		painter.drawRoundedRect(rect(), xRadius, yRadius);
-		
-		
+//		painter.setBrush(brush());
+//		painter.setPen(pen());
+//		painter.drawRoundedRect(rect(), xRadius, yRadius);
 		
 		// render background
+		painter.setPen(QPen.NoPen);
 		if (background != null) {
 			if (background instanceof Backgrounds) {
 				List<BaseBackground> bg = new ArrayList<BaseBackground>(((Backgrounds) background).backgrounds);
@@ -168,6 +167,7 @@ public class QGraphicsContainerItem extends QGraphicsRectItem {
 
 	public void setBackground(Background background) {
 		this.background = background;
+		update(rect());
 	}
 	
 	public void setShape(QPainterPath shape) {

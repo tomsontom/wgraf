@@ -1,5 +1,6 @@
 package at.bestsolution.wgraf.backend.qt;
 
+import java.util.Arrays;
 import java.util.Queue;
 import java.util.LinkedList;
 
@@ -10,9 +11,18 @@ import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.scene.Container;
 
+import com.trolltech.qt.core.QRectF;
 import com.trolltech.qt.gui.QApplication;
+import com.trolltech.qt.gui.QBrush;
+import com.trolltech.qt.gui.QColor;
+import com.trolltech.qt.gui.QGraphicsEllipseItem;
+import com.trolltech.qt.gui.QGraphicsItemInterface;
 import com.trolltech.qt.gui.QGraphicsScene;
 import com.trolltech.qt.gui.QGraphicsView;
+import com.trolltech.qt.gui.QGraphicsView.OptimizationFlag;
+import com.trolltech.qt.gui.QPainter;
+import com.trolltech.qt.gui.QStyleOptionGraphicsItem;
+import com.trolltech.qt.gui.QWidget;
 import com.trolltech.qt.gui.QApplication.ColorSpec;
 import com.trolltech.qt.gui.QPainter.RenderHint;
 import com.trolltech.qt.gui.QResizeEvent;
@@ -69,12 +79,53 @@ public class QtApplication implements BackingApplication {
 			init.run();
 		}
 		
-		scene = new QGraphicsScene();
+		scene = new QGraphicsScene() {
+			@Override
+			protected void drawItems(QPainter painter,
+					QGraphicsItemInterface[] items,
+					QStyleOptionGraphicsItem[] options, QWidget widget) {
+				
+//				System.err.println("SCENE DRAW ITEMS " + Arrays.toString(items));
+				super.drawItems(painter, items, options, widget);
+			}
+			
+			@Override
+			protected void drawBackground(QPainter painter, QRectF rect) {
+//				System.err.println("SCENE DRAW BACKGROUND");
+				super.drawBackground(painter, rect);
+			}
+			
+			protected void drawForeground(QPainter painter, QRectF rect) {
+//				System.err.println("SCENE DRAW FOREGROUND");
+				super.drawForeground(painter, rect);
+			}
+		};
 		
 		view = new QGraphicsView(scene) {
 			@Override
 			protected void resizeEvent(QResizeEvent event) {
 				scene.setSceneRect(0, 0, event.size().width(), event.size().height());
+			}
+			
+			
+			@Override
+			protected void drawItems(QPainter painter,
+					QGraphicsItemInterface[] items,
+					QStyleOptionGraphicsItem[] options) {
+				
+//				System.err.println("VIEW DRAW ITEMS " + Arrays.toString(items));
+				super.drawItems(painter, items, options);
+			}
+			
+			@Override
+			protected void drawBackground(QPainter painter, QRectF rect) {
+//				System.err.println("VIEW DRAW BACKGROUND");
+				super.drawBackground(painter, rect);
+			}
+			
+			protected void drawForeground(QPainter painter, QRectF rect) {
+//				System.err.println("VIEW DRAW FOREGROUND");
+				super.drawForeground(painter, rect);
 			}
 		};
 		view.setWindowTitle(title().get());
@@ -86,7 +137,12 @@ public class QtApplication implements BackingApplication {
 		
 //		QGraphicsRectItem rect = new QGraphicsRectItem();
 //		
-//		scene.addItem(rect);
+		
+		// this flag allows to hook the drawItems method in GraphicsView / GraphicsScene
+		// TODO find out how it impacts performance
+		// https://qt.gitorious.org/qt/qt/source/319d4ad467364525a788c827ae04934ef4722eef:src/gui/graphicsview/qgraphicsview.cpp#L3385
+		
+		view.setOptimizationFlag(OptimizationFlag.IndirectPainting);
 		
 		view.setRenderHints(RenderHint.HighQualityAntialiasing, RenderHint.Antialiasing, RenderHint.TextAntialiasing);
 		
@@ -94,26 +150,10 @@ public class QtApplication implements BackingApplication {
 		
 		view.setStyleSheet( "QGraphicsView { border-style: none; }" );
 		
-		
-		
-		
 		scene.addItem(((QtContainer)root().get().internal_getBackend()).getNode());
 		
 		scene.setSceneRect(0, 0, w, h);
 		
-		
-//		QGraphicsRectItem x = new QGraphicsRectItem();
-//		x.setRect(0, 0, 100, 100);
-//		x.setX(10);
-//		x.setY(10);
-//		
-//		QGraphicsRectItem x1 = new QGraphicsRectItem();
-//		x1.setRect(0,0, 20, 20);
-//		x1.setParentItem(x);
-//		x1.setX(20);
-//		x1.setY(20);
-		
-//		scene.addItem(x);
 		QApplication.exec();
 
 	}

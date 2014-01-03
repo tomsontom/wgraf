@@ -31,6 +31,9 @@ import at.bestsolution.wgraf.scene.Text;
 import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.transition.TouchScrollTransition;
 
+// TODO item resizing
+// TODO some converters like model -> label
+// TODO support multiple columns
 public class VirtualFlow<Model> extends Widget {
 
 	public static interface Factory<Type> {
@@ -120,7 +123,7 @@ public class VirtualFlow<Model> extends Widget {
 			if (lastVisible == 0) {
 				lastVisible = Math.max(0, size - 1);
 			}
-			System.err.println("visiblitiy: " + firstVisible + " -> " + lastVisible);
+//			System.err.println("visiblitiy: " + firstVisible + " -> " + lastVisible);
 //			System.err.println("firstOffset: " + firstOffset);
 			
 			List<VisibleElement> result = new ArrayList<VisibleElement>();
@@ -244,7 +247,10 @@ public class VirtualFlow<Model> extends Widget {
 				for (VisibleElement e : newValue) {
 					Node<?> c = getCellByIdx(e.idx);
 					c.y().set(e.offset);
-					((Text)c).text().set(model.get(e.idx).toString());
+					// TODO add a provider system
+					if (c instanceof Text) {
+						((Text)c).text().set(model.get(e.idx).toString());
+					}
 				}
 				freeCells();
 			}

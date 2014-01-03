@@ -5,7 +5,9 @@ import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.geom.shape.Rectangle;
 import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.paint.Color;
+import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.ClampedDoubleIncrement;
+import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.scene.Container;
 import at.bestsolution.wgraf.scene.Text;
@@ -14,12 +16,10 @@ import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.style.Insets;
-import at.bestsolution.wgraf.transition.LinearDoubleTransition;
 import at.bestsolution.wgraf.transition.TouchScrollTransition;
 
 
-// TODO snap to on / off
-// TODO limit move to on / off
+// TODO snap to on / off -> this needs a scroll-end-event
 // TODO remove fixed sizes
 public class CheckBox extends Widget {
 
@@ -59,11 +59,35 @@ public class CheckBox extends Widget {
 		
 		Rectangle clipRect = new Rectangle(2, 2, 96, 36, 10);
 		
-		area.clippingShape().set(clipRect);
+//		area.clippingShape().set(clipRect);
+		
+		// this should come from css:
+		area.background().set(null);
+		focus().registerChangeListener(new ChangeListener<Boolean>() {
+			@Override
+			public void onChange(Boolean oldValue, Boolean newValue) {
+				if (newValue) {
+					area.background().set(new Backgrounds(
+							new FillBackground(new Color(255, 255, 255, 255), new CornerRadii(10), new Insets(2, 2, 2, 2)),
+							new FillBackground(new Color(255, 255, 0, 144), new CornerRadii(10), new Insets(0, 0, 0, 0))
+							));
+				}
+				else {
+					area.background().set(null);
+
+				}
+			}
+		});
+		
+		final Container sliderClip = new Container();
+		sliderClip.setParent(area);
+		sliderClip.clippingShape().set(clipRect);
+		sliderClip.width().set(100d);
+		sliderClip.height().set(40d);
 		
 		slider = new Container();
 		slider.x().setTransition(new TouchScrollTransition());
-		slider.setParent(area);
+		slider.setParent(sliderClip);
 		slider.width().set(160d);
 		slider.height().set(40d);
 		slider.background().set(new Backgrounds(
@@ -132,5 +156,7 @@ public class CheckBox extends Widget {
 		area.setParent(parent);
 	}
 	
-	
+	public ReadOnlyProperty<Boolean> focus() {
+		return area.focus();
+	}
 }

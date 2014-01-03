@@ -1,23 +1,14 @@
 package at.bestsolution.wgraf.test.ui;
 
 import at.bestsolution.wgraf.Application;
-import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.paint.Color;
-import at.bestsolution.wgraf.paint.LinearGradient;
-import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
-import at.bestsolution.wgraf.paint.LinearGradient.Spread;
-import at.bestsolution.wgraf.paint.LinearGradient.Stop;
-import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.scene.Container;
 import at.bestsolution.wgraf.scene.Text;
-import at.bestsolution.wgraf.style.Backgrounds;
 import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.style.Insets;
-import at.bestsolution.wgraf.test.CheckBox;
-import at.bestsolution.wgraf.transition.LinearDoubleTransition;
 
 public class TextNode extends Application {
 
