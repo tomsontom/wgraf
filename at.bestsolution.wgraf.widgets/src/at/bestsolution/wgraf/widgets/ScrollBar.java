@@ -2,6 +2,7 @@ package at.bestsolution.wgraf.widgets;
 
 import at.bestsolution.wgraf.events.ScrollEvent;
 import at.bestsolution.wgraf.paint.Color;
+import at.bestsolution.wgraf.properties.ClampedDoubleIncrement;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.DoubleProperty;
 import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
@@ -36,8 +37,8 @@ public class ScrollBar extends Widget {
 		
 		area.acceptTapEvents().set(true);
 		
-		area.background().set(new FillBackground(new Color(255, 0, 0, 100), new CornerRadii(5), new Insets(0, 0, 0, 0)));
-		slider.background().set(new FillBackground(new Color(255, 0, 0, 150), new CornerRadii(5), new Insets(2, 2, 2, 2)));
+		area.background().set(new FillBackground(new Color(130, 130, 130, 40), new CornerRadii(5), new Insets(0, 0, 0, 0)));
+		slider.background().set(new FillBackground(new Color(130, 130, 130, 150), new CornerRadii(5), new Insets(2, 2, 2, 2)));
 		
 		if (orientation == Orientation.HORIZONTAL) {
 			slider.x().setTransition(new TouchScrollTransition());
@@ -103,7 +104,7 @@ public class ScrollBar extends Widget {
 		double sliderSpace;
 		
 		if (orientation == Orientation.VERTICAL) {
-			sliderSpace = area.width().get() - slider.width().get();
+			sliderSpace = area.height().get() - slider.height().get();
 			
 			double sliderSize = sliderSizeFactor * area.height().get();
 			slider.height().set(sliderSize);
@@ -123,7 +124,6 @@ public class ScrollBar extends Widget {
 	private void onScroll(ScrollEvent data) {
 		double minValue = this.minValue.get();
 		double maxValue = this.maxValue.get();
-		
 		if (orientation == Orientation.HORIZONTAL) {
 			double newX = offset - data.deltaX;
 			
@@ -134,6 +134,7 @@ public class ScrollBar extends Widget {
 			newValue = Math.min(maxValue, newValue);
 			
 			value.set(newValue);
+			
 		}
 		else {
 			double newY = offset - data.deltaY;
@@ -153,10 +154,10 @@ public class ScrollBar extends Widget {
 		
 		offset = (value - minValue) / valueFactor;
 		if (orientation == Orientation.HORIZONTAL) {
-			slider.x().set(offset);
+			slider.x().setDynamic(offset);
 		}
 		else {
-			slider.y().set(offset);
+			slider.y().setDynamic(offset);
 		}
 	}
 	

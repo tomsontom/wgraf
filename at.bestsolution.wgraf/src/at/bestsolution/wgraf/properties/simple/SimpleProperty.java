@@ -5,10 +5,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.Property;
+import at.bestsolution.wgraf.properties.ValueUpdate;
 
 public class SimpleProperty<Type> implements Property<Type> {
 
-	private Type value;
+	protected volatile Type value;
 	
 	private List<ChangeListener<Type>> listeners = new CopyOnWriteArrayList<ChangeListener<Type>>();
 	
@@ -33,6 +34,11 @@ public class SimpleProperty<Type> implements Property<Type> {
 	@Override
 	public void set(Type value) {
 		notify(this.value, this.value = value);
+	}
+	
+	@Override
+	public void update(ValueUpdate<Type> update) {
+		notify(this.value, this.value = update.update(value));
 	}
 
 	@Override

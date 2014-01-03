@@ -5,6 +5,7 @@ import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.geom.shape.Rectangle;
 import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.paint.Color;
+import at.bestsolution.wgraf.properties.ClampedDoubleIncrement;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.scene.Container;
 import at.bestsolution.wgraf.scene.Text;
@@ -19,6 +20,7 @@ import at.bestsolution.wgraf.transition.TouchScrollTransition;
 
 // TODO snap to on / off
 // TODO limit move to on / off
+// TODO remove fixed sizes
 public class CheckBox extends Widget {
 
 	private Container slider;
@@ -28,21 +30,27 @@ public class CheckBox extends Widget {
 	private final static String TEXT_ON = "on";
 	private final static String TEXT_OFF = "off";
 	
+	private double minPos;
+	private double maxPos;
+	
 	private boolean isSelected() {
 		return slider.x().get() > -30;
 	}
 	
 	private void setSelected(boolean value) {
 		if (value) {
-			slider.x().set(0d);
+			slider.x().setDynamic(maxPos);
 		}
 		else {
-			slider.x().set(-60d);
+			slider.x().setDynamic(minPos);
 		}
 	}
 	
 	
 	public CheckBox() {
+		
+		maxPos = 0;
+		minPos = -60;
 		
 		area.width().set(100d);
 		area.height().set(40d);
@@ -107,7 +115,7 @@ public class CheckBox extends Widget {
 		area.onScroll().registerSignalListener(new SignalListener<ScrollEvent>() {
 			@Override
 			public void onSignal(ScrollEvent data) {
-				slider.x().increment(- data.deltaX);
+				slider.x().updateDynamic(new ClampedDoubleIncrement(-data.deltaX, minPos, maxPos));
 			}
 		});
 	}

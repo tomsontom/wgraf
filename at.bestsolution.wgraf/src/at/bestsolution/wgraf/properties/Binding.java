@@ -1,6 +1,7 @@
 package at.bestsolution.wgraf.properties;
 
-public interface Binding {
+import at.bestsolution.wgraf.util.Disposable;
 
+public interface Binding extends Disposable {
 	void dispose();
 }

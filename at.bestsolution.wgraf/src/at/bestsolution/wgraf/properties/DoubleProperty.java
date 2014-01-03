@@ -17,4 +17,6 @@ public interface DoubleProperty {
 	void unregisterChangeListener(DoubleChangeListener listener);
 	
 	void increment(double delta);
+	
+	void update(ValueUpdate<Double> update);
 }

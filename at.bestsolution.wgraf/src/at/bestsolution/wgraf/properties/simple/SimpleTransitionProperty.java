@@ -1,21 +1,14 @@
 package at.bestsolution.wgraf.properties.simple;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.TransitionProperty;
+import at.bestsolution.wgraf.properties.ValueUpdate;
 import at.bestsolution.wgraf.transition.Transition;
 import at.bestsolution.wgraf.transition.ValueReader;
 import at.bestsolution.wgraf.transition.ValueUpdater;
 
-public class SimpleTransitionProperty<Type> implements TransitionProperty<Type> {
+public class SimpleTransitionProperty<Type> extends SimpleProperty<Type> implements TransitionProperty<Type> {
 
-	private Type value;
-	
 	private Transition<Type> transition;
-	
-	private List<ChangeListener<Type>> listeners = new CopyOnWriteArrayList<ChangeListener<Type>>();
 	
 	private final ValueUpdater<Type> myUpdater = new ValueUpdater<Type>() {
 		@Override
@@ -38,19 +31,8 @@ public class SimpleTransitionProperty<Type> implements TransitionProperty<Type> 
 		this.value = initialValue;
 	}
 	
-	protected void notify(Type oldValue, Type newValue) {
-		for (ChangeListener<Type> listener : listeners) {
-			try {
-				listener.onChange(oldValue, newValue);
-			}
-			catch (Throwable t) {
-				t.printStackTrace();
-			}
-		}
-	}
-	
 	@Override
-	public void set(Type value) {
+	public void setDynamic(Type value) {
 		if (transition == null) {
 			notify(this.value, this.value = value);
 		}
@@ -60,28 +42,21 @@ public class SimpleTransitionProperty<Type> implements TransitionProperty<Type> 
 	}
 	
 	@Override
-	public void setWithoutTransition(Type value) {
-		notify(this.value, this.value = value);
+	public void updateDynamic(ValueUpdate<Type> update) {
+		if (transition == null) {
+			notify(this.value, this.value = update.update(value));
+		}
+		else {
+			transition.startUpdate(myUpdater, myReader, update);
+		}
 	}
-
-	@Override
-	public Type get() {
-		return value;
-	}
-
-	@Override
-	public void registerChangeListener(ChangeListener<Type> listener) {
-		listeners.add(listener);
-	}
-
-	@Override
-	public void unregisterChangeListener(ChangeListener<Type> listener) {
-		listeners.remove(listener);
-	}
-
+	
+	
+	
 	@Override
 	public void setTransition(Transition<Type> transition) {
 		this.transition = transition;
 	}
+
 
 }

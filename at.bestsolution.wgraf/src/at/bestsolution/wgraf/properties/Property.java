@@ -15,4 +15,6 @@ public interface Property<Type> {
 	
 	void registerChangeListener(ChangeListener<Type> listener);
 	void unregisterChangeListener(ChangeListener<Type> listener);
+	
+	void update(ValueUpdate<Type> update);
 }

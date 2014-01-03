@@ -5,13 +5,10 @@ import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.DoubleProperty;
 import at.bestsolution.wgraf.properties.Property;
+import at.bestsolution.wgraf.properties.Setter;
 
 public class JavaFxBinder {
 
-	public static interface Setter<Type> {
-		void set(Type value);
-	}
-	
 	public abstract static class JfxSetter<Type> implements Setter<Type> {
 		@Override
 		public final void set(final Type value) {

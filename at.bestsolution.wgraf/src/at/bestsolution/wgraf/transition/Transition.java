@@ -1,5 +1,8 @@
 package at.bestsolution.wgraf.transition;
 
+import at.bestsolution.wgraf.properties.ValueUpdate;
+
+
 public interface Transition<Type> {
 	/**
 	 * starts the transition
@@ -13,5 +16,6 @@ public interface Transition<Type> {
 	 * @return true if the transition is finished
 	 */
 	boolean update(long time);
-	void startIncrement(ValueUpdater<Double> updater, ValueReader<Double> reader, double delta);
+	
+	void startUpdate(ValueUpdater<Type> myUpdater, ValueReader<Type> myReader, ValueUpdate<Type> update);
 }

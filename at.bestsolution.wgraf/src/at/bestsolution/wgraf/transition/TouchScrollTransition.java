@@ -1,6 +1,7 @@
 package at.bestsolution.wgraf.transition;
 
 import at.bestsolution.wgraf.interpolator.Interpolator;
+import at.bestsolution.wgraf.properties.ValueUpdate;
 
 public class TouchScrollTransition implements Transition<Double> {
 
@@ -21,10 +22,10 @@ public class TouchScrollTransition implements Transition<Double> {
 	}
 	
 	@Override
-	public void startIncrement(ValueUpdater<Double> updater, ValueReader<Double> reader, double delta) {
+	public void startUpdate(ValueUpdater<Double> updater, ValueReader<Double> reader, ValueUpdate<Double> update) {
 		this.updater = updater;
 		this.reader = reader;
-		this.targetValue += delta;
+		this.targetValue = update.update(this.targetValue);
 		Interpolator.Access.getInterpolator().interpolate(this);
 	}
 

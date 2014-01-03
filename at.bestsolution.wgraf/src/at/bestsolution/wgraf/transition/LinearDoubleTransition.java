@@ -1,6 +1,7 @@
 package at.bestsolution.wgraf.transition;
 
 import at.bestsolution.wgraf.interpolator.Interpolator;
+import at.bestsolution.wgraf.properties.ValueUpdate;
 
 
 public class LinearDoubleTransition implements Transition<Double> {
@@ -39,8 +40,8 @@ public class LinearDoubleTransition implements Transition<Double> {
 	}
 	
 	@Override
-	public void startIncrement(ValueUpdater<Double> updater, ValueReader<Double> reader, double delta) {
-		targetValue = reader.read() + delta;
+	public void startUpdate(ValueUpdater<Double> updater, ValueReader<Double> reader, ValueUpdate<Double> update) {
+		targetValue = update.update(reader.read());
 		this.updater = updater;
 		this.reader = reader;
 		this.timePassed = 0;

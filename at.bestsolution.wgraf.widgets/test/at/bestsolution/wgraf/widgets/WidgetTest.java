@@ -99,6 +99,32 @@ public class WidgetTest extends Application {
 			
 		}
 		
+//		{
+//			Label test = new Label();
+//			test.text().set("ScrollPane");
+//			test.font().set(font);
+//			
+//			pane.add(test, 10, 290);
+//			
+//			ScrollPane scrollPane = new ScrollPane();
+//			scrollPane.area.width().set(200);
+//			scrollPane.area.height().set(200);
+//			
+//			scrollPane.area.background().set(new FillBackground(new Color(255,  0,  0, 50), new CornerRadii(2), new Insets(0, 0, 0, 0)));
+//			pane.add(scrollPane, 170, 290);
+//			
+//			
+//			Label label = new Label();
+//			label.font().set(new Font("Sans", 200));
+//			label.text().set("Scrolling?!");
+//			
+//			Vec2d s = label.computePreferredSize();
+//			label.area.width().set(s.x);
+//			label.area.height().set(s.y);
+//			
+//			scrollPane.setContent(label);
+//		}
+		
 		{
 			Label test = new Label();
 			test.text().set("ScrollPane");
@@ -114,15 +140,10 @@ public class WidgetTest extends Application {
 			pane.add(scrollPane, 170, 290);
 			
 			
-			Label label = new Label();
-			label.font().set(new Font("Sans", 200));
-			label.text().set("Scrolling?!");
-			
-			Vec2d s = label.computePreferredSize();
-			label.area.width().set(s.x);
-			label.area.height().set(s.y);
-			
-			scrollPane.setContent(label);
+			SimpleWidgets w = new SimpleWidgets();
+			w.area.width().set(400);
+			w.area.height().set(500);
+			scrollPane.setContent(w);
 		}
 		root().set(pane.getAreaNode());
 	}

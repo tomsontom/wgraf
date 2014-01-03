@@ -4,7 +4,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import at.bestsolution.wgraf.backend.javafx.JavaFxBinder;
-import at.bestsolution.wgraf.backend.javafx.JavaFxBinder.Setter;
 import at.bestsolution.wgraf.events.MouseEventSupport;
 import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.events.MouseEventSupport.MouseCoords;

@@ -3,8 +3,10 @@ package at.bestsolution.wgraf.widgets;
 import at.bestsolution.wgraf.events.ScrollEvent;
 import at.bestsolution.wgraf.geom.shape.Rectangle;
 import at.bestsolution.wgraf.math.Vec2d;
-import at.bestsolution.wgraf.properties.ChangeListener;
+import at.bestsolution.wgraf.properties.Binding;
+import at.bestsolution.wgraf.properties.ClampedDoubleIncrement;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
+import at.bestsolution.wgraf.properties.GroupBinding;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.transition.TouchScrollTransition;
 
@@ -18,25 +20,13 @@ public class ScrollPane extends Pane {
 	private boolean fitVertically = false;
 	private boolean fitHorizontally = false;
 	
-	private void updateScrollBars() {
-		if (content != null) {
-			double contentWidth = content.area.width().get();
-			double contentHeight = content.area.height().get();
-			
-			double windowWidth = area.width().get();
-			double windowHeight = area.height().get();
-			
-			
-			hBar.sliderSizeFactor().set(contentWidth / windowWidth);
-			vBar.sliderSizeFactor().set(contentHeight / windowHeight);
-			
-			hBar.minValue().set(0);
-			hBar.maxValue().set(windowWidth - contentWidth);
-			
-			vBar.minValue().set(0);
-			vBar.maxValue().set(windowHeight - contentHeight);
-		}
-	}
+	private GroupBinding contentBinding = new GroupBinding();
+	
+	private double minOffsetHorizontal;
+	private double maxOffsetHorizontal;
+	private double minOffsetVertical;
+	private double maxOffsetVertical;
+	
 	
 	public ScrollPane() {
 		hBar = new ScrollBar(Orientation.HORIZONTAL);
@@ -74,8 +64,8 @@ public class ScrollPane extends Pane {
 			@Override
 			public void onSignal(ScrollEvent data) {
 				if (content != null) {
-					content.area.x().increment(-data.deltaX);
-					content.area.y().increment(-data.deltaY);;
+					content.area.x().updateDynamic(new ClampedDoubleIncrement(-data.deltaX, minOffsetHorizontal, maxOffsetHorizontal));
+					content.area.y().updateDynamic(new ClampedDoubleIncrement(-data.deltaY, minOffsetVertical, maxOffsetVertical));
 				}
 			}
 		});
@@ -89,28 +79,48 @@ public class ScrollPane extends Pane {
 		content.getAreaNode().x().setTransition(new TouchScrollTransition());
 		content.getAreaNode().y().setTransition(new TouchScrollTransition());
 		
-		final Widget c = content;
-		content.getAreaNode().x().registerChangeListener(new DoubleChangeListener() {
-			@Override
-			public void onChange(double oldValue, double newValue) {
-				if (content != null) {
-					double space = area.width().get() - c.area.width().get();
-					hBar.value().set(space - newValue);
-				}
-			}
-		});
-		content.getAreaNode().y().registerChangeListener(new DoubleChangeListener() {
-			@Override
-			public void onChange(double oldValue, double newValue) {
-				if (content != null) {
-					double space = area.height().get() - c.area.height().get();
-					vBar.value().set(space - newValue);
-				}
-			}
-		});
-		
 		hBar.area.setParent(area);
 		vBar.area.setParent(area);
+		
+		contentBinding.dispose();
+		contentBinding.registerBinding(WidgetBinder.bindScrollBar(hBar, content.area.x(), area.width(), content.area.width()));
+		contentBinding.registerBinding(WidgetBinder.bindScrollBar(vBar, content.area.y(), area.height(), content.area.height()));
+		
+		final DoubleChangeListener contentLimitX = new DoubleChangeListener() {
+			@Override
+			public void onChange(double oldValue, double newValue) {
+				final double max = ScrollPane.this.content.area.width().get() - area.width().get();
+				if (newValue > 0) {
+					ScrollPane.this.content.area.x().set(0);
+				}
+				else if (newValue < max) {
+					ScrollPane.this.content.area.x().set(max);
+				}
+			}
+		};
+//		content.area.x().registerChangeListener(contentLimitX);
+		
+		final DoubleChangeListener contentLimitY = new DoubleChangeListener() {
+			@Override
+			public void onChange(double oldValue, double newValue) {
+				final double max = ScrollPane.this.content.area.height().get() - area.height().get();
+				if (newValue > 0) {
+					ScrollPane.this.content.area.y().set(0);
+				}
+				else if (newValue < max) {
+					ScrollPane.this.content.area.y().set(max);
+				}
+			} 
+		};
+//		content.area.y().registerChangeListener(contentLimitY);
+		
+		contentBinding.registerBinding(new Binding() {
+			@Override
+			public void dispose() {
+				ScrollPane.this.content.area.x().unregisterChangeListener(contentLimitX);
+				ScrollPane.this.content.area.y().unregisterChangeListener(contentLimitY);
+			}
+		});
 		
 		resize();
 	}
@@ -136,16 +146,20 @@ public class ScrollPane extends Pane {
 			content.getAreaNode().width().set(contentWidth);
 			content.getAreaNode().height().set(contentHeight);
 			
+			maxOffsetVertical = 0;
+			maxOffsetHorizontal = 0;
+			minOffsetVertical = ScrollPane.this.content.area.height().get() - area.height().get();
+			minOffsetHorizontal = ScrollPane.this.content.area.width().get() - area.width().get();
 		}
 		
-		vBar.area.height().set(parentHeight);
+		vBar.area.height().set(parentHeight - 20);
 		vBar.area.width().set(20);
 		vBar.area.x().set(parentWidth - 20);
 		
-		hBar.area.width().set(parentWidth);
+		hBar.area.width().set(parentWidth - 20);
 		hBar.area.height().set(20);
 		hBar.area.y().set(parentHeight - 20);
 		
-		updateScrollBars();
+//		updateScrollBars();
 	}
 }
