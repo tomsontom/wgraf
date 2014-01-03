@@ -2,6 +2,7 @@ package at.bestsolution.wgraf.widgets;
 
 import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.TapEvent;
+import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.properties.Binder;
 import at.bestsolution.wgraf.properties.ChangeListener;
@@ -9,6 +10,7 @@ import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.scene.Container;
+import at.bestsolution.wgraf.style.Backgrounds;
 import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
@@ -92,7 +94,10 @@ public class Text extends Widget {
 	
 	public Text() {
 		
-		area.background().set(new FillBackground(new Color(55, 55, 55, 100), new CornerRadii(10), new Insets(0,0,0,0)));
+		area.background().set(new Backgrounds(
+				new FillBackground(new Color(255, 255, 255, 210), new CornerRadii(7), new Insets(3,3,3,3)),
+				new FillBackground(new Color(55, 55, 55, 100), new CornerRadii(10), new Insets(0,0,0,0))
+				));
 		
 		area.acceptFocus().set(true);
 		area.acceptTapEvents().set(true);
@@ -176,7 +181,10 @@ public class Text extends Widget {
 		});
 	}
 	
-	
+	@Override
+	public Vec2d computePreferredSize() {
+		return font().get().stringExtent(text.get());
+	}
 	
 	private Property<String> text = null;
 	public Property<String> text() {

@@ -91,9 +91,6 @@ public class ScrollBar extends Widget {
 			}
 		});
 		
-		
-		area.width().set(200d);
-		area.height().set(40d);
 	}
 	
 	private void relayout() {
