@@ -5,8 +5,8 @@ import at.bestsolution.wgraf.events.MouseEventSupport;
 import at.bestsolution.wgraf.geom.shape.Shape;
 import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.Property;
+import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.Signal;
-import at.bestsolution.wgraf.properties.TransitionProperty;
 
 public interface BackingNode {
 
@@ -25,5 +25,5 @@ public interface BackingNode {
 	
 	Signal<KeyEvent> onKeyPress();
 	
-	Signal<Boolean> focus();
+	ReadOnlyProperty<Boolean> focus();
 }

@@ -12,7 +12,7 @@ public class DefaultInterpolator implements Interpolator {
 	
 	private Set<Transition<?>> activeTransistions = new CopyOnWriteArraySet<Transition<?>>();
 	
-	private Timer interpol = new Timer();
+	private Timer interpol = new Timer("interpol");
 	
 	public DefaultInterpolator() {
 		startInterpolator();

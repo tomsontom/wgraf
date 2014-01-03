@@ -1,5 +1,6 @@
 package at.bestsolution.wgraf.backend.javafx.scene;
 
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -12,6 +13,7 @@ import at.bestsolution.wgraf.geom.shape.Shape;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.Property;
+import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.TransitionProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleDoubleTransitionProperty;
@@ -38,6 +40,23 @@ public abstract class JavaFxNode<N extends Node> implements BackingNode {
 	
 	public N getNode() {
 		return node;
+	}
+	
+	private Property<Boolean> focus = null;
+	@Override
+	public ReadOnlyProperty<Boolean> focus() {
+		if (focus == null) {
+			focus = new SimpleProperty<Boolean>();
+			node.focusedProperty().addListener(new javafx.beans.value.ChangeListener<Boolean>() {
+				@Override
+				public void changed(
+						ObservableValue<? extends Boolean> observable,
+						Boolean oldValue, Boolean newValue) {
+					focus.set(newValue);
+				}
+			});
+		}
+		return focus;
 	}
 	
 	private Property<Boolean> acceptFocus = null;

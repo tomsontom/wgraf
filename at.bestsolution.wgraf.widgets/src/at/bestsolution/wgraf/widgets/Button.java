@@ -29,9 +29,12 @@ public class Button extends Widget {
 		area.acceptFocus().set(true);
 		area.acceptTapEvents().set(true);
 		
+		area.addStyleClass("button");
+		
 		nodeText = new at.bestsolution.wgraf.scene.Text();
 		nodeText.setParent(area);
 		
+		nodeText.addStyleClass("label");
 		
 		area.onTap().registerSignalListener(new SignalListener<TapEvent>() {
 			@Override

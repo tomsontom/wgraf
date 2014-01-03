@@ -1,5 +1,7 @@
 package at.bestsolution.wgraf.backend.javafx.scene;
 
+
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -116,26 +118,7 @@ public class JavaFxContainer extends JavaFxNode<javafx.scene.layout.Region> impl
 				}
 			}
 		});
-		node.focusedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0,
-					Boolean arg1, Boolean arg2) {
-				if (focus != null) {
-					focus.signal(arg2);
-				}
-				
-			}
-		});
 	}
-	
-	private Signal<Boolean> focus = null;
-	public Signal<Boolean> focus() {
-		if (focus == null) {
-			focus = new SimpleSignal<Boolean>();
-		}
-		return focus;
-	}
-	
 	
 	private Property<Background> background = null;
 	@Override
@@ -185,8 +168,19 @@ public class JavaFxContainer extends JavaFxNode<javafx.scene.layout.Region> impl
 		return height;
 	}
 	
-	public void addChild(javafx.scene.Node child) {
-		((FxRegion)node).getChildren().add(child);
+	public void addChild(final javafx.scene.Node child) {
+		if (Platform.isFxApplicationThread()) {
+			((FxRegion)node).getChildren().add(child);
+		}
+		else {
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					((FxRegion)node).getChildren().add(child);
+				}
+			});
+		}
+		
 	}
 	
 	

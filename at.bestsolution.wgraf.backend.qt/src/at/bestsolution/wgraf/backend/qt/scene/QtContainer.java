@@ -8,6 +8,7 @@ import at.bestsolution.wgraf.geom.shape.Shape;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.Property;
+import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.simple.SimpleDoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
@@ -97,7 +98,7 @@ public class QtContainer extends QtNode<QGraphicsContainerItem> implements Backi
 	}
 	
 	@Override
-	public Signal<Boolean> focus() {
+	public ReadOnlyProperty<Boolean> focus() {
 		return node.focus();
 	}
 }

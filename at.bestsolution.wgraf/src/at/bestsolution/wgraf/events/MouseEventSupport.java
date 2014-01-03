@@ -16,7 +16,7 @@ public class MouseEventSupport {
 	private final static int LONG_TAP_TIMEOUT = 1000;
 	private final static int TAP_RADIUS = 20;
 	
-	Timer t = new Timer();
+	private static Timer t = new Timer("mouseevent");
 	private VelocityTracker tracker = new VelocityTracker();
 	
 	private long beginTime;

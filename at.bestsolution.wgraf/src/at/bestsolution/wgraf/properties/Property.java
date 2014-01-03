@@ -8,7 +8,7 @@ package at.bestsolution.wgraf.properties;
  *
  * @param <Type>
  */
-public interface Property<Type> {
+public interface Property<Type> extends ReadOnlyProperty<Type> {
 
 	void set(Type value);
 	Type get();

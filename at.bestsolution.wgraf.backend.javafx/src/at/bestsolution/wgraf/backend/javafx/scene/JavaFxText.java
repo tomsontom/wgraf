@@ -28,16 +28,6 @@ public class JavaFxText extends JavaFxNode<javafx.scene.text.Text> implements Ba
 				}
 			}
 		});
-		node.focusedProperty().addListener(new ChangeListener<Boolean>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0,
-					Boolean arg1, Boolean arg2) {
-				if (focus != null) {
-					focus.signal(arg2);
-				}
-			}
-		});
 	}
 	
 	private Property<Font> font = null;
@@ -63,7 +53,6 @@ public class JavaFxText extends JavaFxNode<javafx.scene.text.Text> implements Ba
 			JavaFxBinder.uniBind(text, new JavaFxBinder.JfxSetter<String>() {
 				@Override
 				public void doSet(String value) {
-					System.err.println("setting text to " + value);
 					node.setText(value);
 				}
 			});
@@ -102,12 +91,4 @@ public class JavaFxText extends JavaFxNode<javafx.scene.text.Text> implements Ba
 		return onKeyPress;
 	}
 	
-	private Signal<Boolean> focus = null;
-	@Override
-	public Signal<Boolean> focus() {
-		if (focus == null) {
-			focus = new SimpleSignal<Boolean>();
-		}
-		return focus;
-	}
 }

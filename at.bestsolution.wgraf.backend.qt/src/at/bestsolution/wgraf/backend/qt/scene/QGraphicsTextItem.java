@@ -3,7 +3,10 @@ package at.bestsolution.wgraf.backend.qt.scene;
 import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.MouseEventSupport;
 import at.bestsolution.wgraf.events.MouseEventSupport.MouseCoords;
+import at.bestsolution.wgraf.properties.Property;
+import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.Signal;
+import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleSignal;
 import at.bestsolution.wgraf.style.Background;
 
@@ -73,10 +76,10 @@ public class QGraphicsTextItem extends QGraphicsSimpleTextItem {
 		return onKeyPress;
 	}
 	
-	private Signal<Boolean> focus = null;
-	public Signal<Boolean> focus() {
+	private Property<Boolean> focus = null;
+	public ReadOnlyProperty<Boolean> focus() {
 		if (focus == null) {
-			focus = new SimpleSignal<Boolean>();
+			focus = new SimpleProperty<Boolean>();
 		}
 		return focus;
 	}
@@ -84,14 +87,14 @@ public class QGraphicsTextItem extends QGraphicsSimpleTextItem {
 	@Override
 	public void focusInEvent(QFocusEvent event) {
 		if (focus != null) {
-			focus.signal(true);
+			focus.set(true);
 		}
 	}
 	
 	@Override
 	public void focusOutEvent(QFocusEvent event) {
 		if (focus != null) {
-			focus.signal(false);
+			focus.set(false);
 		}
 	}
 }

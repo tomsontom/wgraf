@@ -8,6 +8,7 @@ import at.bestsolution.wgraf.geom.shape.Rectangle;
 import at.bestsolution.wgraf.geom.shape.Shape;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.Property;
+import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.scene.BackingText;
@@ -98,7 +99,7 @@ public class QtText extends QtNode<QGraphicsTextItem> implements BackingText {
 	}
 
 	@Override
-	public Signal<Boolean> focus() {
+	public ReadOnlyProperty<Boolean> focus() {
 		return node.focus();
 	}
 }

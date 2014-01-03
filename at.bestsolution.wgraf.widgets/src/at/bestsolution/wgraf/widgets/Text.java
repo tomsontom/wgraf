@@ -102,13 +102,6 @@ public class Text extends Widget {
 		area.acceptFocus().set(true);
 		area.acceptTapEvents().set(true);
 		
-		area.focus().registerSignalListener(new SignalListener<Boolean>() {
-			@Override
-			public void onSignal(Boolean data) {
-				System.err.println("Text focus: " + data);
-			}
-		});
-		
 		area.width().set(200d);
 		area.height().set(40d);
 		
