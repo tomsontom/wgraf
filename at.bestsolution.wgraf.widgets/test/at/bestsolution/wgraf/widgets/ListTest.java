@@ -16,6 +16,7 @@ import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.style.Insets;
+import at.bestsolution.wgraf.widgets.VirtualFlow.Cell;
 import at.bestsolution.wgraf.widgets.VirtualFlow.Factory;
 
 public class ListTest extends Application {
@@ -37,23 +38,33 @@ public class ListTest extends Application {
 			myFirstList.area.width().set(380);
 			myFirstList.area.height().set(480);
 			myFirstList.area.background().set(new FillBackground(new Color(255,  255,  0, 25), new CornerRadii(2), new Insets(0, 0, 0, 0)));
-			myFirstList.setCellFactory(new Factory<Node<?>>() {
+			myFirstList.setCellFactory(new Factory<Cell<Node<?>, String>>() {
 				@Override
-				public Node<?> create() {
+				public Cell<Node<?>, String> create() {
 					Color red100 = new Color(255, 0, 0, 100);
 					Color red200 = new Color(255, 0, 0, 200);
 					LinearGradient g = new LinearGradient(0.0, 0.0, 0.0, 1.0, CoordMode.OBJECT_BOUNDING, Spread.PAD, new Stop(0.0, red100), new Stop(1.0, red200));
-					Container c = new Container();
+					final Container c = new Container();
 					c.background().set(
 							new FillBackground(g, new CornerRadii(1), new Insets(0, 0, 0, 0))
 							);
-					Text text = new Text();
+					final Text text = new Text();
 					text.font().set(new Font("Sans", 25));
 					text.setParent(c);
 					text.text().set("TODO: labelprovider!");
 					c.width().set(380);
 					c.height().set(40);
-					return c;
+					return new Cell<Node<?>, String>() {
+						@Override
+						public Node<?> getNode() {
+							return c;
+						}
+
+						@Override
+						public void bind(String model) {
+							text.text().set(model);
+						}
+					};
 				}
 				
 			});

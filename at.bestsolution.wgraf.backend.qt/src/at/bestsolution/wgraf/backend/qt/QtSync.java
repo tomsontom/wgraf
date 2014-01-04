@@ -1,10 +1,12 @@
 package at.bestsolution.wgraf.backend.qt;
 
+import at.bestsolution.wgraf.Sync;
+
 import com.trolltech.qt.core.QEvent;
 import com.trolltech.qt.core.QObject;
 import com.trolltech.qt.gui.QApplication;
 
-public class QtSync {
+public class QtSync extends Sync {
 
 	public static class QSyncEvent extends QEvent {
 
@@ -37,8 +39,23 @@ public class QtSync {
 			QApplication.postEvent(obj, new QSyncEvent(r));
 		}
 		else {
-			System.err.println("runlater obj is null!");
+			System.err.println("runlater obj is null! QtSync needs to be initialized!");
 		}
+	}
+	
+	@Override
+	public void syncExecOnUIThread(Runnable runnable) {
+		if (QApplication.instance().thread() == Thread.currentThread()) {
+			runnable.run();
+		}
+		else {
+			runLater(runnable);
+		}
+	}
+	
+	@Override
+	public void asyncExecOnUIThread(Runnable runnable) {
+		runLater(runnable);
 	}
 	
 }

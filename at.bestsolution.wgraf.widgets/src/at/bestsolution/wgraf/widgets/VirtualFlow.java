@@ -2,10 +2,8 @@ package at.bestsolution.wgraf.widgets;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import at.bestsolution.wgraf.events.ScrollEvent;
+import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.geom.shape.Rectangle;
 import at.bestsolution.wgraf.properties.Binder;
 import at.bestsolution.wgraf.properties.Converter;
@@ -36,6 +35,14 @@ import at.bestsolution.wgraf.transition.TouchScrollTransition;
 // TODO support multiple columns
 public class VirtualFlow<Model> extends Widget {
 
+	public static abstract class Cell<Type extends Node<?>, Model> {
+		public abstract Type getNode();
+		public abstract void bind(Model model);
+		
+		public int colIdx;
+		public int rowIdx;
+	}
+	
 	public static interface Factory<Type> {
 		Type create();
 	}
@@ -156,35 +163,35 @@ public class VirtualFlow<Model> extends Widget {
 		}
 	};
 	
-	private Factory<Node<?>> cellFactory;
+	private Factory<Cell<Node<?>, Model>> cellFactory;
 	
 	private ListProperty<Model> model = new SimpleListProperty<Model>();
 	
 	private VisualRange verticalRange = new VisualRange(model.size(), cellHeight, area.height().get());
 	
-	private Map<Integer, Node<?>> assignedCells = new ConcurrentHashMap<Integer, Node<?>>();
+	private Map<Integer, Cell<Node<?>, Model>> assignedCells = new ConcurrentHashMap<Integer, Cell<Node<?>, Model>>();
 	
-	private Queue<Node<?>> freeCells = new ConcurrentLinkedQueue<Node<?>>();
+	private Queue<Cell<Node<?>, Model>> freeCells = new ConcurrentLinkedQueue<Cell<Node<?>, Model>>();
 	
 	private Set<Integer> usedCells = Collections.synchronizedSet(new HashSet<Integer>());
 	
 	private void freeCells() {
-		Iterator<Entry<Integer, Node<?>>> iterator = assignedCells.entrySet().iterator();
+		Iterator<Entry<Integer, Cell<Node<?>, Model>>> iterator = assignedCells.entrySet().iterator();
 		while (iterator.hasNext()) {
-			Entry<Integer, Node<?>> entry = iterator.next();
+			Entry<Integer, Cell<Node<?>, Model>> entry = iterator.next();
 			if (!usedCells.contains(entry.getKey())) {
 //				System.err.println("freeing cell");
 				freeCells.add(entry.getValue());
 				// send offscreen
-				entry.getValue().y().set(-100);
+				entry.getValue().getNode().y().set(-100);
 				iterator.remove();
 			}
 		}
 		usedCells.clear();
 	}
 	
-	private Node<?> getFreeCell() {
-		Node<?> c = freeCells.poll();
+	private Cell<Node<?>, Model> getFreeCell() {
+		Cell<Node<?>, Model> c = freeCells.poll();
 		if (c != null) {
 //			System.err.println("-> FREE");
 			return c;
@@ -192,36 +199,58 @@ public class VirtualFlow<Model> extends Widget {
 		return createCell();
 	}
 	
-	private Node<?> getCellByIdx(int idx) {
-		Node<?> n = assignedCells.get(idx);
+	private Cell<Node<?>, Model> getCellByIdx(int idx) {
+		Cell<Node<?>, Model> n = assignedCells.get(idx);
 		if (n != null) {
 //			System.err.println("-> ASSIGNED");
 			usedCells.add(idx);
+			n.rowIdx = idx;
 			return n;
 		}
 		
 		n = getFreeCell();
 		assignedCells.put(idx, n);
 		usedCells.add(idx);
+		n.rowIdx = idx;
 		return n;
 	}
 	
-	private Node<?> createCell() {
-		Node<?> newNode;
+	private void onCellTap(Cell<Node<?>, Model> cell) {
+		System.err.println("tapped on " + cell.rowIdx);
+	}
+	
+	private Cell<Node<?>, Model> createCell() {
+		Cell<Node<?>, Model> newNode;
 		if (cellFactory != null) {
 			newNode = cellFactory.create();
+			final Cell<Node<?>, Model> n = newNode;
+			newNode.getNode().acceptTapEvents().set(true);
+			newNode.getNode().onTap().registerSignalListener(new SignalListener<TapEvent>() {
+				@Override
+				public void onSignal(TapEvent data) {
+					onCellTap(n);
+				}
+			});
 		}
 		else {
-			Text text = new Text();
+			final Text text = new Text();
 			text.font().set(new Font("Sans", 30));
-			text.text().set("Cell");
-			newNode = text;
+			text.text().set("No cell Factory!");
+			newNode = new Cell<Node<?>, Model>() {
+				@Override
+				public Node<?> getNode() {
+					return text;
+				}
+				@Override
+				public void bind(Model model) {
+				}
+			};
 		}
-		newNode.setParent(area);
+		newNode.getNode().setParent(area);
 		return newNode;
 	}
 	
-	public void setCellFactory(Factory<Node<?>> cellFactory) {
+	public void setCellFactory(Factory<Cell<Node<?>, Model>> cellFactory) {
 		this.cellFactory = cellFactory;
 	}
 	
@@ -245,12 +274,9 @@ public class VirtualFlow<Model> extends Widget {
 			@Override
 			public void onChange(List<VisibleElement> newValue) {
 				for (VisibleElement e : newValue) {
-					Node<?> c = getCellByIdx(e.idx);
-					c.y().set(e.offset);
-					// TODO add a provider system
-					if (c instanceof Text) {
-						((Text)c).text().set(model.get(e.idx).toString());
-					}
+					Cell<Node<?>, Model> c = getCellByIdx(e.idx);
+					c.getNode().y().set(e.offset);
+					c.bind(model.get(e.idx));
 				}
 				freeCells();
 			}

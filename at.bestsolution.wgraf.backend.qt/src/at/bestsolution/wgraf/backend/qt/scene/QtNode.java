@@ -1,5 +1,6 @@
 package at.bestsolution.wgraf.backend.qt.scene;
 
+import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.backend.qt.QtBinder;
 import at.bestsolution.wgraf.backend.qt.QtSync;
 import at.bestsolution.wgraf.geom.shape.Shape;
@@ -119,17 +120,12 @@ public abstract class QtNode<N extends QGraphicsItemInterface> implements Backin
 	
 	@Override
 	public void setParent(final BackingContainer parent) {
-		if (QApplication.instance().thread() == Thread.currentThread()) {
-			node.setParentItem(((QtContainer)parent).node);
-		}
-		else {
-			QtSync.runLater(new Runnable() {
-				@Override
-				public void run() {
-					node.setParentItem(((QtContainer)parent).node);
-				}
-			});
-		}
+		Sync.get().syncExecOnUIThread(new Runnable() {
+			@Override
+			public void run() {
+				node.setParentItem(((QtContainer)parent).node);
+			}
+		});
 	}
 	
 	

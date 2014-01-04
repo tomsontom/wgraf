@@ -2,6 +2,7 @@ package at.bestsolution.wgraf.backend.qt;
 
 import at.bestsolution.wgraf.BackendFactory;
 import at.bestsolution.wgraf.BackingApplication;
+import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.backend.qt.internal.util.QtFontUtil;
 import at.bestsolution.wgraf.backend.qt.scene.QtContainer;
 import at.bestsolution.wgraf.backend.qt.scene.QtText;
@@ -13,6 +14,9 @@ public class QtBackendFactory extends BackendFactory{
 
 	@Override
 	public <Type> Type create(Class<?> type) {
+		if (type == Sync.class) {
+			return (Type) new QtSync();
+		}
 		if (type == BackingApplication.class) {
 			return (Type) new QtApplication();
 		}

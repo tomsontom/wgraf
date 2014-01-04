@@ -18,6 +18,7 @@ import at.bestsolution.wgraf.style.Backgrounds;
 import at.bestsolution.wgraf.style.BaseBackground;
 import at.bestsolution.wgraf.style.FillBackground;
 
+import com.trolltech.qt.core.QEvent;
 import com.trolltech.qt.gui.QBrush;
 import com.trolltech.qt.gui.QGraphicsItem.GraphicsItemFlag;
 import com.trolltech.qt.gui.QGraphicsRectItem;
@@ -44,6 +45,14 @@ public class QGraphicsContainerItem extends QGraphicsRectItem {
 //		setFlag(GraphicsItemFlag.ItemClipsChildrenToShape, true);
 		
 		setPen(QPen.NoPen);
+		
+		setFiltersChildEvents(true);
+	}
+	
+	@Override
+	public boolean sceneEvent(QEvent event) {
+		System.err.println(event);
+		return super.sceneEvent(event);
 	}
 	
 	private double yRadius = 0;

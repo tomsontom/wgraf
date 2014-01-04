@@ -2,6 +2,7 @@ package at.bestsolution.wgraf.backend.javafx;
 
 import at.bestsolution.wgraf.BackendFactory;
 import at.bestsolution.wgraf.BackingApplication;
+import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.backend.javafx.scene.JavaFxContainer;
 import at.bestsolution.wgraf.backend.javafx.scene.JavaFxText;
 import at.bestsolution.wgraf.backend.javafx.util.JavaFxFontUtil;
@@ -12,20 +13,23 @@ import at.bestsolution.wgraf.util.FontUtil;
 public class JavaFxBackendFactory extends BackendFactory {
 
 	@Override
-	public <Backend> Backend create(Class<?> frontendType) {
-		if (frontendType == BackingApplication.class) {
-			return (Backend) new JavaFxApplication();
+	public <Type> Type create(Class<?> type) {
+		if (type == Sync.class) {
+			return (Type) new JavaFxSync();
 		}
-		else if (frontendType == BackingContainer.class) {
-			return (Backend) new JavaFxContainer();
+		if (type == BackingApplication.class) {
+			return (Type) new JavaFxApplication();
 		}
-		else if (frontendType == BackingText.class) {
-			return (Backend) new JavaFxText();
+		else if (type == BackingContainer.class) {
+			return (Type) new JavaFxContainer();
 		}
-		else if (frontendType == FontUtil.class) {
-			return (Backend) new JavaFxFontUtil();
+		else if (type == BackingText.class) {
+			return (Type) new JavaFxText();
 		}
-		throw new UnsupportedOperationException("not implemented! " + frontendType);
+		else if (type == FontUtil.class) {
+			return (Type) new JavaFxFontUtil();
+		}
+		throw new UnsupportedOperationException("not implemented! " + type);
 	}
 
 }

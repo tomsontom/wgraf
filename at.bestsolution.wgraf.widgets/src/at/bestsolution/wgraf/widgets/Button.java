@@ -3,6 +3,7 @@ package at.bestsolution.wgraf.widgets;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.events.KeyCode;
 import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.TapEvent;
@@ -64,33 +65,16 @@ public class Button extends Widget {
 		area.onTap().registerSignalListener(new SignalListener<TapEvent>() {
 			@Override
 			public void onSignal(TapEvent data) {
-				active.set(true);
-				// need some global timer
-				final Timer t = new Timer();
-				t.schedule(new TimerTask() {
-					@Override
-					public void run() {
-						active.set(false);
-						if (activated != null) {
-							activated.signal(null);
-						}
-						t.cancel();
-					}
-				}, 200);
-				
+				triggerActivated();
 			}
 		});
 		
 		area.onKeyPress().registerSignalListener(new SignalListener<KeyEvent>() {
 			@Override
 			public void onSignal(KeyEvent data) {
-				
 				if (data.code == KeyCode.SPACE || data.code == KeyCode.ENTER) {
-					if (activated != null) {
-						activated.signal(null);
-					}
+					triggerActivated();
 				}
-				
 			}
 		});
 		
@@ -113,6 +97,19 @@ public class Button extends Widget {
 		
 		
 		registerPseudoClassState("focus", focus());
+	}
+	
+	private void triggerActivated() {
+		active.set(true);
+		Sync.get().execLaterOnUIThread(new Runnable() {
+			@Override
+			public void run() {
+				active.set(false);
+				if (activated != null) {
+					activated.signal(null);
+				}
+			}
+		}, 200);
 	}
 	
 	private final DoubleChangeListener relayout = new DoubleChangeListener() {

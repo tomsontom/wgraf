@@ -80,6 +80,7 @@ public class QtApplication implements BackingApplication {
 		}
 		
 		scene = new QGraphicsScene() {
+			
 			@Override
 			protected void drawItems(QPainter painter,
 					QGraphicsItemInterface[] items,
