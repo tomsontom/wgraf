@@ -40,6 +40,8 @@ import com.trolltech.qt.gui.QResizeEvent;
 
 public class QtApplication implements BackingApplication {
 
+	private static final boolean debugTapEvents = false;
+	
 	private QGraphicsView view;
 	private QGraphicsScene scene;
 	
@@ -100,14 +102,14 @@ public class QtApplication implements BackingApplication {
 						// find nodes under tap position
 						final QPointF point = new QPointF(data.x, data.y);
 						List<QGraphicsItemInterface> items = items(point);
-						System.err.println("Tap event " + data + " on");
+						if (debugTapEvents) System.err.println("Tap event " + data + " on");
 						
 						for (QGraphicsItemInterface item : items) {
-							System.err.println(" * " + item + ":");
+							if (debugTapEvents) System.err.println(" * " + item + ":");
 							if (item instanceof TapEventReceiver) {
 								final AtomicBoolean consumed = new AtomicBoolean(false);
 								final QPointF itemLocalPoint = item.mapFromScene(point);
-								System.err.println(" => sending tap " + itemLocalPoint);
+								if (debugTapEvents) System.err.println(" => sending tap " + itemLocalPoint);
 								((TapEventReceiver) item).sendTap(new TapEvent(itemLocalPoint.x(), itemLocalPoint.y()) {
 									@Override
 									public void consume() {
@@ -115,7 +117,7 @@ public class QtApplication implements BackingApplication {
 									}
 								});
 								if (consumed.get()) {
-									System.err.println(" => was consumed, stopping propagation");
+									if (debugTapEvents) System.err.println(" => was consumed, stopping propagation");
 									break;
 								}
 							}
@@ -132,14 +134,14 @@ public class QtApplication implements BackingApplication {
 						// find nodes under tap position
 						final QPointF point = new QPointF(data.x, data.y);
 						List<QGraphicsItemInterface> items = items(point);
-						System.err.println("LongTap event " + data + " on");
+						if (debugTapEvents) System.err.println("LongTap event " + data + " on");
 						
 						for (QGraphicsItemInterface item : items) {
-							System.err.println(" * " + item + ":");
+							if (debugTapEvents) System.err.println(" * " + item + ":");
 							if (item instanceof TapEventReceiver) {
 								final AtomicBoolean consumed = new AtomicBoolean(false);
 								final QPointF itemLocalPoint = item.mapFromScene(point);
-								System.err.println(" => sending longtap " + itemLocalPoint);
+								if (debugTapEvents) System.err.println(" => sending longtap " + itemLocalPoint);
 								((TapEventReceiver) item).sendLongTap(new TapEvent(itemLocalPoint.x(), itemLocalPoint.y()) {
 									@Override
 									public void consume() {
@@ -147,7 +149,7 @@ public class QtApplication implements BackingApplication {
 									}
 								});
 								if (consumed.get()) {
-									System.err.println(" => was consumed, stopping propagation");
+									if (debugTapEvents) System.err.println(" => was consumed, stopping propagation");
 									break;
 								}
 							}
@@ -165,15 +167,15 @@ public class QtApplication implements BackingApplication {
 						final QPointF beginPoint = new QPointF(data.beginX, data.beginY);
 						final QPointF point = new QPointF(data.x, data.y);
 						List<QGraphicsItemInterface> items = items(beginPoint);
-						System.err.println("Scroll event " + data + " on");
+						if (debugTapEvents) System.err.println("Scroll event " + data + " on");
 						
 						for (QGraphicsItemInterface item : items) {
-							System.err.println(" * " + item + ":");
+							if (debugTapEvents) System.err.println(" * " + item + ":");
 							if (item instanceof TapEventReceiver) {
 								final AtomicBoolean consumed = new AtomicBoolean(false);
 								final QPointF itemLocalBeginPoint = item.mapFromScene(beginPoint);
 								final QPointF itemLocalPoint = item.mapFromScene(point);
-								System.err.println(" => sending scroll " + itemLocalPoint);
+								if (debugTapEvents) System.err.println(" => sending scroll " + itemLocalPoint);
 								((TapEventReceiver) item).sendScroll(new ScrollEvent(itemLocalBeginPoint.x(), itemLocalBeginPoint.y(), 
 										itemLocalPoint.x(), itemLocalPoint.y(), data.scrollLock, data.deltaX, data.deltaY) {
 									@Override
@@ -182,7 +184,7 @@ public class QtApplication implements BackingApplication {
 									}
 								});
 								if (consumed.get()) {
-									System.err.println(" => was consumed, stopping propagation");
+									if (debugTapEvents) System.err.println(" => was consumed, stopping propagation");
 									break;
 								}
 							}
