@@ -17,7 +17,7 @@
 <listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;&lt;runtimeClasspathEntry path=&quot;3&quot; projectName=&quot;at.bestsolution.wgraf&quot; type=&quot;1&quot;/&gt;&#10;"/>
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
-<stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0x64_b120"/>
+<stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre8 x86"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="at.bestsolution.wgraf.widgets.WidgetTest"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="at.bestsolution.wgraf.widgets"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dwgraf.factory=at.bestsolution.wgraf.backend.qt.QtBackendFactory"/>

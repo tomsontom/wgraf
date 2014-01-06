@@ -136,7 +136,7 @@ public class WidgetTest extends Application {
 			scrollPane.area.width().set(200);
 			scrollPane.area.height().set(200);
 			
-			scrollPane.area.background().set(new FillBackground(new Color(255,  0,  0, 50), new CornerRadii(2), new Insets(0, 0, 0, 0)));
+//			scrollPane.area.background().set(new FillBackground(new Color(255,  0,  0, 50), new CornerRadii(2), new Insets(0, 0, 0, 0)));
 			pane.add(scrollPane, 170, 290);
 			
 			

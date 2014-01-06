@@ -1,12 +1,19 @@
 package at.bestsolution.wgraf.widgets;
 
+import java.awt.Rectangle;
+
+import sun.misc.Signal;
 import at.bestsolution.wgraf.events.KeyCode;
 import at.bestsolution.wgraf.events.KeyEvent;
+import at.bestsolution.wgraf.events.ScrollEvent;
+import at.bestsolution.wgraf.events.ScrollLock;
 import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.properties.Binder;
 import at.bestsolution.wgraf.properties.ChangeListener;
+import at.bestsolution.wgraf.properties.ClampedDoubleIncrement;
+import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.SignalListener;
@@ -17,6 +24,7 @@ import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.style.Insets;
+import at.bestsolution.wgraf.transition.TouchScrollTransition;
 
 // TODO add some kind of action menu - for copy, cut and paste
 // TODO implement selection
@@ -32,7 +40,7 @@ public class Text extends Widget {
 	protected final at.bestsolution.wgraf.scene.Text nodeText;
 	protected final Container nodeCursor;
 	
-	private final Property<Integer> cursorIndex = new SimpleProperty<Integer>();
+	private final Property<Integer> cursorIndex = new SimpleProperty<Integer>(0);
 	
 	private static enum Cmp {
 		LESSER,
@@ -49,6 +57,15 @@ public class Text extends Widget {
 	}
 	
 	private static Letter getLetter(Font font, String text, int index) {
+		if (text.length() == 0) {
+			Letter l = new Letter();
+			l.index = 0;
+			l.beginX = 0;
+			l.endX = 0;
+			l.cmp = Cmp.EQUAL;
+			return l;
+		}
+		
 		final Letter result = new Letter();
 		result.index = index;
 		
@@ -147,9 +164,34 @@ public class Text extends Widget {
 		area.width().set(200d);
 		area.height().set(40d);
 		
+		final Container textClip = new Container();
+		textClip.setParent(area);
+		textClip.width().set(180);
+		textClip.height().set(40);
+		textClip.x().set(10);
+		textClip.y().set(0);
+		
+		textClip.clippingShape().set(new at.bestsolution.wgraf.geom.shape.Rectangle(0, 5, 180, 30));
+		
+		
+		
+		area.onScroll().registerSignalListener(new SignalListener<ScrollEvent>() {
+			@Override
+			public void onSignal(ScrollEvent data) {
+				if (data.scrollLock == ScrollLock.HORIZONTAL) {
+					// scroll the inner text
+					double min = Math.min(0, textClip.width().get() - calcTextWidth());
+					double max = 0;
+					nodeText.x().updateDynamic(new ClampedDoubleIncrement(-data.deltaX, min, max));
+					data.consume();
+				}
+			}
+		});
+		
 		nodeText = new at.bestsolution.wgraf.scene.Text();
-		nodeText.setParent(area);
-		nodeText.x().set(10);
+		nodeText.setParent(textClip);
+		nodeText.x().set(0);
+		nodeText.x().setTransition(new TouchScrollTransition());
 		
 		font().registerChangeListener(new ChangeListener<Font>() {
 			@Override
@@ -162,10 +204,51 @@ public class Text extends Widget {
 		});
 		
 		nodeCursor = new Container();
-		nodeCursor.setParent(area);
-		nodeCursor.background().set(new FillBackground(new Color(0, 255, 255, 100), new CornerRadii(0), new Insets(0,0,0,0)));
+		nodeCursor.setParent(textClip);
+//		nodeCursor.background().set(new FillBackground(new Color(0, 255, 255, 100), new CornerRadii(0), new Insets(0,0,0,0)));
 		nodeCursor.width().set(3d);
 		nodeCursor.height().set(30d);
+		
+		
+		nodeText.x().registerChangeListener(new DoubleChangeListener() {
+			@Override
+			public void onChange(double oldValue, double newValue) {
+				double textOffset = newValue;
+				double letterOffset = getLetter(font().get(), text().get(), cursorIndex.get()).beginX;
+				nodeCursor.x().set(textOffset + letterOffset);
+			}
+		});
+		cursorIndex.registerChangeListener(new ChangeListener<Integer>() {
+			@Override
+			public void onChange(Integer oldValue, Integer newValue) {
+				double textOffset = nodeText.x().get();
+				double letterOffset = getLetter(font().get(), text().get(), newValue).beginX;
+				
+				if (letterOffset < -textOffset) {
+					nodeText.x().setDynamic(Math.min(0, -letterOffset + 10));
+				}
+				else if (letterOffset > -textOffset + textClip.width().get()) {
+					nodeText.x().setDynamic(-letterOffset + textClip.width().get() - 10);
+				}
+				
+				nodeCursor.x().set(textOffset + letterOffset);
+			}
+		});
+		
+		// for now we change the background property of the cursor depending on the focus
+		// better would be to set the visibility or the opacity - but both do not exist at the moment -.-
+		// TODO add visible and opacity properties to nodes=?
+		focus().registerChangeListener(new ChangeListener<Boolean>() {
+			@Override
+			public void onChange(Boolean oldValue, Boolean newValue) {
+				if (newValue) {
+					nodeCursor.background().set(new FillBackground(new Color(0, 255, 255, 100), new CornerRadii(0), new Insets(0,0,0,0)));
+				}
+				else {
+					nodeCursor.background().set(null);
+				}
+			}
+		});
 		
 		area.onTap().registerSignalListener(new SignalListener<TapEvent>() {
 			@Override
@@ -176,14 +259,14 @@ public class Text extends Widget {
 				final int firstIdx = 0;
 				final int lastIdx = Math.max(0, currentText.length());
 				
-				final double offsetX = data.x - nodeText.x().get();
+				final double offsetX = data.x - nodeText.x().get() - textClip.x().get();
 				Letter result = binSearch(currentFont, currentText, firstIdx, lastIdx, offsetX);
 				
 				if ((result.endX - result.beginX) / 2 < offsetX - result.beginX) {
-					cursorIndex.set(result.index + 1);
+					updateCursorIndex(result.index + 1);
 				}
 				else {
-					cursorIndex.set(result.index);
+					updateCursorIndex(result.index);
 				}
 				
 				
@@ -229,14 +312,16 @@ public class Text extends Widget {
 			}
 		});
 		
-		cursorIndex.registerChangeListener(new ChangeListener<Integer>() {
-			@Override
-			public void onChange(Integer oldValue, Integer newValue) {
-				Letter letter = getLetter(font().get(), text().get(), newValue);
-				nodeCursor.x().set(nodeText.x().get() + letter.beginX);
-			}
-		});
+		
+		
+		
+		
 	}
+	
+	private double calcTextWidth() {
+		return font().get().stringExtent(text().get()).x;
+	}
+	
 	private void triggerDelete() {
 		final int idx = cursorIndex.get();
 		String currentText = text().get();
@@ -260,6 +345,7 @@ public class Text extends Widget {
 		final int textLength = text().get().length();
 		idx = Math.max(0, idx);
 		idx = Math.min(textLength, idx);
+		System.err.println("setting cursorIndex to " + idx);
 		cursorIndex.set(idx);
 	}
 	
@@ -273,6 +359,12 @@ public class Text extends Widget {
 		if (text == null) {
 			text = new SimpleProperty<String>("");
 			Binder.uniBind(text, nodeText.text());
+			text.registerChangeListener(new ChangeListener<String>() {
+				@Override
+				public void onChange(String oldValue, String newValue) {
+					updateCursorIndex(0);
+				}
+			});
 		}
 		return text;
 	}
