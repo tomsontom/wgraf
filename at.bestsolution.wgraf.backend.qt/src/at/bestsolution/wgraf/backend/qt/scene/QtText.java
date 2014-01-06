@@ -73,9 +73,9 @@ public class QtText extends QtNode<QGraphicsTextItem> implements BackingText {
 		}
 		return fontSize;
 	}
+	
 	@Override
 	public void setEventSupport(MouseEventSupport support) {
-		node.setEventSupport(support);
 	}
 	
 	private Property<Font> font = null;

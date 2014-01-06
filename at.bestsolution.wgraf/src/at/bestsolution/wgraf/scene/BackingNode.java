@@ -1,7 +1,10 @@
 package at.bestsolution.wgraf.scene;
 
+import at.bestsolution.wgraf.events.FlingEvent;
 import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.MouseEventSupport;
+import at.bestsolution.wgraf.events.ScrollEvent;
+import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.geom.shape.Shape;
 import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.Property;
@@ -26,4 +29,10 @@ public interface BackingNode {
 	Signal<KeyEvent> onKeyPress();
 	
 	ReadOnlyProperty<Boolean> focus();
+	
+	
+	Signal<TapEvent> onTap();
+	Signal<TapEvent> onLongTap();
+	Signal<ScrollEvent> onScroll();
+	Signal<FlingEvent> onFling();
 }

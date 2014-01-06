@@ -5,5 +5,9 @@ public enum KeyCode {
 	ENTER,
 	TAB,
 	BACKSPACE,
-	DELETE;
+	DELETE,
+	LEFT,
+	RIGHT,
+	UP,
+	DOWN;
 }

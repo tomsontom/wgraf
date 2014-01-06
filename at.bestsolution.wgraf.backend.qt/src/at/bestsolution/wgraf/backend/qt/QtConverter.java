@@ -1,7 +1,6 @@
 package at.bestsolution.wgraf.backend.qt;
 
-import java.nio.channels.UnsupportedAddressTypeException;
-
+import at.bestsolution.wgraf.events.KeyCode;
 import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.paint.LinearGradient;
 import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
@@ -10,6 +9,7 @@ import at.bestsolution.wgraf.paint.LinearGradient.Stop;
 import at.bestsolution.wgraf.paint.Paint;
 import at.bestsolution.wgraf.style.Font;
 
+import com.trolltech.qt.core.Qt;
 import com.trolltech.qt.core.Qt.BrushStyle;
 import com.trolltech.qt.gui.QBrush;
 import com.trolltech.qt.gui.QColor;
@@ -19,6 +19,21 @@ import com.trolltech.qt.gui.QLinearGradient;
 
 public class QtConverter {
 
+	public static KeyCode convertKeyCode(int qtKeyCode) {
+		switch (Qt.Key.resolve(qtKeyCode)) {
+		case Key_Enter: return KeyCode.ENTER;
+		case Key_Delete: return KeyCode.DELETE;
+		case Key_Tab: return KeyCode.TAB;
+		case Key_Space: return KeyCode.SPACE;
+		case Key_Backspace: return KeyCode.BACKSPACE;
+		case Key_Up: return KeyCode.UP;
+		case Key_Down: return KeyCode.DOWN;
+		case Key_Left: return KeyCode.LEFT;
+		case Key_Right: return KeyCode.RIGHT;
+		}
+		return null;
+	}
+	
 	public static QColor convert(Color color) {
 		return new QColor(color.red, color.green, color.blue, color.alpha);
 	}

@@ -1,10 +1,7 @@
 package at.bestsolution.wgraf.backend.javafx.scene;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.VPos;
-import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.Text;
 import at.bestsolution.wgraf.backend.javafx.JavaFxBinder;
 import at.bestsolution.wgraf.backend.javafx.JavaFxConverter;
@@ -24,7 +21,7 @@ public class JavaFxText extends JavaFxNode<javafx.scene.text.Text> implements Ba
 			@Override
 			public void handle(javafx.scene.input.KeyEvent arg0) {
 				if (onKeyPress != null) {
-					onKeyPress.signal(new KeyEvent(arg0.getCode().ordinal(), arg0.getText()));
+					onKeyPress.signal(new KeyEvent(JavaFxConverter.convert(arg0.getCode()), arg0.getText()));
 				}
 			}
 		});

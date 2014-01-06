@@ -1,16 +1,13 @@
 package at.bestsolution.wgraf.events;
 
-public class KeyEvent {
+public class KeyEvent extends InputEvent {
 
 	public final KeyCode code;
 	
 	public final String key;
 	
-	public final int keyCode;
-	
-	public KeyEvent(int keyCode, String key) {
+	public KeyEvent(KeyCode code, String key) {
 		this.key = key;
-		this.keyCode = keyCode;
-		this.code = null; // TODO add keycode mappings!!
+		this.code = code;
 	}
 }

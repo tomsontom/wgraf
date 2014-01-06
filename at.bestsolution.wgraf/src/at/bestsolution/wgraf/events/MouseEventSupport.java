@@ -3,6 +3,7 @@ package at.bestsolution.wgraf.events;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.simple.SimpleSignal;
@@ -11,12 +12,10 @@ public class MouseEventSupport {
 
 	private boolean debug = false;
 	
-	
 	private final static int TAP_TIMEOUT = 500;
 	private final static int LONG_TAP_TIMEOUT = 1000;
 	private final static int TAP_RADIUS = 20;
 	
-	private static Timer t = new Timer("mouseevent");
 	private VelocityTracker tracker = new VelocityTracker();
 	
 	private long beginTime;
@@ -30,72 +29,128 @@ public class MouseEventSupport {
 	
 	public MouseEventSupport() {
 		// wire events
-		mousePressed().registerSignalListener(new SignalListener<MouseEventSupport.MouseCoords>() {
-			@Override
-			public void onSignal(MouseCoords event) {
-				final long now = System.currentTimeMillis();
-				
-				beginEvent = event;
-				withinTapBounds = true;
-				isLongTap = false;
-				tapDone = false;
-				
-				tracker.addMovement(now, (float) event.x, (float) event.y);
-				
-				scheduleLongTapCheck(beginEvent);
-			}
-		});
+//		mousePressed().registerSignalListener(new SignalListener<MouseEventSupport.MouseCoords>() {
+//			@Override
+//			public void onSignal(MouseCoords event) {
+//				final long now = System.currentTimeMillis();
+//				
+//				beginEvent = event;
+//				withinTapBounds = true;
+//				isLongTap = false;
+//				tapDone = false;
+//				
+//				tracker.addMovement(now, (float) event.x, (float) event.y);
+//				
+//				scheduleLongTapCheck(beginEvent);
+//			}
+//		});
+//		
+//		mouseReleased().registerSignalListener(new SignalListener<MouseEventSupport.MouseCoords>() {
+//			@Override
+//			public void onSignal(MouseCoords e) {
+//				final long now = System.currentTimeMillis();
+//				
+//				beginEvent = e;
+//				if (beginEvent != null) {
+//					tracker.addMovement(now, (float)e.x, (float)e.y);
+//					
+//					if (isWithinTapBounds(e) && !isLongTap) {
+//						tapDone = true;
+//						emitTap(e);
+//					}
+//					else {
+//						// fling
+//						tracker.computeCurrentVelocity(1000);
+//						float velocityX = tracker.getXVelocity(), velocityY = tracker.getYVelocity();
+//						
+//						emitTFling(e, velocityX, velocityY);
+//					}
+//					if (beginEvent != null) {
+//						MouseCoords eBegin = beginEvent;
+//						beginEvent = null;
+//						moveEvent = null;
+////						emitTapEnd(createTapEvent(eBegin), createTapEvent(e));
+//					}
+//				}
+//			}
+//			
+//		});
+//		
+//		mouseDragged().registerSignalListener(new SignalListener<MouseEventSupport.MouseCoords>() {
+//
+//			@Override
+//			public void onSignal(MouseCoords e) {
+//				final long now = System.currentTimeMillis();
+//				
+//				if (beginEvent != null) {
+//					
+//					tracker.addMovement(now, (float)e.x, (float)e.y);
+//					
+//					if (!isWithinTapBounds(e)) {
+////						TapEvent moveEv = createTapEvent(e);
+////						moveEv.scrollLock = moveLock;
+//						emitTScroll(beginEvent.x, beginEvent.y, e, moveLock, calcX(e), calcY(e));
+//					}
+//					moveEvent = e;
+//				}
+//			}
+//		});
+	}
+	
+	public void mousePressed(MouseCoords coords, Runnable consumeCallback) {
+		final long now = System.currentTimeMillis();
 		
-		mouseReleased().registerSignalListener(new SignalListener<MouseEventSupport.MouseCoords>() {
-			@Override
-			public void onSignal(MouseCoords e) {
-				final long now = System.currentTimeMillis();
-				
-				beginEvent = e;
-				if (beginEvent != null) {
-					tracker.addMovement(now, (float)e.x, (float)e.y);
-					
-					if (isWithinTapBounds(e) && !isLongTap) {
-						tapDone = true;
-						emitTap(e);
-					}
-					else {
-						// fling
-						tracker.computeCurrentVelocity(1000);
-						float velocityX = tracker.getXVelocity(), velocityY = tracker.getYVelocity();
-						
-						emitTFling(e, velocityX, velocityY);
-					}
-					if (beginEvent != null) {
-						MouseCoords eBegin = beginEvent;
-						beginEvent = null;
-						moveEvent = null;
-//						emitTapEnd(createTapEvent(eBegin), createTapEvent(e));
-					}
-				}
-			}
+		beginEvent = coords;
+		withinTapBounds = true;
+		isLongTap = false;
+		tapDone = false;
+		
+		tracker.addMovement(now, (float) coords.x, (float) coords.y);
+		
+		scheduleLongTapCheck(beginEvent, consumeCallback);
+	}
+	
+	public void mouseReleased(MouseCoords coords, Runnable consumeCallback) {
+		final long now = System.currentTimeMillis();
+		
+		beginEvent = coords;
+		if (beginEvent != null) {
+			tracker.addMovement(now, (float)coords.x, (float)coords.y);
 			
-		});
-		
-		mouseDragged().registerSignalListener(new SignalListener<MouseEventSupport.MouseCoords>() {
-
-			@Override
-			public void onSignal(MouseCoords e) {
-				final long now = System.currentTimeMillis();
-				
-				if (beginEvent != null) {
-					
-					tracker.addMovement(now, (float)e.x, (float)e.y);
-					
-					if (!isWithinTapBounds(e)) {
-//						TapEvent moveEv = createTapEvent(e);
-//						moveEv.scrollLock = moveLock;
-						emitTScroll(e, moveLock, calcX(e), calcY(e));
-					}
-					moveEvent = e;
-				}
+			if (isWithinTapBounds(coords) && !isLongTap) {
+				tapDone = true;
+				emitTap(coords, consumeCallback);
 			}
-		});
+			else {
+				// fling
+				tracker.computeCurrentVelocity(1000);
+				float velocityX = tracker.getXVelocity(), velocityY = tracker.getYVelocity();
+				
+				emitTFling(coords, velocityX, velocityY, consumeCallback);
+			}
+			if (beginEvent != null) {
+				MouseCoords eBegin = beginEvent;
+				beginEvent = null;
+				moveEvent = null;
+//				emitTapEnd(createTapEvent(eBegin), createTapEvent(e));
+			}
+		}
+	}
+	
+	public void mouseDragged(MouseCoords coords, Runnable consumeCallback) {
+		final long now = System.currentTimeMillis();
+		
+		if (beginEvent != null) {
+			
+			tracker.addMovement(now, (float)coords.x, (float)coords.y);
+			
+			if (!isWithinTapBounds(coords)) {
+//				TapEvent moveEv = createTapEvent(e);
+//				moveEv.scrollLock = moveLock;
+				emitTScroll(beginEvent.x, beginEvent.y, coords, moveLock, calcX(coords), calcY(coords), consumeCallback);
+			}
+			moveEvent = coords;
+		}
 	}
 	
 	private double calcDistance(MouseCoords from, MouseCoords to) {
@@ -141,58 +196,89 @@ public class MouseEventSupport {
 		return (moveEvent != null ? moveEvent : beginEvent).y - e.y;
 	}
 	
-	private void scheduleLongTapCheck(final MouseCoords event) {
-		t.schedule(new TimerTask() {
+	private void scheduleLongTapCheck(final MouseCoords event, final Runnable consumeCallback) {
+		Sync.get().execLaterOnUIThread(new Runnable() {
 			@Override
 			public void run() {
-//				Platform.runLater(new Runnable() {
-//					
-//					@Override
-//					public void run() {
-						if (beginEvent != event) return;
-						if (!withinTapBounds) return;
-						if (tapDone) return;
-						
-						final MouseCoords last = moveEvent!=null?moveEvent:beginEvent;
-						
-						if (last != null) {
-//							TapEvent end = new TapEvent(last);
-							isLongTap = true;
-							emitLongTap(event);
-						}
-//					}
-//				});
+				if (beginEvent != event) return;
+				if (!withinTapBounds) return;
+				if (tapDone) return;
 				
+				final MouseCoords last = moveEvent!=null?moveEvent:beginEvent;
+				
+				if (last != null) {
+//					TapEvent end = new TapEvent(last);
+					isLongTap = true;
+					emitLongTap(event, consumeCallback);
+				}
 			}
 		}, 5 + LONG_TAP_TIMEOUT);
-		
 	}
 	
-	private void emitTap(MouseCoords e) {
+	private void emitTap(MouseCoords e, final Runnable consumeCallback) {
 		if (debug) System.err.println("emitTap");
-		tap().signal(new TapEvent(e.x, e.y));
+		if (consumeCallback == null) {
+			tap().signal(new TapEvent(e.x, e.y));
+		}
+		else {
+			tap().signal(new TapEvent(e.x, e.y) {
+				@Override
+				public void consume() {
+					consumeCallback.run();
+				}
+			});
+		}
 	}
 	
-	private void emitLongTap(MouseCoords e) {
+	private void emitLongTap(MouseCoords e, final Runnable consumeCallback) {
 		if (debug) System.err.println("emitLongTap");
-		longTap().signal(new TapEvent(e.x, e.y));
+		if (consumeCallback == null) {
+			longTap().signal(new TapEvent(e.x, e.y));
+		}
+		else {
+			longTap().signal(new TapEvent(e.x, e.y) {
+				@Override
+				public void consume() {
+					consumeCallback.run();
+				}
+			});
+		}
 	}
 	
-	private void emitTScroll(MouseCoords e, ScrollLock l, double x, double y) {
+	private void emitTScroll(double beginX, double beginY, MouseCoords e, ScrollLock l, double x, double y, final Runnable consumeCallback) {
 		if (debug) System.err.println("emitTScroll " + l + ", " + x + ", " + y);
-		scroll().signal(new ScrollEvent(e.x, e.x, l, x, y));
+		
+		if (consumeCallback == null) {
+			scroll().signal(new ScrollEvent(beginX, beginY, e.x, e.x, l, x, y));
+		}
+		else {
+			scroll().signal(new ScrollEvent(beginX, beginY, e.x, e.x, l, x, y) {
+				@Override
+				public void consume() {
+					consumeCallback.run();
+				}
+			});
+		}
 		
 //		if (getOnTScroll() != null) {
 //			getOnTScroll().handle(new TScrollEvent(e, l, x, y));
 //		}
 	}
 	
-	private void emitTFling(MouseCoords e, float velocityX, float velocityY) {
+	private void emitTFling(MouseCoords e, float velocityX, float velocityY, final Runnable consumeCallback) {
 		if (debug) System.err.println("emitTFling " + velocityX + ", " + velocityY);
-		fling().signal(new FlingEvent());
-//		if (getOnTFling() != null) {
-//			getOnTFling().handle(new TFlingEvent(e, velocityX, velocityY));
-//		}
+		
+		if (consumeCallback == null) {
+			fling().signal(new FlingEvent());
+		}
+		else {
+			fling().signal(new FlingEvent() {
+				@Override
+				public void consume() {
+					consumeCallback.run();
+				}
+			});
+		}
 	}
 	
 	
@@ -207,29 +293,29 @@ public class MouseEventSupport {
 		}
 	}
 	
-	private Signal<MouseCoords> mousePressed = null;
-	public Signal<MouseCoords> mousePressed() {
-		if (mousePressed == null) {
-			mousePressed = new SimpleSignal<MouseEventSupport.MouseCoords>();
-		}
-		return mousePressed;
-	}
-	
-	private Signal<MouseCoords> mouseReleased = null;
-	public Signal<MouseCoords> mouseReleased() {
-		if (mouseReleased == null) {
-			mouseReleased = new SimpleSignal<MouseEventSupport.MouseCoords>();
-		}
-		return mouseReleased;
-	}
-	
-	private Signal<MouseCoords> mouseDragged = null;
-	public Signal<MouseCoords> mouseDragged() {
-		if (mouseDragged == null) {
-			mouseDragged = new SimpleSignal<MouseEventSupport.MouseCoords>();
-		}
-		return mouseDragged;
-	}
+//	private Signal<MouseCoords> mousePressed = null;
+//	public Signal<MouseCoords> mousePressed() {
+//		if (mousePressed == null) {
+//			mousePressed = new SimpleSignal<MouseEventSupport.MouseCoords>();
+//		}
+//		return mousePressed;
+//	}
+//	
+//	private Signal<MouseCoords> mouseReleased = null;
+//	public Signal<MouseCoords> mouseReleased() {
+//		if (mouseReleased == null) {
+//			mouseReleased = new SimpleSignal<MouseEventSupport.MouseCoords>();
+//		}
+//		return mouseReleased;
+//	}
+//	
+//	private Signal<MouseCoords> mouseDragged = null;
+//	public Signal<MouseCoords> mouseDragged() {
+//		if (mouseDragged == null) {
+//			mouseDragged = new SimpleSignal<MouseEventSupport.MouseCoords>();
+//		}
+//		return mouseDragged;
+//	}
 	
 	private Signal<TapEvent> tap = null;
 	public Signal<TapEvent> tap() {

@@ -6,6 +6,7 @@ import java.util.List;
 
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.CycleMethod;
+import at.bestsolution.wgraf.events.KeyCode;
 import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.paint.LinearGradient;
 import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
@@ -22,6 +23,22 @@ import at.bestsolution.wgraf.style.Insets;
 
 public class JavaFxConverter {
 
+	public static KeyCode convert(javafx.scene.input.KeyCode jfxCode) {
+		System.err.println("convert jfxCode " + jfxCode);
+		switch (jfxCode) {
+		case ENTER: return KeyCode.ENTER;
+		case DELETE: return KeyCode.DELETE;
+		case TAB: return KeyCode.TAB;
+		case SPACE: return KeyCode.SPACE;
+		case BACK_SPACE: return KeyCode.BACKSPACE;
+		case UP: return KeyCode.UP;
+		case DOWN: return KeyCode.DOWN;
+		case LEFT: return KeyCode.LEFT;
+		case RIGHT: return KeyCode.RIGHT;
+		}
+		return null;
+	}
+	
 	public static javafx.scene.text.Font convert(Font font) {
 		if (font == null) return null;
 		return javafx.scene.text.Font.font(font.name, font.pointSize/0.75);

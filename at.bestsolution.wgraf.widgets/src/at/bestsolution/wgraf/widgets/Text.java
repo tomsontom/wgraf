@@ -1,5 +1,6 @@
 package at.bestsolution.wgraf.widgets;
 
+import at.bestsolution.wgraf.events.KeyCode;
 import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.math.Vec2d;
@@ -23,6 +24,10 @@ import at.bestsolution.wgraf.style.Insets;
 // TODO we need some kind of delayed text change listener
 //      to prevent model updates on every stroke
 public class Text extends Widget {
+	
+	private static final String BACKSPACE = "\u0008";
+	private static final String DELETE = "\u007F";
+	private static final String ESCAPE = "\u001B";
 	
 	protected final at.bestsolution.wgraf.scene.Text nodeText;
 	protected final Container nodeCursor;
@@ -83,6 +88,16 @@ public class Text extends Widget {
 	}
 	
 	private static Letter binSearch(Font font, String text, int firstIdx, int lastIdx, double xPos) {
+		
+		if (text.length() == 0) {
+			Letter l = new Letter();
+			l.index = 0;
+			l.beginX = 0;
+			l.endX = 0;
+			l.cmp = Cmp.EQUAL;
+			return l;
+		}
+		
 		int curIdx = firstIdx + (lastIdx-firstIdx)/2;
 		Letter r = compare(font, text, curIdx, xPos);
 		switch (r.cmp) {
@@ -178,17 +193,39 @@ public class Text extends Widget {
 		area.onKeyPress().registerSignalListener(new SignalListener<KeyEvent>() {
 			@Override
 			public void onSignal(KeyEvent data) {
-				System.err.println("KEY PRESS: ");
-				System.err.println(data.keyCode + " - " + data.key);
+				System.err.println(data.code + " - " + data.key);
 				
-				// letter
-				final int idx = cursorIndex.get();
-				String currentText = text().get();
-				String headText = currentText.substring(0, idx);
-				String tailText = currentText.substring(idx, currentText.length());
-				String result = headText + data.key + tailText;
-				text().set(result);
-				cursorIndex.set(idx+1);
+				if (data.code == KeyCode.BACKSPACE || BACKSPACE.equals(data.key)) {
+					triggerBackspace();
+				}
+				else if (data.code == KeyCode.DELETE || DELETE.equals(data.key)) {
+					triggerDelete();
+				}
+				else if (data.code == KeyCode.ENTER) {
+					// do nothing
+				}
+				else if (data.code == KeyCode.TAB) {
+					// do nothing
+				}
+				else if (data.code == KeyCode.LEFT) {
+					final int idx = cursorIndex.get();
+					updateCursorIndex(idx-1);
+				}
+				else if (data.code == KeyCode.RIGHT) {
+					final int idx = cursorIndex.get();
+					updateCursorIndex(idx+1);
+				}
+				else {
+					// letter
+					final int idx = cursorIndex.get();
+					System.err.println("cursorIndex : " + idx);
+					String currentText = text().get();
+					String headText = currentText.substring(0, idx);
+					String tailText = currentText.substring(idx, currentText.length());
+					String result = headText + data.key + tailText;
+					text().set(result);
+					updateCursorIndex(idx+1);
+				}
 			}
 		});
 		
@@ -199,6 +236,31 @@ public class Text extends Widget {
 				nodeCursor.x().set(nodeText.x().get() + letter.beginX);
 			}
 		});
+	}
+	private void triggerDelete() {
+		final int idx = cursorIndex.get();
+		String currentText = text().get();
+		String headText = currentText.substring(0, idx);
+		String tailText = currentText.substring(idx+1, currentText.length());
+		String result = headText + tailText;
+		text().set(result);
+		//updateCursorIndex(idx);
+	}
+	private void triggerBackspace() {
+		final int idx = cursorIndex.get();
+		String currentText = text().get();
+		String headText = currentText.substring(0,  Math.max(0, idx - 1));
+		String tailText = currentText.substring(idx, currentText.length());
+		String result = headText + tailText;
+		text().set(result);
+		updateCursorIndex(idx - 1);
+	}
+	
+	private void updateCursorIndex(int idx) {
+		final int textLength = text().get().length();
+		idx = Math.max(0, idx);
+		idx = Math.min(textLength, idx);
+		cursorIndex.set(idx);
 	}
 	
 	@Override

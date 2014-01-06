@@ -5,20 +5,22 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import at.bestsolution.wgraf.backend.javafx.JavaFxBinder;
+import at.bestsolution.wgraf.events.FlingEvent;
 import at.bestsolution.wgraf.events.MouseEventSupport;
-import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.events.MouseEventSupport.MouseCoords;
+import at.bestsolution.wgraf.events.ScrollEvent;
+import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.geom.shape.Rectangle;
 import at.bestsolution.wgraf.geom.shape.Shape;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.ReadOnlyProperty;
+import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.SignalListener;
-import at.bestsolution.wgraf.properties.TransitionProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleDoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
-import at.bestsolution.wgraf.properties.simple.SimpleTransitionProperty;
+import at.bestsolution.wgraf.properties.simple.SimpleSignal;
 import at.bestsolution.wgraf.scene.BackingContainer;
 import at.bestsolution.wgraf.scene.BackingNode;
 
@@ -110,24 +112,63 @@ public abstract class JavaFxNode<N extends Node> implements BackingNode {
 		this.support = support;
 		node.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
-			public void handle(MouseEvent event) {
-				support.mousePressed().signal(new MouseCoords(event.getX(), event.getY()));
+			public void handle(final MouseEvent event) {
+				support.mousePressed(new MouseCoords(event.getX(), event.getY()), new Runnable() {
+					@Override
+					public void run() {
+						event.consume();
+					}
+				});
+//				support.mousePressed().signal(new MouseCoords(event.getX(), event.getY()));
 			}
 		});
 		
 		node.setOnMouseReleased(new EventHandler<MouseEvent>() {
 			@Override
-			public void handle(MouseEvent event) {
-				support.mouseReleased().signal(new MouseCoords(event.getX(), event.getY()));
+			public void handle(final MouseEvent event) {
+//				support.mouseReleased().signal(new MouseCoords(event.getX(), event.getY()));
+				support.mouseReleased(new MouseCoords(event.getX(), event.getY()), new Runnable() {
+					@Override
+					public void run() {
+						event.consume();
+					}
+				});
 			}
 		});
 		
 		node.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override
-			public void handle(MouseEvent event) {
-				support.mouseDragged().signal(new MouseCoords(event.getX(), event.getY()));
+			public void handle(final MouseEvent event) {
+//				support.mouseDragged().signal(new MouseCoords(event.getX(), event.getY()));
+				support.mouseDragged(new MouseCoords(event.getX(), event.getY()), new Runnable() {
+					@Override
+					public void run() {
+						event.consume();
+					}
+				});
 			}
 		});
+		
+	}
+	
+	@Override
+	public Signal<TapEvent> onTap() {
+		return support.tap();
+	}
+	
+	@Override
+	public Signal<TapEvent> onLongTap() {
+		return support.longTap();
+	}
+	
+	@Override
+	public Signal<ScrollEvent> onScroll() {
+		return support.scroll();
+	}
+	
+	@Override
+	public Signal<FlingEvent> onFling() {
+		return support.fling();
 	}
 	
 	private DoubleTransitionProperty x = null;

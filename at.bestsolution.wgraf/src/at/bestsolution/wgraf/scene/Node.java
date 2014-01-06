@@ -62,10 +62,10 @@ public abstract class Node<Backend extends BackingNode> extends Frontend<Backend
 		return new Vec2d(10, 10);
 	}
 	
-	public final Signal<TapEvent> onTap() { return events.tap(); }
-	public final Signal<TapEvent> onLongTap() { return events.longTap(); }
-	public final Signal<ScrollEvent> onScroll() { return events.scroll(); }
-	public final Signal<FlingEvent> onFling() { return events.fling(); }
+	public final Signal<TapEvent> onTap() { return backend.onTap(); }
+	public final Signal<TapEvent> onLongTap() { return backend.onLongTap(); }
+	public final Signal<ScrollEvent> onScroll() { return backend.onScroll(); }
+	public final Signal<FlingEvent> onFling() { return backend.onFling(); }
 	
 	public final Signal<KeyEvent> onKeyPress() { return backend.onKeyPress(); }
 	

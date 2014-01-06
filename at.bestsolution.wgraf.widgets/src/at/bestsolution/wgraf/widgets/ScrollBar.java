@@ -1,8 +1,8 @@
 package at.bestsolution.wgraf.widgets;
 
 import at.bestsolution.wgraf.events.ScrollEvent;
+import at.bestsolution.wgraf.events.ScrollLock;
 import at.bestsolution.wgraf.paint.Color;
-import at.bestsolution.wgraf.properties.ClampedDoubleIncrement;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.DoubleProperty;
 import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
@@ -125,27 +125,34 @@ public class ScrollBar extends Widget {
 		double minValue = this.minValue.get();
 		double maxValue = this.maxValue.get();
 		if (orientation == Orientation.HORIZONTAL) {
-			double newX = offset - data.deltaX;
-			
-			double newValue = minValue + newX * valueFactor;
-			
-			// clamp
-			newValue = Math.max(minValue, newValue);
-			newValue = Math.min(maxValue, newValue);
-			
-			value.set(newValue);
-			
+			if (data.scrollLock == ScrollLock.HORIZONTAL) {
+				double newX = offset - data.deltaX;
+				
+				double newValue = minValue + newX * valueFactor;
+				
+				// clamp
+				newValue = Math.max(minValue, newValue);
+				newValue = Math.min(maxValue, newValue);
+				
+				value.set(newValue);
+				
+				data.consume();
+			}
 		}
 		else {
-			double newY = offset - data.deltaY;
-			
-			double newValue = minValue + newY * valueFactor;
-			
-			// clamp
-			newValue = Math.max(minValue, newValue);
-			newValue = Math.min(maxValue, newValue);
-			
-			value.set(newValue);
+			if (data.scrollLock == ScrollLock.VERTICAL) {
+				double newY = offset - data.deltaY;
+				
+				double newValue = minValue + newY * valueFactor;
+				
+				// clamp
+				newValue = Math.max(minValue, newValue);
+				newValue = Math.min(maxValue, newValue);
+				
+				value.set(newValue);
+				
+				data.consume();
+			}
 		}
 	}
 	

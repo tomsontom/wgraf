@@ -12,6 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import at.bestsolution.wgraf.backend.javafx.JavaFxBinder;
 import at.bestsolution.wgraf.backend.javafx.JavaFxConverter;
+import at.bestsolution.wgraf.events.KeyCode;
 import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.Property;
@@ -111,10 +112,20 @@ public class JavaFxContainer extends JavaFxNode<javafx.scene.layout.Region> impl
 		node.setOnKeyTyped(new EventHandler<javafx.scene.input.KeyEvent>() {
 			@Override
 			public void handle(javafx.scene.input.KeyEvent arg0) {
-				System.err.println("KEY TYPED!! " + arg0);
-				System.err.println(" -> " + onKeyPress());
 				if (onKeyPress != null) {
-					onKeyPress.signal(new KeyEvent(arg0.getCode().ordinal(), arg0.getCharacter()));
+					onKeyPress.signal(new KeyEvent(JavaFxConverter.convert(arg0.getCode()), arg0.getCharacter()));
+				}
+			}
+		});
+		
+		node.setOnKeyPressed(new EventHandler<javafx.scene.input.KeyEvent>() {
+			@Override
+			public void handle(javafx.scene.input.KeyEvent arg0) {
+				final KeyCode code = JavaFxConverter.convert(arg0.getCode());
+				if (code != null) {
+					if (onKeyPress != null) {
+						onKeyPress.signal(new KeyEvent(code, arg0.getCharacter()));
+					}
 				}
 			}
 		});

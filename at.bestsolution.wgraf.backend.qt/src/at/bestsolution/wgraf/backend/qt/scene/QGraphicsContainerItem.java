@@ -5,9 +5,12 @@ import java.util.Collections;
 import java.util.List;
 
 import at.bestsolution.wgraf.backend.qt.QtConverter;
+import at.bestsolution.wgraf.events.FlingEvent;
 import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.MouseEventSupport;
 import at.bestsolution.wgraf.events.MouseEventSupport.MouseCoords;
+import at.bestsolution.wgraf.events.ScrollEvent;
+import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.Signal;
@@ -20,19 +23,18 @@ import at.bestsolution.wgraf.style.FillBackground;
 
 import com.trolltech.qt.core.QEvent;
 import com.trolltech.qt.gui.QBrush;
-import com.trolltech.qt.gui.QGraphicsItem.GraphicsItemFlag;
+import com.trolltech.qt.gui.QFocusEvent;
 import com.trolltech.qt.gui.QGraphicsRectItem;
 import com.trolltech.qt.gui.QGraphicsSceneMouseEvent;
+import com.trolltech.qt.gui.QKeyEvent;
 import com.trolltech.qt.gui.QPainter;
 import com.trolltech.qt.gui.QPainter.CompositionMode;
-import com.trolltech.qt.gui.QFocusEvent;
-import com.trolltech.qt.gui.QKeyEvent;
 import com.trolltech.qt.gui.QPainterPath;
 import com.trolltech.qt.gui.QPen;
 import com.trolltech.qt.gui.QStyleOptionGraphicsItem;
 import com.trolltech.qt.gui.QWidget;
 
-public class QGraphicsContainerItem extends QGraphicsRectItem {
+public class QGraphicsContainerItem extends QGraphicsRectItem implements QGraphicsItemInterfaceWithTapEventReceiver {
 
 	private QPainterPath shape;
 	
@@ -46,12 +48,69 @@ public class QGraphicsContainerItem extends QGraphicsRectItem {
 		
 		setPen(QPen.NoPen);
 		
-		setFiltersChildEvents(true);
+	}
+	
+	
+	@Override
+	public void sendTap(TapEvent e) {
+		if (onTap != null) onTap.signal(e);
+	}
+	
+	private Signal<TapEvent> onTap = null;
+	@Override
+	public Signal<TapEvent> onTap() {
+		if (onTap == null) {
+			onTap = new SimpleSignal<TapEvent>();
+		}
+		return onTap;
+	}
+	
+	@Override
+	public void sendLongTap(TapEvent e) {
+		if (onLongTap != null) onLongTap.signal(e);
+	}
+	
+	private Signal<TapEvent> onLongTap = null;
+	@Override
+	public Signal<TapEvent> onLongTap() {
+		if (onLongTap == null) {
+			onLongTap = new SimpleSignal<TapEvent>();
+		}
+		return onLongTap;
+	}
+	
+	@Override
+	public void sendScroll(ScrollEvent e) {
+		if (onScroll != null) onScroll.signal(e);
+	}
+	
+	private Signal<ScrollEvent> onScroll = null;
+	@Override
+	public Signal<ScrollEvent> onScroll() {
+		if (onScroll == null) {
+			onScroll = new SimpleSignal<ScrollEvent>();
+		}
+		return onScroll;
+	}
+	
+	@Override
+	public void sendFling(FlingEvent e) {
+		if (onFling != null) onFling.signal(e);
+	}
+	
+	private Signal<FlingEvent> onFling = null;
+	@Override
+	public Signal<FlingEvent> onFling() {
+		if (onFling == null) {
+			onFling = new SimpleSignal<FlingEvent>();
+		}
+		return onFling;
 	}
 	
 	@Override
 	public boolean sceneEvent(QEvent event) {
-		System.err.println(event);
+//		System.err.println(event.type());
+//		System.err.println(event.getClass());
 		return super.sceneEvent(event);
 	}
 	
@@ -153,27 +212,6 @@ public class QGraphicsContainerItem extends QGraphicsRectItem {
 		this.support = support;
 	}
 	
-	@Override
-	public void mousePressEvent(QGraphicsSceneMouseEvent event) {
-		if (support != null) {
-			support.mousePressed().signal(new MouseCoords(event.pos().x(), event.pos().y()));
-		}
-	}
-	
-	@Override
-	public void mouseReleaseEvent(QGraphicsSceneMouseEvent event) {
-		if (support != null) {
-			support.mouseReleased().signal(new MouseCoords(event.pos().x(), event.pos().y()));
-		}
-	}
-	
-	@Override
-	public void mouseMoveEvent(QGraphicsSceneMouseEvent event) {
-		if (support != null) {
-			support.mouseDragged().signal(new MouseCoords(event.pos().x(), event.pos().y()));
-		}
-	}
-
 	public void setBackground(Background background) {
 		this.background = background;
 		update(rect());
@@ -196,7 +234,7 @@ public class QGraphicsContainerItem extends QGraphicsRectItem {
 	@Override
 	public void keyPressEvent(QKeyEvent event) {
 		if (onKeyPress != null) {
-			onKeyPress.signal(new KeyEvent(event.key(), event.text()));
+			onKeyPress.signal(new KeyEvent(QtConverter.convertKeyCode(event.key()), event.text()));
 		}
 	}
 
@@ -228,6 +266,11 @@ public class QGraphicsContainerItem extends QGraphicsRectItem {
 		if (focus != null) {
 			focus.set(false);
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return "QGraphicsContainerItem("+rect()+")@" + System.identityHashCode(this);
 	}
 	
 }

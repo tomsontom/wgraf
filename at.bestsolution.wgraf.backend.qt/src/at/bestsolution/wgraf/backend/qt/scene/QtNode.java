@@ -2,11 +2,13 @@ package at.bestsolution.wgraf.backend.qt.scene;
 
 import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.backend.qt.QtBinder;
-import at.bestsolution.wgraf.backend.qt.QtSync;
+import at.bestsolution.wgraf.events.FlingEvent;
+import at.bestsolution.wgraf.events.ScrollEvent;
+import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.geom.shape.Shape;
 import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.Property;
-import at.bestsolution.wgraf.properties.ReadOnlyProperty;
+import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.simple.SimpleDoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.scene.BackingContainer;
@@ -15,10 +17,8 @@ import at.bestsolution.wgraf.scene.BackingNode;
 import com.trolltech.qt.core.Qt.MouseButton;
 import com.trolltech.qt.core.Qt.MouseButtons;
 import com.trolltech.qt.gui.QGraphicsItem.GraphicsItemFlag;
-import com.trolltech.qt.gui.QApplication;
-import com.trolltech.qt.gui.QGraphicsItemInterface;
 
-public abstract class QtNode<N extends QGraphicsItemInterface> implements BackingNode {
+public abstract class QtNode<N extends QGraphicsItemInterfaceWithTapEventReceiver> implements BackingNode {
 
 	protected final N node;
 	
@@ -129,6 +129,23 @@ public abstract class QtNode<N extends QGraphicsItemInterface> implements Backin
 	}
 	
 	
-
+	@Override
+	public Signal<TapEvent> onTap() {
+		return node.onTap();
+	}
 	
+	@Override
+	public Signal<TapEvent> onLongTap() {
+		return node.onLongTap();
+	}
+	
+	@Override
+	public Signal<ScrollEvent> onScroll() {
+		return node.onScroll();
+	}
+	
+	@Override
+	public Signal<FlingEvent> onFling() {
+		return node.onFling();
+	}
 }

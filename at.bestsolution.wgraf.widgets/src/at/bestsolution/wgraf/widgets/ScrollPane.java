@@ -10,7 +10,8 @@ import at.bestsolution.wgraf.properties.GroupBinding;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.transition.TouchScrollTransition;
 
-// TODO scrollbar visibility
+// TODO scrollbar visibility - hide scrollbars and only show them while scrolling
+// TODO allow only vertical or horizontal scrollbar
 public class ScrollPane extends Pane {
 
 	private Widget content;

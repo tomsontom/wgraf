@@ -1,5 +1,5 @@
 package at.bestsolution.wgraf.events;
 
-public class FlingEvent {
+public class FlingEvent extends InputEvent {
 
 }

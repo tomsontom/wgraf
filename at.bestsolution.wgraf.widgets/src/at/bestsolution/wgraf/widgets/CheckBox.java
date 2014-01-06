@@ -1,6 +1,7 @@
 package at.bestsolution.wgraf.widgets;
 
 import at.bestsolution.wgraf.events.ScrollEvent;
+import at.bestsolution.wgraf.events.ScrollLock;
 import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.geom.shape.Rectangle;
 import at.bestsolution.wgraf.math.Vec2d;
@@ -139,7 +140,11 @@ public class CheckBox extends Widget {
 		area.onScroll().registerSignalListener(new SignalListener<ScrollEvent>() {
 			@Override
 			public void onSignal(ScrollEvent data) {
-				slider.x().updateDynamic(new ClampedDoubleIncrement(-data.deltaX, minPos, maxPos));
+				if (data.scrollLock == ScrollLock.HORIZONTAL) {
+					slider.x().updateDynamic(new ClampedDoubleIncrement(-data.deltaX, minPos, maxPos));
+					// we consume horizontal scroll events
+					data.consume();
+				}
 			}
 		});
 	}

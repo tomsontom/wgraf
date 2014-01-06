@@ -1,52 +1,26 @@
 package at.bestsolution.wgraf.backend.qt.scene;
 
+import at.bestsolution.wgraf.backend.qt.QtConverter;
+import at.bestsolution.wgraf.events.FlingEvent;
 import at.bestsolution.wgraf.events.KeyEvent;
-import at.bestsolution.wgraf.events.MouseEventSupport;
-import at.bestsolution.wgraf.events.MouseEventSupport.MouseCoords;
+import at.bestsolution.wgraf.events.ScrollEvent;
+import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleSignal;
-import at.bestsolution.wgraf.style.Background;
 
 import com.trolltech.qt.gui.QFocusEvent;
-import com.trolltech.qt.gui.QGraphicsSceneMouseEvent;
 import com.trolltech.qt.gui.QGraphicsSimpleTextItem;
 import com.trolltech.qt.gui.QKeyEvent;
 import com.trolltech.qt.gui.QPainterPath;
 
 
-public class QGraphicsTextItem extends QGraphicsSimpleTextItem {
+public class QGraphicsTextItem extends QGraphicsSimpleTextItem implements QGraphicsItemInterfaceWithTapEventReceiver{
 
 	private QPainterPath shape;
-	private MouseEventSupport support;
 	
-	public void setEventSupport(MouseEventSupport support) {
-		this.support = support;
-	}
-	
-	@Override
-	public void mousePressEvent(QGraphicsSceneMouseEvent event) {
-		if (support != null) {
-			support.mousePressed().signal(new MouseCoords(event.pos().x(), event.pos().y()));
-		}
-	}
-	
-	@Override
-	public void mouseReleaseEvent(QGraphicsSceneMouseEvent event) {
-		if (support != null) {
-			support.mouseReleased().signal(new MouseCoords(event.pos().x(), event.pos().y()));
-		}
-	}
-	
-	@Override
-	public void mouseMoveEvent(QGraphicsSceneMouseEvent event) {
-		if (support != null) {
-			support.mouseDragged().signal(new MouseCoords(event.pos().x(), event.pos().y()));
-		}
-	}
-
 	public void setShape(QPainterPath shape) {
 		this.shape = shape;
 	}
@@ -64,7 +38,7 @@ public class QGraphicsTextItem extends QGraphicsSimpleTextItem {
 	@Override
 	public void keyPressEvent(QKeyEvent event) {
 		if (onKeyPress != null) {
-			onKeyPress.signal(new KeyEvent(event.key(), event.text()));
+			onKeyPress.signal(new KeyEvent(QtConverter.convertKeyCode(event.key()), event.text()));
 		}
 	}
 
@@ -96,5 +70,66 @@ public class QGraphicsTextItem extends QGraphicsSimpleTextItem {
 		if (focus != null) {
 			focus.set(false);
 		}
+	}
+
+	@Override
+	public void sendTap(TapEvent e) {
+		if (onTap != null) onTap.signal(e);
+	}
+	
+	private Signal<TapEvent> onTap = null;
+	@Override
+	public Signal<TapEvent> onTap() {
+		if (onTap == null) {
+			onTap = new SimpleSignal<TapEvent>();
+		}
+		return onTap;
+	}
+	
+	@Override
+	public void sendLongTap(TapEvent e) {
+		if (onLongTap != null) onLongTap.signal(e);
+	}
+	
+	private Signal<TapEvent> onLongTap = null;
+	@Override
+	public Signal<TapEvent> onLongTap() {
+		if (onLongTap == null) {
+			onLongTap = new SimpleSignal<TapEvent>();
+		}
+		return onLongTap;
+	}
+	
+	@Override
+	public void sendScroll(ScrollEvent e) {
+		if (onScroll != null) onScroll.signal(e);
+	}
+	
+	private Signal<ScrollEvent> onScroll = null;
+	@Override
+	public Signal<ScrollEvent> onScroll() {
+		if (onScroll == null) {
+			onScroll = new SimpleSignal<ScrollEvent>();
+		}
+		return onScroll;
+	}
+	
+	@Override
+	public void sendFling(FlingEvent e) {
+		if (onFling != null) onFling.signal(e);
+	}
+	
+	private Signal<FlingEvent> onFling = null;
+	@Override
+	public Signal<FlingEvent> onFling() {
+		if (onFling == null) {
+			onFling = new SimpleSignal<FlingEvent>();
+		}
+		return onFling;
+	}
+	
+	@Override
+	public String toString() {
+		return "QGraphicsTextItem("+boundingRect()+")@" + System.identityHashCode(this);
 	}
 }
