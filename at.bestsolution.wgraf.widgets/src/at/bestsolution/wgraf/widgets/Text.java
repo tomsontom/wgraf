@@ -10,6 +10,10 @@ import at.bestsolution.wgraf.events.ScrollLock;
 import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.paint.Color;
+import at.bestsolution.wgraf.paint.LinearGradient;
+import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
+import at.bestsolution.wgraf.paint.LinearGradient.Spread;
+import at.bestsolution.wgraf.paint.LinearGradient.Stop;
 import at.bestsolution.wgraf.properties.Binder;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.ClampedDoubleIncrement;
@@ -20,6 +24,9 @@ import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.scene.Container;
 import at.bestsolution.wgraf.style.Backgrounds;
+import at.bestsolution.wgraf.style.Border;
+import at.bestsolution.wgraf.style.BorderStroke;
+import at.bestsolution.wgraf.style.BorderWidths;
 import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
@@ -132,32 +139,6 @@ public class Text extends Widget {
 	
 	public Text() {
 		
-		// this should come from css:
-		area.background().set(new Backgrounds(
-				new FillBackground(new Color(255, 255, 255, 210), new CornerRadii(7), new Insets(5,5,5,5)),
-				new FillBackground(new Color(55, 55, 55, 100), new CornerRadii(10), new Insets(2,2,2,2))
-				));
-		focus().registerChangeListener(new ChangeListener<Boolean>() {
-			@Override
-			public void onChange(Boolean oldValue, Boolean newValue) {
-				System.err.println("focus changed on " + Thread.currentThread());
-				if (newValue) {
-					area.background().set(new Backgrounds(
-							new FillBackground(new Color(255, 255, 255, 210), new CornerRadii(7), new Insets(5,5,5,5)),
-							new FillBackground(new Color(55, 55, 55, 100), new CornerRadii(10), new Insets(2,2,2,2)),
-							new FillBackground(new Color(255, 255, 0, 144), new CornerRadii(10), new Insets(0, 0, 0, 0))
-							));
-				}
-				else {
-					area.background().set(new Backgrounds(
-							new FillBackground(new Color(255, 255, 255, 210), new CornerRadii(7), new Insets(5,5,5,5)),
-							new FillBackground(new Color(55, 55, 55, 100), new CornerRadii(10), new Insets(2,2,2,2))
-							));
-				}
-			}
-		});
-		
-		
 		area.acceptFocus().set(true);
 		area.acceptTapEvents().set(true);
 		
@@ -235,21 +216,6 @@ public class Text extends Widget {
 			}
 		});
 		
-		// for now we change the background property of the cursor depending on the focus
-		// better would be to set the visibility or the opacity - but both do not exist at the moment -.-
-		// TODO add visible and opacity properties to nodes=?
-		focus().registerChangeListener(new ChangeListener<Boolean>() {
-			@Override
-			public void onChange(Boolean oldValue, Boolean newValue) {
-				if (newValue) {
-					nodeCursor.background().set(new FillBackground(new Color(0, 255, 255, 100), new CornerRadii(0), new Insets(0,0,0,0)));
-				}
-				else {
-					nodeCursor.background().set(null);
-				}
-			}
-		});
-		
 		area.onTap().registerSignalListener(new SignalListener<TapEvent>() {
 			@Override
 			public void onSignal(TapEvent data) {
@@ -318,6 +284,57 @@ public class Text extends Widget {
 		
 		area.requireKeyboard().set(true);
 		
+		initDefaultStyle();
+	}
+	
+	private void initDefaultStyle() {
+		// this should come from css:
+		Insets bgInsets = new Insets(0, 0, 0, 0);
+		final FillBackground normal = new FillBackground(
+				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
+					new Stop(0, new Color(240, 240, 240, 255)),
+					new Stop(1, new Color(255, 255, 255, 255))
+				), 
+				new CornerRadii(4), bgInsets);
+		
+		area.background().set(null);
+		
+		area.border().set(new Border(new BorderStroke( new Color(200, 200, 200, 255), new CornerRadii(4), new BorderWidths(1, 1, 1, 1), bgInsets)));
+		
+//		focus().registerChangeListener(new ChangeListener<Boolean>() {
+//			@Override
+//			public void onChange(Boolean oldValue, Boolean newValue) {
+//				System.err.println("focus changed on " + Thread.currentThread());
+//				if (newValue) {
+//					area.background().set(new Backgrounds(
+//							new FillBackground(new Color(255, 255, 255, 210), new CornerRadii(7), new Insets(5,5,5,5)),
+//							new FillBackground(new Color(55, 55, 55, 100), new CornerRadii(10), new Insets(2,2,2,2)),
+//							new FillBackground(new Color(255, 255, 0, 144), new CornerRadii(10), new Insets(0, 0, 0, 0))
+//							));
+//				}
+//				else {
+//					area.background().set(new Backgrounds(
+//							new FillBackground(new Color(255, 255, 255, 210), new CornerRadii(7), new Insets(5,5,5,5)),
+//							new FillBackground(new Color(55, 55, 55, 100), new CornerRadii(10), new Insets(2,2,2,2))
+//							));
+//				}
+//			}
+//		});
+		
+		// for now we change the background property of the cursor depending on the focus
+		// better would be to set the visibility or the opacity - but both do not exist at the moment -.-
+		// TODO add visible and opacity properties to nodes=?
+		focus().registerChangeListener(new ChangeListener<Boolean>() {
+			@Override
+			public void onChange(Boolean oldValue, Boolean newValue) {
+				if (newValue) {
+					nodeCursor.background().set(new FillBackground(new Color(0, 255, 255, 100), new CornerRadii(0), new Insets(0,0,0,0)));
+				}
+				else {
+					nodeCursor.background().set(null);
+				}
+			}
+		});
 	}
 	
 	private double calcTextWidth() {

@@ -5,7 +5,14 @@ import java.util.TimerTask;
 
 public abstract class Sync {
 
-	private Timer timer = new Timer();
+	public static interface PulseListener {
+		void onPulse();
+	}
+	
+	public abstract void registerPulseListener(PulseListener listener);
+	public abstract void unregisterPulseListener(PulseListener listener);
+	
+	private Timer timer = new Timer("runLater-Timer");
 	
 	private static Sync INSTANCE;
 	

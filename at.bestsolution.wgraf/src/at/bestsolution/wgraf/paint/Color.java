@@ -13,5 +13,12 @@ public class Color extends Paint {
 		this.blue = blue;
 		this.alpha = alpha;
 	}
+
+	@Override
+	public String toString() {
+		return "Color [red=" + red + ", green=" + green + ", blue=" + blue
+				+ ", alpha=" + alpha + "]";
+	}
+	
 	
 }

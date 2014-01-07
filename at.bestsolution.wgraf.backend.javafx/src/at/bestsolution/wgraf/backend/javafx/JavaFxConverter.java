@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javafx.scene.effect.BlurType;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.paint.CycleMethod;
 import at.bestsolution.wgraf.events.KeyCode;
 import at.bestsolution.wgraf.paint.Color;
@@ -16,7 +18,12 @@ import at.bestsolution.wgraf.paint.Paint;
 import at.bestsolution.wgraf.style.Background;
 import at.bestsolution.wgraf.style.Backgrounds;
 import at.bestsolution.wgraf.style.BaseBackground;
+import at.bestsolution.wgraf.style.Border;
+import at.bestsolution.wgraf.style.BorderStroke;
+import at.bestsolution.wgraf.style.BorderWidths;
 import at.bestsolution.wgraf.style.CornerRadii;
+import at.bestsolution.wgraf.style.DropShadow;
+import at.bestsolution.wgraf.style.Effect;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.style.Insets;
@@ -116,5 +123,43 @@ public class JavaFxConverter {
 		}
 		
 		throw new UnsupportedOperationException("background not supported: " + background);
+	}
+	
+	public static javafx.scene.effect.Effect convert(Effect effect) {
+		if (effect == null) {
+			return null;
+		}
+		if (effect instanceof DropShadow) {
+			DropShadow d = (DropShadow) effect;
+			javafx.scene.effect.DropShadow e = new javafx.scene.effect.DropShadow();
+			e.setOffsetX(d.offset.x);
+			e.setOffsetY(d.offset.y);
+			e.setRadius(d.radius);
+			e.setBlurType(BlurType.GAUSSIAN);
+			e.setColor(convert(d.color));
+			return e;
+		}
+		
+		throw new UnsupportedOperationException("effect not supported: " + effect);
+	}
+
+	public static javafx.scene.layout.BorderWidths convert(BorderWidths widths) {
+		return new javafx.scene.layout.BorderWidths(widths.top, widths.right, widths.bottom, widths.left);
+	}
+	
+	public static javafx.scene.layout.BorderStroke convert(BorderStroke stroke) {
+		return new javafx.scene.layout.BorderStroke(convert(stroke.paint), BorderStrokeStyle.SOLID, convert(stroke.cornerRadii), convert(stroke.widths), convert(stroke.insets));
+	}
+	
+	public static javafx.scene.layout.Border convert(Border value) {
+		if (value == null) {
+			return null;
+		}
+		List<javafx.scene.layout.BorderStroke> strokes = new ArrayList<javafx.scene.layout.BorderStroke>();
+		
+		for (BorderStroke s : value.strokes) {
+			strokes.add(convert(s));
+		}
+		return new javafx.scene.layout.Border(strokes, null);
 	}
 }

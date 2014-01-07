@@ -1,6 +1,5 @@
 package at.bestsolution.wgraf.interpolator;
 
-import java.util.Iterator;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -16,6 +15,12 @@ public class DefaultInterpolator implements Interpolator {
 	
 	public DefaultInterpolator() {
 		startInterpolator();
+//		Sync.get().registerPulseListener(new PulseListener() {
+//			@Override
+//			public void onPulse() {
+//				step();
+//			}
+//		});
 	}
 	
 	private void startInterpolator() {

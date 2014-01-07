@@ -18,7 +18,7 @@ public class SimpleWidgets extends AbsolutePane {
 			add(test, 10, 10);
 			
 			CheckBox box = new CheckBox();
-			add(box, 170, 10);
+			add(box, 170 + 100, 10);
 		}
 		
 		{

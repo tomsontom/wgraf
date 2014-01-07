@@ -19,6 +19,7 @@ import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
+import at.bestsolution.wgraf.style.Effect;
 
 public abstract class Node<Backend extends BackingNode> extends Frontend<Backend>{
 
@@ -70,6 +71,7 @@ public abstract class Node<Backend extends BackingNode> extends Frontend<Backend
 		return backend.clippingShape();
 	}
 	
+	public final Property<Effect> effect() { return backend.effect(); }
 	
 	public final DoubleTransitionProperty x() { return backend.x(); }
 	public final DoubleTransitionProperty y() { return backend.y(); }
@@ -107,6 +109,8 @@ public abstract class Node<Backend extends BackingNode> extends Frontend<Backend
 	public Vec2d computePreferredSize() {
 		return new Vec2d(10, 10);
 	}
+	
+	public final Property<Boolean> cache() { return backend.cache(); }
 	
 	public final Signal<TapEvent> onTap() { return backend.onTap(); }
 	public final Signal<TapEvent> onLongTap() { return backend.onLongTap(); }

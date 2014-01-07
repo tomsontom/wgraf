@@ -10,6 +10,7 @@ import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.Signal;
+import at.bestsolution.wgraf.style.Effect;
 
 public interface BackingNode {
 
@@ -25,6 +26,10 @@ public interface BackingNode {
 	Property<Boolean> acceptTapEvents();
 	Property<Boolean> acceptFocus();
 	
+	Property<Effect> effect();
+	
+	Property<Boolean> cache();
+
 	
 	Signal<KeyEvent> onKeyPress();
 	

@@ -36,7 +36,7 @@ public class WidgetTest extends Application {
 			pane.add(test, 10, yOffset);
 			
 			CheckBox box = new CheckBox();
-			pane.add(box, 170, yOffset);
+			pane.add(box, 170 + 100, yOffset);
 		}
 		yOffset += 70;
 		{
@@ -168,8 +168,8 @@ public class WidgetTest extends Application {
 			pane.add(test, 400, yOffset);
 			
 			ScrollPane scrollPane = new ScrollPane();
-			scrollPane.area.width().set(300);
-			scrollPane.area.height().set(400);
+			scrollPane.area.width().set(400);
+			scrollPane.area.height().set(350);
 			
 //			scrollPane.area.background().set(new FillBackground(new Color(255,  0,  0, 50), new CornerRadii(2), new Insets(0, 0, 0, 0)));
 			pane.add(scrollPane, 400, yOffset + 40);
@@ -186,7 +186,7 @@ public class WidgetTest extends Application {
 		
 		pane.add(kb, 0, 400);
 		
-		kb.area.y().set(600);
+		kb.area.y().set(400);
 		kb.area.y().setTransition(new LinearDoubleTransition(200));
 		
 		Application.get().focusNode().registerChangeListener(new ChangeListener<Node<?>>() {

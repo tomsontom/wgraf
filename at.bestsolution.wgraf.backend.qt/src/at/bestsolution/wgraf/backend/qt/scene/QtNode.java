@@ -17,6 +17,7 @@ import at.bestsolution.wgraf.scene.BackingNode;
 
 import com.trolltech.qt.core.Qt.MouseButton;
 import com.trolltech.qt.core.Qt.MouseButtons;
+import com.trolltech.qt.gui.QGraphicsItem.CacheMode;
 import com.trolltech.qt.gui.QGraphicsItem.GraphicsItemFlag;
 
 public abstract class QtNode<N extends QGraphicsItemInterfaceWithTapEventReceiver> implements BackingNode {
@@ -31,6 +32,26 @@ public abstract class QtNode<N extends QGraphicsItemInterfaceWithTapEventReceive
 	}
 	
 	protected abstract void applyClippingShape(Shape s);
+	
+	private Property<Boolean> cache = null;
+	@Override
+	public Property<Boolean> cache() {
+		if (cache == null) {
+			cache = new SimpleProperty<Boolean>(false);
+			QtBinder.uniBind(cache, new QtBinder.QtSetter<Boolean>() {
+				@Override
+				public void doSet(Boolean value) {
+					if (value) {
+						node.setCacheMode(CacheMode.ItemCoordinateCache, null);
+					}
+					else {
+						node.setCacheMode(CacheMode.NoCache, null);
+					}
+				}
+			});
+		}
+		return cache;
+	}
 	
 	private Property<Boolean> acceptFocus = null;
 	@Override

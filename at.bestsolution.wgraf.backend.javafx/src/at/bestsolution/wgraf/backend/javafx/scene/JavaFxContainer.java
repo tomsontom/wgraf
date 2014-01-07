@@ -25,6 +25,9 @@ import at.bestsolution.wgraf.properties.simple.SimpleSignal;
 import at.bestsolution.wgraf.properties.simple.SimpleTransitionProperty;
 import at.bestsolution.wgraf.scene.BackingContainer;
 import at.bestsolution.wgraf.style.Background;
+import at.bestsolution.wgraf.style.Border;
+import at.bestsolution.wgraf.style.DropShadow;
+import at.bestsolution.wgraf.style.Effect;
 
 
 public class JavaFxContainer extends JavaFxNode<javafx.scene.layout.Region> implements BackingContainer {
@@ -147,6 +150,21 @@ public class JavaFxContainer extends JavaFxNode<javafx.scene.layout.Region> impl
 		return background;
 	}
 	
+	private Property<Border> border = null;
+	@Override
+	public Property<Border> border() {
+		if (border == null) {
+			border = new SimpleProperty<Border>();
+			JavaFxBinder.uniBind(border, new JavaFxBinder.JfxSetter<Border>() {
+				@Override
+				public void doSet(Border value) {
+					node.setBorder(JavaFxConverter.convert(value));
+				}
+			});
+		}
+		return border;
+	}
+	
 	private DoubleTransitionProperty width = null;
 	@Override
 	public DoubleTransitionProperty width() {
@@ -205,6 +223,21 @@ public class JavaFxContainer extends JavaFxNode<javafx.scene.layout.Region> impl
 			onKeyPress = new SimpleSignal<KeyEvent>();
 		}
 		return onKeyPress;
+	}
+	
+	private Property<Effect> effect = null;
+	@Override
+	public Property<Effect> effect() {
+		if (effect == null) {
+			effect = new SimpleProperty<Effect>();
+			JavaFxBinder.uniBind(effect, new JavaFxBinder.JfxSetter<Effect>() {
+				@Override
+				public void doSet(Effect value) {
+					node.setEffect(JavaFxConverter.convert(value));
+				}
+			});
+		}
+		return effect;
 	}
 
 }

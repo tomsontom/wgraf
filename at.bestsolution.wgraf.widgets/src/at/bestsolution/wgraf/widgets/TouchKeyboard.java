@@ -219,10 +219,10 @@ public class TouchKeyboard extends Widget {
 					buttons.put(key, b);
 				}
 				
-				x += key.width;
+				x += key.width + 2;
 				keyIdx++;
 			}
-			y += 40;
+			y += 42;
 			x = 0;
 		}
 		
@@ -353,7 +353,7 @@ public class TouchKeyboard extends Widget {
 			down.font().set(font);
 			down.area.parent().set(area);
 			down.area.x().set(150+500);
-			down.area.y().set(160);
+			down.area.y().set(162);
 			down.activated().registerSignalListener(new SignalListener<Void>() {
 				@Override
 				public void onSignal(Void data) {
@@ -369,8 +369,8 @@ public class TouchKeyboard extends Widget {
 			left.text().set("<");
 			left.font().set(font);
 			left.area.parent().set(area);
-			left.area.x().set(150+460);
-			left.area.y().set(160);
+			left.area.x().set(150+458);
+			left.area.y().set(162);
 			left.activated().registerSignalListener(new SignalListener<Void>() {
 				@Override
 				public void onSignal(Void data) {
@@ -387,8 +387,8 @@ public class TouchKeyboard extends Widget {
 			right.text().set(">");
 			right.font().set(font);
 			right.area.parent().set(area);
-			right.area.x().set(150+540);
-			right.area.y().set(160);
+			right.area.x().set(150+542);
+			right.area.y().set(162);
 			right.activated().registerSignalListener(new SignalListener<Void>() {
 				@Override
 				public void onSignal(Void data) {

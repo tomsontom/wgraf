@@ -7,6 +7,8 @@ import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
 import at.bestsolution.wgraf.paint.LinearGradient.Spread;
 import at.bestsolution.wgraf.paint.LinearGradient.Stop;
 import at.bestsolution.wgraf.paint.Paint;
+import at.bestsolution.wgraf.style.DropShadow;
+import at.bestsolution.wgraf.style.Effect;
 import at.bestsolution.wgraf.style.Font;
 
 import com.trolltech.qt.core.Qt;
@@ -14,6 +16,8 @@ import com.trolltech.qt.core.Qt.BrushStyle;
 import com.trolltech.qt.gui.QBrush;
 import com.trolltech.qt.gui.QColor;
 import com.trolltech.qt.gui.QFont;
+import com.trolltech.qt.gui.QGraphicsDropShadowEffect;
+import com.trolltech.qt.gui.QGraphicsEffect;
 import com.trolltech.qt.gui.QGradient.CoordinateMode;
 import com.trolltech.qt.gui.QLinearGradient;
 
@@ -91,5 +95,20 @@ public class QtConverter {
 		return f;
 	}
 	
+	public static QGraphicsEffect convert(Effect effect) {
+		if (effect == null) {
+			return null;
+		}
+		if (effect instanceof DropShadow) {
+			DropShadow d = (DropShadow) effect;
+			QGraphicsDropShadowEffect e = new QGraphicsDropShadowEffect();
+			e.setOffset(d.offset.x, d.offset.y);
+			e.setBlurRadius(d.radius);
+			e.setColor(convert(d.color));
+			return e;
+		}
+		
+		throw new UnsupportedOperationException("effect not supported: " + effect);
+	}
 	
 }

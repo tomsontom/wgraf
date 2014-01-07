@@ -5,6 +5,10 @@ import at.bestsolution.wgraf.events.KeyCode;
 import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.paint.Color;
+import at.bestsolution.wgraf.paint.LinearGradient;
+import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
+import at.bestsolution.wgraf.paint.LinearGradient.Spread;
+import at.bestsolution.wgraf.paint.LinearGradient.Stop;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.Property;
@@ -15,6 +19,7 @@ import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleSignal;
 import at.bestsolution.wgraf.style.Backgrounds;
 import at.bestsolution.wgraf.style.CornerRadii;
+import at.bestsolution.wgraf.style.DropShadow;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.style.Insets;
@@ -144,6 +149,61 @@ public class ToggleButton extends Widget {
 	
 		
 		registerPseudoClassState("focus", focus());
+		
+		initDefaultStyle();
+	}
+	
+	private void initDefaultStyle() {
+		// this should come from css:
+		
+		Insets bgInsets = new Insets(0, 0, 0, 0);
+		final FillBackground normal = new FillBackground(
+				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
+					new Stop(0, new Color(181, 181, 181, 255)),
+					new Stop(1, new Color(124, 124, 124, 255))
+				), 
+				new CornerRadii(4), bgInsets);
+		
+		
+		final FillBackground active = new FillBackground(
+				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
+						new Stop(0, new Color(124, 124, 124, 255)),
+						new Stop(1, new Color(181, 181, 181, 255))
+					), 
+					new CornerRadii(4), bgInsets);
+		
+		
+		
+		area.background().set(normal);
+		active().registerChangeListener(new ChangeListener<Boolean>() {
+			@Override
+			public void onChange(Boolean oldValue, Boolean newValue) {
+				if (newValue) {
+					area.effect().set(null);
+//					if (focus().get()) {
+//						area.background().set(activeWithFocus);
+//					}
+//					else {
+						area.background().set(active);
+//					}
+				}
+				else {
+					area.effect().set(new DropShadow());
+//					if (focus().get()) {
+//						area.background().set(normalWithFocus);
+//					}
+//					else {
+						area.background().set(normal);
+//					}
+				}
+			}
+			
+		});
+		
+		area.effect().set(new DropShadow());
+		
+		nodeText.fill().set(new Color(255,255,255,255));
+		nodeText.effect().set(new DropShadow());
 	}
 	
 	private void triggerActivated() {

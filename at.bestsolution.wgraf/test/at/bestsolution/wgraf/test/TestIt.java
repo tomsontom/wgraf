@@ -141,7 +141,6 @@ public class TestIt {
 					
 					Text text = new Text();
 					
-					text.fontSize().set(20.0);
 					
 					text.x().set(10.0);
 					text.y().set(200.0);

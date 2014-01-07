@@ -6,6 +6,7 @@ import java.util.List;
 import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.style.Background;
+import at.bestsolution.wgraf.style.Border;
 
 public class Container extends Node<BackingContainer> {
 
@@ -13,7 +14,7 @@ public class Container extends Node<BackingContainer> {
 	public final DoubleTransitionProperty height() { return backend.height(); }
 	
 	public final Property<Background> background() { return backend.background(); }
-	
+	public final Property<Border> border() { return backend.border(); }
 	
 	@Override
 	protected Class<BackingContainer> internal_getBackendType() {

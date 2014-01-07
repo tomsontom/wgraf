@@ -1,7 +1,9 @@
 package at.bestsolution.wgraf.backend.javafx.scene;
 
+
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import at.bestsolution.wgraf.backend.javafx.JavaFxBinder;
@@ -43,6 +45,22 @@ public abstract class JavaFxNode<N extends Node> implements BackingNode {
 	
 	public N getNode() {
 		return node;
+	}
+	
+	private Property<Boolean> cache = null;
+	@Override
+	public Property<Boolean> cache() {
+		if (cache == null) {
+			cache = new SimpleProperty<Boolean>(false);
+			JavaFxBinder.uniBind(cache, new JavaFxBinder.JfxSetter<Boolean>() {
+				@Override
+				public void doSet(Boolean value) {
+					node.setCache(value);
+					node.setCacheHint(CacheHint.SPEED);
+				}
+			});
+		}
+		return cache;
 	}
 	
 	private Property<Boolean> focus = null;

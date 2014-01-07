@@ -21,12 +21,14 @@ public class SimpleProperty<Type> implements Property<Type> {
 	}
 	
 	protected void notify(Type oldValue, Type newValue) {
-		for (ChangeListener<Type> listener : listeners) {
-			try {
-				listener.onChange(oldValue, newValue);
-			}
-			catch (Throwable t) {
-				t.printStackTrace();
+		if (oldValue != newValue) {
+			for (ChangeListener<Type> listener : listeners) {
+				try {
+					listener.onChange(oldValue, newValue);
+				}
+				catch (Throwable t) {
+					t.printStackTrace();
+				}
 			}
 		}
 	}

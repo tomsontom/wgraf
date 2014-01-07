@@ -6,14 +6,26 @@ import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.geom.shape.Rectangle;
 import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.paint.Color;
+import at.bestsolution.wgraf.paint.LinearGradient;
+import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
+import at.bestsolution.wgraf.paint.LinearGradient.Spread;
+import at.bestsolution.wgraf.paint.LinearGradient.Stop;
+import at.bestsolution.wgraf.properties.Binder;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.ClampedDoubleIncrement;
+import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.ReadOnlyProperty;
+import at.bestsolution.wgraf.properties.Setter;
 import at.bestsolution.wgraf.properties.SignalListener;
+import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.scene.Container;
 import at.bestsolution.wgraf.scene.Text;
 import at.bestsolution.wgraf.style.Backgrounds;
+import at.bestsolution.wgraf.style.Border;
+import at.bestsolution.wgraf.style.BorderStroke;
+import at.bestsolution.wgraf.style.BorderWidths;
 import at.bestsolution.wgraf.style.CornerRadii;
+import at.bestsolution.wgraf.style.DropShadow;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.style.Insets;
@@ -22,6 +34,7 @@ import at.bestsolution.wgraf.transition.TouchScrollTransition;
 
 // TODO snap to on / off -> this needs a scroll-end-event
 // TODO remove fixed sizes
+// TODO fix selected model
 public class CheckBox extends Widget {
 
 	private Container slider;
@@ -35,7 +48,7 @@ public class CheckBox extends Widget {
 	private double maxPos;
 	
 	private boolean isSelected() {
-		return slider.x().get() > -30;
+		return slider.x().get() > (maxPos - minPos) / 2d;
 	}
 	
 	private void setSelected(boolean value) {
@@ -45,40 +58,23 @@ public class CheckBox extends Widget {
 		else {
 			slider.x().setDynamic(minPos);
 		}
+		selected.set(value);
 	}
+	
+	private Property<Boolean> selected = new SimpleProperty<Boolean>(true);
 	
 	
 	public CheckBox() {
 		
-		maxPos = 0;
-		minPos = -60;
+		maxPos = 56;
+		minPos = 2;
 		
 		area.width().set(100d);
 		area.height().set(40d);
 		area.acceptFocus().set(true);
 		area.acceptTapEvents().set(true);
 		
-		Rectangle clipRect = new Rectangle(2, 2, 96, 36, 10);
-		
-//		area.clippingShape().set(clipRect);
-		
-		// this should come from css:
-		area.background().set(null);
-		focus().registerChangeListener(new ChangeListener<Boolean>() {
-			@Override
-			public void onChange(Boolean oldValue, Boolean newValue) {
-				if (newValue) {
-					area.background().set(new Backgrounds(
-							new FillBackground(new Color(255, 255, 255, 255), new CornerRadii(10), new Insets(2, 2, 2, 2)),
-							new FillBackground(new Color(255, 255, 0, 144), new CornerRadii(10), new Insets(0, 0, 0, 0))
-							));
-				}
-				else {
-					area.background().set(null);
-
-				}
-			}
-		});
+		Rectangle clipRect = new Rectangle(2, 2, 96, 36, 0);
 		
 		final Container sliderClip = new Container();
 		sliderClip.parent().set(area);
@@ -87,20 +83,14 @@ public class CheckBox extends Widget {
 		sliderClip.height().set(40d);
 		
 		slider = new Container();
+		slider.cache().set(true);
 		slider.x().setTransition(new TouchScrollTransition());
 		slider.parent().set(sliderClip);
-		slider.width().set(160d);
+		slider.width().set(40d);
 		slider.height().set(40d);
-		slider.background().set(new Backgrounds(
-				// slider
-				new FillBackground(new Color(125, 125, 125, 255), new CornerRadii(10d, 10d, 10d, 10d, 10d, 10d, 10d, 10d), new Insets(2, 60, 2, 60)),
-				// on color
-				new FillBackground(new Color(0, 255, 0, 100), new CornerRadii(10d, 10d, 0d, 0d, 10d, 10d, 0d, 0d), new Insets(2, 90, 2, 2)),
-				// off color
-				new FillBackground(new Color(255, 0, 0, 100), new CornerRadii(0d, 0d, 10d, 10d, 0d, 0d, 10d, 10d), new Insets(2, 2, 2, 90))
-				
-				));
 		
+		// init state
+		slider.x().set(maxPos);
 		
 		Font font = new Font("Sans", 20);
 		
@@ -110,7 +100,7 @@ public class CheckBox extends Widget {
 		onText = new Text();
 		onText.font().set(font);
 		onText.text().set(TEXT_ON);
-		onText.x().set(60/2d - onExtent.x/2);
+		onText.x().set(-60/2d - onExtent.x/2);
 		onText.y().set(40/2d - onExtent.y/2);
 		onText.parent().set(slider);
 		
@@ -124,7 +114,7 @@ public class CheckBox extends Widget {
 		offText = new Text();
 		offText.font().set(font);
 		offText.text().set(TEXT_OFF);
-		offText.x().set(100 + 60/2d - offExtent.x/2);
+		offText.x().set(40 + 60/2d - offExtent.x/2);
 		offText.y().set(40/2d - offExtent.y/2);
 		
 		offText.parent().set(slider);
@@ -147,6 +137,62 @@ public class CheckBox extends Widget {
 				}
 			}
 		});
+		
+		initDefaultStyle();
+	}
+	
+	private void initDefaultStyle() {
+		
+		Insets bgInsets = new Insets(0, 0, 0, 0);
+		final FillBackground off = new FillBackground(
+				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
+					new Stop(0, new Color(255, 180, 180, 255)),
+					new Stop(1, new Color(255, 230, 230, 255))
+				), 
+				new CornerRadii(4), bgInsets);
+		
+		final FillBackground on = new FillBackground(
+				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
+					new Stop(0, new Color(180, 240, 180, 255)),
+					new Stop(1, new Color(230, 255, 230, 255))
+				), 
+				new CornerRadii(4), bgInsets);
+		
+		
+		area.border().set(new Border(new BorderStroke( new Color(200, 200, 200, 255), new CornerRadii(4), new BorderWidths(1, 1, 1, 1), bgInsets)));
+		
+		// this should come from css:
+		Binder.uniBind(selected, new Setter<Boolean>() {
+			@Override
+			public void set(Boolean value) {
+				area.background().set(value ? on : off);
+			}
+		});
+
+		final FillBackground sliderBg = new FillBackground(
+				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
+					new Stop(0, new Color(200, 200, 200, 255)),
+					new Stop(1, new Color(124, 124, 124, 255))
+				), 
+				new CornerRadii(6), bgInsets);
+		
+		slider.background().set(sliderBg);
+		slider.effect().set(new DropShadow());
+//		focus().registerChangeListener(new ChangeListener<Boolean>() {
+//			@Override
+//			public void onChange(Boolean oldValue, Boolean newValue) {
+//				if (newValue) {
+//					area.background().set(new Backgrounds(
+//							new FillBackground(new Color(255, 255, 255, 255), new CornerRadii(10), new Insets(2, 2, 2, 2)),
+//							new FillBackground(new Color(255, 255, 0, 144), new CornerRadii(10), new Insets(0, 0, 0, 0))
+//							));
+//				}
+//				else {
+//					area.background().set(null);
+//
+//				}
+//			}
+//		});
 	}
 	
 	public void setX(double x) {

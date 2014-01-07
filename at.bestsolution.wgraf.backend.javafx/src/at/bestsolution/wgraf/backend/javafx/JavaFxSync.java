@@ -6,6 +6,16 @@ import at.bestsolution.wgraf.Sync;
 public class JavaFxSync extends Sync {
 
 	@Override
+	public void registerPulseListener(PulseListener listener) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void unregisterPulseListener(PulseListener listener) {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
 	public void syncExecOnUIThread(Runnable runnable) {
 		if (Platform.isFxApplicationThread()) {
 			runnable.run();

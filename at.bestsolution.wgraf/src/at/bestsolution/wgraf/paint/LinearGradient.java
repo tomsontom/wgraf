@@ -1,5 +1,7 @@
 package at.bestsolution.wgraf.paint;
 
+import java.util.Arrays;
+
 public class LinearGradient extends Paint {
 
 	public static enum Spread {
@@ -42,6 +44,14 @@ public class LinearGradient extends Paint {
 		this.spread = spread;
 		
 		this.stops = stops;
+	}
+
+	@Override
+	public String toString() {
+		return "LinearGradient [startX=" + startX + ", startY=" + startY
+				+ ", stopX=" + stopX + ", stopY=" + stopY + ", coordMode="
+				+ coordMode + ", spread=" + spread + ", stops="
+				+ Arrays.toString(stops) + "]";
 	}
 	
 }

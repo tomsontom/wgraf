@@ -6,17 +6,22 @@ import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.MouseEventSupport;
 import at.bestsolution.wgraf.geom.shape.Rectangle;
 import at.bestsolution.wgraf.geom.shape.Shape;
+import at.bestsolution.wgraf.paint.Color;
+import at.bestsolution.wgraf.paint.Paint;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.scene.BackingText;
+import at.bestsolution.wgraf.style.DropShadow;
+import at.bestsolution.wgraf.style.Effect;
 import at.bestsolution.wgraf.style.Font;
 
 import com.trolltech.qt.core.Qt.MouseButton;
 import com.trolltech.qt.core.Qt.MouseButtons;
 import com.trolltech.qt.gui.QFont;
+import com.trolltech.qt.gui.QGraphicsDropShadowEffect;
 import com.trolltech.qt.gui.QPainterPath;
 import com.trolltech.qt.gui.QGraphicsItem.GraphicsItemFlag;
 
@@ -58,24 +63,25 @@ public class QtText extends QtNode<QGraphicsTextItem> implements BackingText {
 		return text;
 	}
 	
-	private Property<Double> fontSize = null;
-	public Property<Double> fontSize() {
-		if (fontSize == null) {
-			fontSize = new SimpleProperty<Double>();
-			fontSize.registerChangeListener(new ChangeListener<Double>() {
-				@Override
-				public void onChange(Double oldValue, Double newValue) {
-					QFont font = node.font();
-					font.setPointSizeF(newValue);
-					node.setFont(font);
-				}
-			});
-		}
-		return fontSize;
-	}
+	
 	
 	@Override
 	public void setEventSupport(MouseEventSupport support) {
+	}
+	
+	private Property<Paint> fill = null;
+	@Override
+	public Property<Paint> fill() {
+		if (fill == null) {
+			fill = new SimpleProperty<Paint>(new Color(0, 0, 0, 255));
+			QtBinder.uniBind(fill, new QtBinder.QtSetter<Paint>() {
+				@Override
+				public void doSet(Paint value) {
+					node.setBrush(QtConverter.convert(value));
+				}
+			});
+		}
+		return fill;
 	}
 	
 	private Property<Font> font = null;
@@ -83,9 +89,9 @@ public class QtText extends QtNode<QGraphicsTextItem> implements BackingText {
 	public Property<Font> font() {
 		if (font == null) {
 			font = new SimpleProperty<Font>();
-			QtBinder.uniBind(font, new QtBinder.Setter<Font>() {
+			QtBinder.uniBind(font, new QtBinder.QtSetter<Font>() {
 				@Override
-				public void set(Font value) {
+				public void doSet(Font value) {
 					node.setFont(QtConverter.convert(value));
 				}
 			});
@@ -101,5 +107,20 @@ public class QtText extends QtNode<QGraphicsTextItem> implements BackingText {
 	@Override
 	public ReadOnlyProperty<Boolean> focus() {
 		return node.focus();
+	}
+	
+	private Property<Effect> effect = null;
+	@Override
+	public Property<Effect> effect() {
+		if (effect == null) {
+			effect = new SimpleProperty<Effect>();
+			QtBinder.uniBind(effect, new QtBinder.QtSetter<Effect>() {
+				@Override
+				public void doSet(Effect value) {
+					node.setGraphicsEffect(QtConverter.convert(value));
+				}
+			});
+		}
+		return effect;
 	}
 }

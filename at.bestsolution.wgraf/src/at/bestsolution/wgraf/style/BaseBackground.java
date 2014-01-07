@@ -1,5 +1,6 @@
 package at.bestsolution.wgraf.style;
 
+
 public abstract class BaseBackground extends Background {
 
 	public final CornerRadii cornerRadii;
@@ -11,5 +12,7 @@ public abstract class BaseBackground extends Background {
 		this.cornerRadii = radii;
 		this.insets = insets;
 	}
+	
+	
 	
 }

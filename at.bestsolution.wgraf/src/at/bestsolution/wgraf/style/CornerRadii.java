@@ -83,4 +83,35 @@ public class CornerRadii {
 		bottomRightHorizontalRadiusAsPercent =
 		bottomRightVerticalRadiusAsPercent = false;
 	}
+
+
+	@Override
+	public String toString() {
+		return "CornerRadii [topLeftHorizontalRadius="
+				+ topLeftHorizontalRadius + ", topLeftVerticalRadius="
+				+ topLeftVerticalRadius + ", topRightHorizontalRadius="
+				+ topRightHorizontalRadius + ", topRightVerticalRadius="
+				+ topRightVerticalRadius + ", bottomLeftHorizontalRadius="
+				+ bottomLeftHorizontalRadius + ", bottomLeftVerticalRadius="
+				+ bottomLeftVerticalRadius + ", bottomRightHorizontalRadius="
+				+ bottomRightHorizontalRadius + ", bottomRightVerticalRadius="
+				+ bottomRightVerticalRadius
+				+ ", topLeftHorizontalRadiusAsPercent="
+				+ topLeftHorizontalRadiusAsPercent
+				+ ", topLeftVerticalRadiusAsPercent="
+				+ topLeftVerticalRadiusAsPercent
+				+ ", topRightHorizontalRadiusAsPercent="
+				+ topRightHorizontalRadiusAsPercent
+				+ ", topRightVerticalRadiusAsPercent="
+				+ topRightVerticalRadiusAsPercent
+				+ ", bottomLeftHorizontalRadiusAsPercent="
+				+ bottomLeftHorizontalRadiusAsPercent
+				+ ", bottomLeftVerticalRadiusAsPercent="
+				+ bottomLeftVerticalRadiusAsPercent
+				+ ", bottomRightHorizontalRadiusAsPercent="
+				+ bottomRightHorizontalRadiusAsPercent
+				+ ", bottomRightVerticalRadiusAsPercent="
+				+ bottomRightVerticalRadiusAsPercent + "]";
+	}
+
 }

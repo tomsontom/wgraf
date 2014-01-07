@@ -1,6 +1,10 @@
 package at.bestsolution.wgraf.backend.qt.scene;
 
+import java.util.Map;
+import java.util.WeakHashMap;
+
 import at.bestsolution.wgraf.backend.qt.QtBinder;
+import at.bestsolution.wgraf.backend.qt.QtConverter;
 import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.MouseEventSupport;
 import at.bestsolution.wgraf.geom.shape.Rectangle;
@@ -14,8 +18,11 @@ import at.bestsolution.wgraf.properties.simple.SimpleDoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.scene.BackingContainer;
 import at.bestsolution.wgraf.style.Background;
+import at.bestsolution.wgraf.style.Border;
+import at.bestsolution.wgraf.style.Effect;
 
 import com.trolltech.qt.gui.QGraphicsItem.GraphicsItemFlag;
+import com.trolltech.qt.gui.QImage;
 import com.trolltech.qt.gui.QPainterPath;
 
 public class QtContainer extends QtNode<QGraphicsContainerItem> implements BackingContainer {
@@ -65,6 +72,21 @@ public class QtContainer extends QtNode<QGraphicsContainerItem> implements Backi
 		}
 		return background;
 	}
+	
+	private Property<Border> border = null;
+	@Override
+	public Property<Border> border() {
+		if (border == null) {
+			border = new SimpleProperty<Border>();
+			QtBinder.uniBind(border, new QtBinder.QtSetter<Border>() {
+				@Override
+				public void doSet(Border value) {
+					node.setBorder(value);
+				}
+			});
+		}
+		return border;
+	}
 
 	private DoubleTransitionProperty width = null;
 	@Override
@@ -100,5 +122,20 @@ public class QtContainer extends QtNode<QGraphicsContainerItem> implements Backi
 	@Override
 	public ReadOnlyProperty<Boolean> focus() {
 		return node.focus();
+	}
+	
+	private Property<Effect> effect = null;
+	@Override
+	public Property<Effect> effect() {
+		if (effect == null) {
+			effect = new SimpleProperty<Effect>();
+			QtBinder.uniBind(effect, new QtBinder.QtSetter<Effect>() {
+				@Override
+				public void doSet(Effect value) {
+					node.setGraphicsEffect(QtConverter.convert(value));
+				}
+			});
+		}
+		return effect;
 	}
 }

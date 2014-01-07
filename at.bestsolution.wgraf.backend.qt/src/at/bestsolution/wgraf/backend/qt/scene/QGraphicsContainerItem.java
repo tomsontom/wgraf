@@ -3,6 +3,8 @@ package at.bestsolution.wgraf.backend.qt.scene;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 import at.bestsolution.wgraf.backend.qt.QtConverter;
 import at.bestsolution.wgraf.events.FlingEvent;
@@ -19,13 +21,18 @@ import at.bestsolution.wgraf.properties.simple.SimpleSignal;
 import at.bestsolution.wgraf.style.Background;
 import at.bestsolution.wgraf.style.Backgrounds;
 import at.bestsolution.wgraf.style.BaseBackground;
+import at.bestsolution.wgraf.style.Border;
+import at.bestsolution.wgraf.style.BorderStroke;
 import at.bestsolution.wgraf.style.FillBackground;
 
 import com.trolltech.qt.core.QEvent;
+import com.trolltech.qt.core.QSize;
 import com.trolltech.qt.gui.QBrush;
 import com.trolltech.qt.gui.QFocusEvent;
 import com.trolltech.qt.gui.QGraphicsRectItem;
 import com.trolltech.qt.gui.QGraphicsSceneMouseEvent;
+import com.trolltech.qt.gui.QImage;
+import com.trolltech.qt.gui.QImage.Format;
 import com.trolltech.qt.gui.QKeyEvent;
 import com.trolltech.qt.gui.QPainter;
 import com.trolltech.qt.gui.QPainter.CompositionMode;
@@ -36,9 +43,12 @@ import com.trolltech.qt.gui.QWidget;
 
 public class QGraphicsContainerItem extends QGraphicsRectItem implements QGraphicsItemInterfaceWithTapEventReceiver {
 
+	private static Map<String, QImage> backgroundCache = new WeakHashMap<String, QImage>();
+	
 	private QPainterPath shape;
 	
 	private Background background;
+	private Border border;
 	
 	public QGraphicsContainerItem() {
 //		setFlag(GraphicsItemFlag.ItemSendsGeometryChanges, true);
@@ -132,20 +142,96 @@ public class QGraphicsContainerItem extends QGraphicsRectItem implements QGraphi
 //		painter.drawRoundedRect(rect(), xRadius, yRadius);
 		
 		// render background
-		painter.setPen(QPen.NoPen);
+		renderBackground(painter);
+		
+		
+		// renderBorder
+		renderBorder(painter);
+	}
+	
+	private void renderBackground(QPainter painter) {
 		if (background != null) {
-			if (background instanceof Backgrounds) {
-				List<BaseBackground> bg = new ArrayList<BaseBackground>(((Backgrounds) background).backgrounds);
-				Collections.reverse(bg);
-				for (BaseBackground b : bg) {
-					renderBackground(painter, b);
-				}
+			long begin = System.nanoTime();
+			final String hash = background.getHexHash();
+			
+			QImage image = null;
+			if (backgroundCache.containsKey(hash)) {
+				System.err.println("from cache");
+				 image = backgroundCache.get(hash);
 			}
-			else if (background instanceof BaseBackground ){
-				renderBackground(painter, (BaseBackground)background);
+			else {
+				System.err.println("new");
+				image = new QImage(new QSize((int)Math.ceil(rect().width()), (int)Math.ceil(rect().height())), Format.Format_ARGB32);
+				QPainter imagePainter = new QPainter(image);
+				
+				painter.setPen(QPen.NoPen);
+				if (background instanceof Backgrounds) {
+					List<BaseBackground> bg = new ArrayList<BaseBackground>(((Backgrounds) background).backgrounds);
+					Collections.reverse(bg);
+					for (BaseBackground b : bg) {
+						renderBackground(imagePainter, b);
+					}
+				}
+				else if (background instanceof BaseBackground ){
+					renderBackground(imagePainter, (BaseBackground)background);
+				}
+				imagePainter.end();
+				imagePainter.dispose();
+				
+				backgroundCache.put(hash, image);
 			}
 			
+			painter.drawImage(0, 0, image);
+			
+			long duration = (System.nanoTime() - begin) / 1000000;
+			System.err.println(this + " duration = " + duration );
 		}
+	}
+	
+	private void renderBorder(QPainter painter) {
+		if (border != null) {
+			for (BorderStroke s : border.strokes) {
+				renderBorderStroke(painter, s);
+			}
+		}
+	}
+	
+	private void renderBorderStroke(QPainter painter, BorderStroke stroke) {
+		QBrush brush = QtConverter.convert(stroke.paint);
+		
+		painter.setCompositionMode(CompositionMode.CompositionMode_SourceOver);
+		painter.setBrush(QBrush.NoBrush);
+		
+		QPen pen = new QPen();
+		pen.setBrush(brush);
+		pen.setWidthF(stroke.widths.top);
+		
+		painter.setPen(pen);
+		
+		double width = boundingRect().width();
+		double height = boundingRect().height();
+		
+		double left = stroke.insets.left;
+		double right = width - stroke.insets.right;
+		
+		double top = stroke.insets.top;
+		double bottom = height - stroke.insets.bottom;
+		
+		QPainterPath path = new QPainterPath();
+		path.moveTo(left + stroke.cornerRadii.topLeftHorizontalRadius, top);
+		path.lineTo(right - stroke.cornerRadii.topRightHorizontalRadius, top);
+		path.arcTo(right - stroke.cornerRadii.topRightHorizontalRadius * 2, top, stroke.cornerRadii.topRightHorizontalRadius * 2, stroke.cornerRadii.topRightVerticalRadius * 2, 90, -90);
+		path.lineTo(right, bottom - stroke.cornerRadii.bottomRightVerticalRadius);
+		path.arcTo(right - stroke.cornerRadii.bottomRightHorizontalRadius * 2, bottom - stroke.cornerRadii.bottomRightVerticalRadius*2, stroke.cornerRadii.bottomRightHorizontalRadius * 2, stroke.cornerRadii.bottomRightVerticalRadius*2,  0, -90);
+		path.lineTo(left + stroke.cornerRadii.bottomLeftHorizontalRadius, bottom);
+		
+		path.arcTo(left, bottom - stroke.cornerRadii.bottomLeftVerticalRadius*2, stroke.cornerRadii.bottomLeftHorizontalRadius*2, stroke.cornerRadii.bottomLeftVerticalRadius*2, -90, -90);
+		path.lineTo(left, top + stroke.cornerRadii.topLeftVerticalRadius);
+		
+		path.arcTo(left, top, stroke.cornerRadii.topLeftHorizontalRadius*2, stroke.cornerRadii.topLeftVerticalRadius*2, -180, -90);
+		
+		
+		painter.drawPath(path);
 		
 	}
 
@@ -207,6 +293,8 @@ public class QGraphicsContainerItem extends QGraphicsRectItem implements QGraphi
 	}
 
 	private MouseEventSupport support;
+
+	
 	
 	public void setEventSupport(MouseEventSupport support) {
 		this.support = support;
@@ -214,6 +302,11 @@ public class QGraphicsContainerItem extends QGraphicsRectItem implements QGraphi
 	
 	public void setBackground(Background background) {
 		this.background = background;
+		update(rect());
+	}
+	
+	public void setBorder(Border border) {
+		this.border = border;
 		update(rect());
 	}
 	
@@ -272,5 +365,8 @@ public class QGraphicsContainerItem extends QGraphicsRectItem implements QGraphi
 	public String toString() {
 		return "QGraphicsContainerItem("+rect()+")@" + System.identityHashCode(this);
 	}
+
+
+	
 	
 }
