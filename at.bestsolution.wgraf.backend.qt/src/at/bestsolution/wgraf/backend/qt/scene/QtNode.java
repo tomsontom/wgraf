@@ -3,6 +3,7 @@ package at.bestsolution.wgraf.backend.qt.scene;
 import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.backend.qt.QtBinder;
 import at.bestsolution.wgraf.events.FlingEvent;
+import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.ScrollEvent;
 import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.geom.shape.Shape;
@@ -132,7 +133,6 @@ public abstract class QtNode<N extends QGraphicsItemInterfaceWithTapEventReceive
 			}
 		});
 	}
-	
 	
 	@Override
 	public Signal<TapEvent> onTap() {

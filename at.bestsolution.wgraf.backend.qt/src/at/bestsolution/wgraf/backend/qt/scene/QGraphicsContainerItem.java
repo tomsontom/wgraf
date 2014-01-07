@@ -249,7 +249,7 @@ public class QGraphicsContainerItem extends QGraphicsRectItem implements QGraphi
 	private Property<Boolean> focus = null;
 	public ReadOnlyProperty<Boolean> focus() {
 		if (focus == null) {
-			focus = new SimpleProperty<Boolean>();
+			focus = new SimpleProperty<Boolean>(false);
 		}
 		return focus;
 	}

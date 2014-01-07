@@ -1,8 +1,5 @@
 package at.bestsolution.wgraf.widgets;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.events.KeyCode;
 import at.bestsolution.wgraf.events.KeyEvent;
@@ -22,11 +19,11 @@ import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.style.Insets;
 
-public class Button extends Widget {
+public class ToggleButton extends Widget {
 
 	private final at.bestsolution.wgraf.scene.Text nodeText;
 	
-	public Button() {
+	public ToggleButton() {
 		
 		area.width().set(200d);
 		area.height().set(40d);
@@ -66,7 +63,7 @@ public class Button extends Widget {
 				}
 			}
 		});
-		active().registerChangeListener(new ChangeListener<Boolean>() {
+		selected().registerChangeListener(new ChangeListener<Boolean>() {
 			@Override
 			public void onChange(Boolean oldValue, Boolean newValue) {
 				if (newValue) {
@@ -144,10 +141,13 @@ public class Button extends Widget {
 		});
 		
 		
+	
+		
 		registerPseudoClassState("focus", focus());
 	}
 	
 	private void triggerActivated() {
+		selected.set(!selected.get());
 		active.set(true);
 		Sync.get().execLaterOnUIThread(new Runnable() {
 			@Override
@@ -158,6 +158,12 @@ public class Button extends Widget {
 				}
 			}
 		}, 100);
+	}
+	
+	
+	private Property<Boolean> selected = new SimpleProperty<Boolean>(false);
+	public Property<Boolean> selected() {
+		return selected;
 	}
 	
 	private final DoubleChangeListener relayout = new DoubleChangeListener() {

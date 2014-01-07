@@ -3,12 +3,15 @@ package at.bestsolution.wgraf.widgets;
 import at.bestsolution.wgraf.Application;
 import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.paint.Color;
+import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.SignalListener;
+import at.bestsolution.wgraf.scene.Node;
 import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.style.Insets;
+import at.bestsolution.wgraf.transition.LinearDoubleTransition;
 
 public class WidgetTest extends Application {
 
@@ -19,8 +22,8 @@ public class WidgetTest extends Application {
 		
 		
 		final PopupPane pane = new PopupPane();
-		pane.getAreaNode().width().set(400d);
-		pane.getAreaNode().height().set(500d);
+		pane.getAreaNode().width().set(800);
+		pane.getAreaNode().height().set(600);
 	
 		Font font = new Font("Sans", 22);
 		
@@ -156,20 +159,20 @@ public class WidgetTest extends Application {
 //			
 //			scrollPane.setContent(label);
 //		}
-		yOffset += 70;
+		yOffset = 0;
 		{
 			Label test = new Label();
 			test.text().set("ScrollPane");
 			test.font().set(font);
 			
-			pane.add(test, 10, yOffset);
+			pane.add(test, 400, yOffset);
 			
 			ScrollPane scrollPane = new ScrollPane();
-			scrollPane.area.width().set(200);
-			scrollPane.area.height().set(200);
+			scrollPane.area.width().set(300);
+			scrollPane.area.height().set(400);
 			
 //			scrollPane.area.background().set(new FillBackground(new Color(255,  0,  0, 50), new CornerRadii(2), new Insets(0, 0, 0, 0)));
-			pane.add(scrollPane, 170, yOffset);
+			pane.add(scrollPane, 400, yOffset + 40);
 			
 			
 			SimpleWidgets w = new SimpleWidgets();
@@ -177,6 +180,36 @@ public class WidgetTest extends Application {
 			w.area.height().set(500);
 			scrollPane.setContent(w);
 		}
+		
+		
+		final TouchKeyboard kb = new TouchKeyboard();
+		
+		pane.add(kb, 0, 400);
+		
+		kb.area.y().set(600);
+		kb.area.y().setTransition(new LinearDoubleTransition(200));
+		
+		Application.get().focusNode().registerChangeListener(new ChangeListener<Node<?>>() {
+			@Override
+			public void onChange(Node<?> oldValue, Node<?> newValue) {
+				if (newValue != null) {
+					if (newValue.requireKeyboard().get()) {
+						
+						// show keyboard
+						kb.area.y().setDynamic(400);
+					}
+					else {
+						// hide keyboard
+						kb.area.y().setDynamic(600);
+					}
+				}
+				else {
+					// hide keyboard
+					kb.area.y().setDynamic(600);
+				}
+			}
+		});
+		
 		root().set(pane.getAreaNode());
 	}
 	

@@ -299,22 +299,24 @@ public class Text extends Widget {
 					updateCursorIndex(idx+1);
 				}
 				else {
-					// letter
-					final int idx = cursorIndex.get();
-					System.err.println("cursorIndex : " + idx);
-					String currentText = text().get();
-					String headText = currentText.substring(0, idx);
-					String tailText = currentText.substring(idx, currentText.length());
-					String result = headText + data.key + tailText;
-					text().set(result);
-					updateCursorIndex(idx+1);
+					if (data.key != null) {
+						// letter
+						final int idx = cursorIndex.get();
+						System.err.println("cursorIndex : " + idx);
+						String currentText = text().get();
+						String headText = currentText.substring(0, idx);
+						String tailText = currentText.substring(idx, currentText.length());
+						String result = headText + data.key + tailText;
+						text().set(result);
+						updateCursorIndex(idx+1);
+					}
 				}
 			}
 		});
 		
 		
 		
-		
+		area.requireKeyboard().set(true);
 		
 	}
 	

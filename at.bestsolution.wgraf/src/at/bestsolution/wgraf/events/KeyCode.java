@@ -9,5 +9,15 @@ public enum KeyCode {
 	LEFT,
 	RIGHT,
 	UP,
-	DOWN;
+	DOWN,
+	
+	
+	Q,
+	W,
+	E,
+	R,
+	T,
+	Z,
+	U, CAPS, SHIFT
+	;
 }

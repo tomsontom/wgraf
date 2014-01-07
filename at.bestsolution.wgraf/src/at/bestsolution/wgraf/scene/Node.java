@@ -3,6 +3,7 @@ package at.bestsolution.wgraf.scene;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import at.bestsolution.wgraf.Application;
 import at.bestsolution.wgraf.Frontend;
 import at.bestsolution.wgraf.events.FlingEvent;
 import at.bestsolution.wgraf.events.KeyEvent;
@@ -16,7 +17,7 @@ import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.Signal;
-import at.bestsolution.wgraf.properties.TransitionProperty;
+import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 
 public abstract class Node<Backend extends BackingNode> extends Frontend<Backend>{
@@ -61,6 +62,8 @@ public abstract class Node<Backend extends BackingNode> extends Frontend<Backend
 				}
 			}
 		});
+		
+		
 	}
 	
 	public final Property<Shape> clippingShape() {
@@ -73,7 +76,33 @@ public abstract class Node<Backend extends BackingNode> extends Frontend<Backend
 	
 	
 	public final Property<Boolean> acceptTapEvents() { return backend.acceptTapEvents(); }
-	public final Property<Boolean> acceptFocus() { return backend.acceptFocus(); }
+	
+	private SignalListener<TapEvent> focusOnTap = new SignalListener<TapEvent>() {
+		@Override
+		public void onSignal(TapEvent data) {
+			requestFocus();
+		}
+	};
+	
+	private Property<Boolean> acceptFocus = null;
+	public final Property<Boolean> acceptFocus() { 
+		if (acceptFocus == null) {
+			acceptFocus = new SimpleProperty<Boolean>(false);
+			acceptFocus.registerChangeListener(new ChangeListener<Boolean>() {
+				@Override
+				public void onChange(Boolean oldValue, Boolean newValue) {
+					if (newValue)  {
+						onTap().registerSignalListener(focusOnTap);
+					}
+					else {
+						onTap().unregisterSignalListener(focusOnTap);
+					}
+				}
+			});
+		}
+		return acceptFocus;
+//		return backend.acceptFocus();
+	}
 	
 	public Vec2d computePreferredSize() {
 		return new Vec2d(10, 10);
@@ -86,7 +115,27 @@ public abstract class Node<Backend extends BackingNode> extends Frontend<Backend
 	
 	public final Signal<KeyEvent> onKeyPress() { return backend.onKeyPress(); }
 	
-	public final ReadOnlyProperty<Boolean> focus() { return backend.focus(); }
+	private Property<Boolean> requireKeyboard = null;
+	public final Property<Boolean> requireKeyboard() { 
+		if (requireKeyboard == null) {
+			requireKeyboard = new SimpleProperty<Boolean>(false);
+		}
+		return requireKeyboard;
+	}
+	
+	
+	private Property<Boolean> focus = null;
+	public final ReadOnlyProperty<Boolean> focus() { 
+		if (focus == null) {
+			focus = new SimpleProperty<Boolean>(false);
+		}
+		return focus;
+		//return backend.focus();
+	}
+	
+	public final void requestFocus() {
+		Application.get().requestFocus(this);
+	}
 	
 	
 	private Property<Container> parent = new SimpleProperty<Container>(null);

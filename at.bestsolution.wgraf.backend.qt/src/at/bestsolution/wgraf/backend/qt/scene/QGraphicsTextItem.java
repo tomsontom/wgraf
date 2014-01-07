@@ -53,7 +53,7 @@ public class QGraphicsTextItem extends QGraphicsSimpleTextItem implements QGraph
 	private Property<Boolean> focus = null;
 	public ReadOnlyProperty<Boolean> focus() {
 		if (focus == null) {
-			focus = new SimpleProperty<Boolean>();
+			focus = new SimpleProperty<Boolean>(false);
 		}
 		return focus;
 	}
