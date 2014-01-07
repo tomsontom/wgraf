@@ -10,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
+import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.backend.javafx.JavaFxBinder;
 import at.bestsolution.wgraf.backend.javafx.JavaFxConverter;
 import at.bestsolution.wgraf.events.KeyCode;
@@ -28,7 +29,7 @@ import at.bestsolution.wgraf.style.Background;
 
 public class JavaFxContainer extends JavaFxNode<javafx.scene.layout.Region> implements BackingContainer {
 
-	private static class FxRegion extends Region {
+	public static class FxRegion extends Region {
 		
 		public FxRegion() {
 			// IMAGE TEST
@@ -179,19 +180,22 @@ public class JavaFxContainer extends JavaFxNode<javafx.scene.layout.Region> impl
 		return height;
 	}
 	
+	public void removeChild(final javafx.scene.Node child) {
+		Sync.get().syncExecOnUIThread(new Runnable() {
+			@Override
+			public void run() {
+				((FxRegion)node).getChildren().remove(child);
+			}
+		});
+	}
+	
 	public void addChild(final javafx.scene.Node child) {
-		if (Platform.isFxApplicationThread()) {
-			((FxRegion)node).getChildren().add(child);
-		}
-		else {
-			Platform.runLater(new Runnable() {
-				@Override
-				public void run() {
-					((FxRegion)node).getChildren().add(child);
-				}
-			});
-		}
-		
+		Sync.get().syncExecOnUIThread(new Runnable() {
+			@Override
+			public void run() {
+				((FxRegion)node).getChildren().add(child);
+			}
+		});
 	}
 	
 	

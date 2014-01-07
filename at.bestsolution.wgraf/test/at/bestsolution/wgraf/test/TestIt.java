@@ -33,7 +33,7 @@ public class TestIt {
 				
 				{
 					Container solidFill = new Container();
-					solidFill.setParent(region);
+					solidFill.parent().set(region);
 					
 					solidFill.x().set(75.0);
 					solidFill.y().set(40.0);
@@ -53,7 +53,7 @@ public class TestIt {
 				
 				{
 					Container solidFill = new Container();
-					solidFill.setParent(region);
+					solidFill.parent().set(region);
 					
 					solidFill.x().set(75.0);
 					solidFill.y().set(80.0);
@@ -78,7 +78,7 @@ public class TestIt {
 				
 				{
 					Container solidFill = new Container();
-					solidFill.setParent(region);
+					solidFill.parent().set(region);
 					
 					solidFill.x().set(75.0);
 					solidFill.y().set(120.0);
@@ -103,7 +103,7 @@ public class TestIt {
 				
 				{
 					Container linearGradient = new Container();
-					linearGradient.setParent(region);
+					linearGradient.parent().set(region);
 					
 					linearGradient.x().set(75.0);
 					linearGradient.y().set(160.0);
@@ -136,7 +136,7 @@ public class TestIt {
 					r.y().set(200.0);
 					r.width().set(stringExtent.x);
 					r.height().set(stringExtent.y);
-					r.setParent(region);
+					r.parent().set(region);
 					r.background().set(new FillBackground(new Color(255, 0, 0, 50), new CornerRadii(0), new Insets(0, 0, 0, 0)));
 					
 					Text text = new Text();
@@ -148,13 +148,13 @@ public class TestIt {
 					
 					text.text().set("Hallo yj");
 					
-					text.setParent(region);
+					text.parent().set(region);
 					
 				}
 				
 				final Container r = new Container();
 				r.acceptTapEvents().set(true);
-				r.setParent(region);
+				r.parent().set(region);
 				
 				r.x().set(75.0);
 				r.y().set(200.0);

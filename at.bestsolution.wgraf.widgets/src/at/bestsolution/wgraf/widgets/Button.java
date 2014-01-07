@@ -58,7 +58,7 @@ public class Button extends Widget {
 		area.addStyleClass("button");
 		
 		nodeText = new at.bestsolution.wgraf.scene.Text();
-		nodeText.setParent(area);
+		nodeText.parent().set(area);
 		
 		nodeText.addStyleClass("label");
 		
@@ -121,12 +121,14 @@ public class Button extends Widget {
 	
 	private void layoutChilds() {
 		final Font font = font().get();
-		final double fontHeight = font.stringExtent("Ay").y;
 		
-		final double width = font.stringExtent(text().get()).x;
-		nodeText.y().set(area.height().get() / 2 - fontHeight / 2);
-		nodeText.x().set(area.width().get() / 2 - width / 2);
-		
+		if (font != null) {
+			final double fontHeight = font.stringExtent("Ay").y;
+			
+			final double width = font.stringExtent(text().get()).x;
+			nodeText.y().set(area.height().get() / 2 - fontHeight / 2);
+			nodeText.x().set(area.width().get() / 2 - width / 2);
+		}
 	}
 	
 	

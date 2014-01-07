@@ -17,6 +17,7 @@ import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.TransitionProperty;
+import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 
 public abstract class Node<Backend extends BackingNode> extends Frontend<Backend>{
 
@@ -43,13 +44,29 @@ public abstract class Node<Backend extends BackingNode> extends Frontend<Backend
 				}
 			}
 		});
+		
+		parent.registerChangeListener(new ChangeListener<Container>() {
+			@Override
+			public void onChange(Container oldValue, Container newValue) {
+				if (oldValue != null) {
+					oldValue.getChildren().remove(this);
+				}
+				
+				if (newValue != null) {
+					newValue.getChildren().add(Node.this);
+					backend.setParent(newValue.backend);
+				}
+				else {
+					backend.setParent(null);
+				}
+			}
+		});
 	}
 	
 	public final Property<Shape> clippingShape() {
 		return backend.clippingShape();
 	}
 	
-	private Container parent;
 	
 	public final DoubleTransitionProperty x() { return backend.x(); }
 	public final DoubleTransitionProperty y() { return backend.y(); }
@@ -71,18 +88,10 @@ public abstract class Node<Backend extends BackingNode> extends Frontend<Backend
 	
 	public final ReadOnlyProperty<Boolean> focus() { return backend.focus(); }
 	
-	public Container getParent() {
-		return parent;
-	}
 	
-	public void setParent(Container parent) {
-		this.parent = parent;
-		if (this.parent != null) {
-			this.parent.getChildren().remove(this);
-		}
-		parent.getChildren().add(this);
-		
-		backend.setParent(parent.backend);
+	private Property<Container> parent = new SimpleProperty<Container>(null);
+	public Property<Container> parent() {
+		return parent;
 	}
 	
 	@Override

@@ -17,43 +17,63 @@ public class WidgetTest extends Application {
 		
 		title().set("Hallo Widgets");
 		
-		AbsolutePane pane = new AbsolutePane();
+		
+		final PopupPane pane = new PopupPane();
 		pane.getAreaNode().width().set(400d);
 		pane.getAreaNode().height().set(500d);
 	
 		Font font = new Font("Sans", 22);
 		
+		double yOffset = 10;
 		{
 			Label test = new Label();
 			test.text().set("Checkbox");
 			test.font().set(font);
 			
-			pane.add(test, 10, 10);
+			pane.add(test, 10, yOffset);
 			
 			CheckBox box = new CheckBox();
-			pane.add(box, 170, 10);
+			pane.add(box, 170, yOffset);
 		}
-		
+		yOffset += 70;
 		{
 			Label test = new Label();
 			test.text().set("Text");
 			test.font().set(font);
 			
-			pane.add(test, 10, 80);
+			pane.add(test, 10, yOffset);
 			
 			Text txt = new Text();
 			txt.font().set(font);
 			txt.text().set("Hallo Test");
-			pane.add(txt, 170, 80);
+			pane.add(txt, 170, yOffset);
 			
 		}
-		
+		yOffset += 70;
+		{
+			Label test = new Label();
+			test.text().set("Combobox");
+			test.font().set(font);
+			
+			pane.add(test, 10, yOffset);
+			
+			final ComboBox<String> box = new ComboBox<String>();
+			box.model().add("Test0");
+			box.model().add("Test1");
+			box.model().add("Test2");
+			box.model().add("Test3");
+			
+			
+			pane.add(box, 170, yOffset);
+			
+		}
+		yOffset += 70;
 		{
 			Label test = new Label();
 			test.text().set("Button");
 			test.font().set(font);
 			
-			pane.add(test, 10, 150);
+			pane.add(test, 10, yOffset);
 			
 			final Button btn = new Button();
 			btn.font().set(font);
@@ -64,22 +84,34 @@ public class WidgetTest extends Application {
 				public void onSignal(Void data) {
 					if (btn.text().get().equals("Press me!")) {
 						btn.text().set("Thanks!");
+						
+						Pane pop = new AbsolutePane();
+						pop.area.background().set(new FillBackground(new Color(255,  0,  0, 50), new CornerRadii(2), new Insets(0, 0, 0, 0)));
+						
+						pop.area.width().set(100);
+						pop.area.height().set(100);
+						
+						pane.showModal(new Vec2d(0,0), pop);
+						
+						
 					}
 					else {
 						btn.text().set("Press me!");
+						
+						pane.hide();
 					}
 				}
 			});
-			pane.add(btn, 170, 150);
+			pane.add(btn, 170, yOffset);
 			
 		}
-		
+		yOffset += 70;
 		{
 			Label test = new Label();
 			test.text().set("ScrollBar");
 			test.font().set(font);
 			
-			pane.add(test, 10, 220);
+			pane.add(test, 10, yOffset);
 			
 			ScrollBar bar = new ScrollBar();
 			bar.sliderSizeFactor().set(0.2);
@@ -95,7 +127,7 @@ public class WidgetTest extends Application {
 			bar.area.width().set(200d);
 			bar.area.height().set(40d);
 			
-			pane.add(bar, 170, 220);
+			pane.add(bar, 170, yOffset);
 			
 		}
 		
@@ -124,20 +156,20 @@ public class WidgetTest extends Application {
 //			
 //			scrollPane.setContent(label);
 //		}
-		
+		yOffset += 70;
 		{
 			Label test = new Label();
 			test.text().set("ScrollPane");
 			test.font().set(font);
 			
-			pane.add(test, 10, 290);
+			pane.add(test, 10, yOffset);
 			
 			ScrollPane scrollPane = new ScrollPane();
 			scrollPane.area.width().set(200);
 			scrollPane.area.height().set(200);
 			
 //			scrollPane.area.background().set(new FillBackground(new Color(255,  0,  0, 50), new CornerRadii(2), new Insets(0, 0, 0, 0)));
-			pane.add(scrollPane, 170, 290);
+			pane.add(scrollPane, 170, yOffset);
 			
 			
 			SimpleWidgets w = new SimpleWidgets();

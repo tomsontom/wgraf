@@ -123,7 +123,12 @@ public abstract class QtNode<N extends QGraphicsItemInterfaceWithTapEventReceive
 		Sync.get().syncExecOnUIThread(new Runnable() {
 			@Override
 			public void run() {
-				node.setParentItem(((QtContainer)parent).node);
+				if (parent != null) {
+					node.setParentItem(((QtContainer)parent).node);
+				}
+				else {
+					node.scene().removeItem(node);
+				}
 			}
 		});
 	}

@@ -79,12 +79,12 @@ public class ScrollPane extends Pane {
 	public void setContent(Widget content) {
 		this.content = content;
 		
-		content.getAreaNode().setParent(area);
+		content.getAreaNode().parent().set(area);
 		content.getAreaNode().x().setTransition(new TouchScrollTransition());
 		content.getAreaNode().y().setTransition(new TouchScrollTransition());
 		
-		hBar.area.setParent(area);
-		vBar.area.setParent(area);
+		hBar.area.parent().set(area);
+		vBar.area.parent().set(area);
 		
 		contentBinding.dispose();
 		contentBinding.registerBinding(WidgetBinder.bindScrollBar(hBar, content.area.x(), area.width(), content.area.width()));

@@ -50,7 +50,7 @@ public class ListTest extends Application {
 							);
 					final Text text = new Text();
 					text.font().set(new Font("Sans", 25));
-					text.setParent(c);
+					text.parent().set(c);
 					text.text().set("TODO: labelprovider!");
 					c.width().set(380);
 					c.height().set(40);

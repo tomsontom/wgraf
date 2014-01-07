@@ -81,14 +81,14 @@ public class CheckBox extends Widget {
 		});
 		
 		final Container sliderClip = new Container();
-		sliderClip.setParent(area);
+		sliderClip.parent().set(area);
 		sliderClip.clippingShape().set(clipRect);
 		sliderClip.width().set(100d);
 		sliderClip.height().set(40d);
 		
 		slider = new Container();
 		slider.x().setTransition(new TouchScrollTransition());
-		slider.setParent(sliderClip);
+		slider.parent().set(sliderClip);
 		slider.width().set(160d);
 		slider.height().set(40d);
 		slider.background().set(new Backgrounds(
@@ -112,7 +112,7 @@ public class CheckBox extends Widget {
 		onText.text().set(TEXT_ON);
 		onText.x().set(60/2d - onExtent.x/2);
 		onText.y().set(40/2d - onExtent.y/2);
-		onText.setParent(slider);
+		onText.parent().set(slider);
 		
 		onText.onTap().registerSignalListener(new SignalListener<TapEvent>() {
 			@Override
@@ -127,7 +127,7 @@ public class CheckBox extends Widget {
 		offText.x().set(100 + 60/2d - offExtent.x/2);
 		offText.y().set(40/2d - offExtent.y/2);
 		
-		offText.setParent(slider);
+		offText.parent().set(slider);
 		
 		area.onTap().registerSignalListener(new SignalListener<TapEvent>() {
 
@@ -155,10 +155,6 @@ public class CheckBox extends Widget {
 	
 	public void setY(double y) {
 		area.x().set(y);
-	}
-	
-	public void setParent(Container parent) {
-		area.setParent(parent);
 	}
 	
 	public ReadOnlyProperty<Boolean> focus() {

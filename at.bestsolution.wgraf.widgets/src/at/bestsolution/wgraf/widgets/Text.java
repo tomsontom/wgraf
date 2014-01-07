@@ -165,7 +165,7 @@ public class Text extends Widget {
 		area.height().set(40d);
 		
 		final Container textClip = new Container();
-		textClip.setParent(area);
+		textClip.parent().set(area);
 		textClip.width().set(180);
 		textClip.height().set(40);
 		textClip.x().set(10);
@@ -189,7 +189,7 @@ public class Text extends Widget {
 		});
 		
 		nodeText = new at.bestsolution.wgraf.scene.Text();
-		nodeText.setParent(textClip);
+		nodeText.parent().set(textClip);
 		nodeText.x().set(0);
 		nodeText.x().setTransition(new TouchScrollTransition());
 		
@@ -204,7 +204,7 @@ public class Text extends Widget {
 		});
 		
 		nodeCursor = new Container();
-		nodeCursor.setParent(textClip);
+		nodeCursor.parent().set(textClip);
 //		nodeCursor.background().set(new FillBackground(new Color(0, 255, 255, 100), new CornerRadii(0), new Insets(0,0,0,0)));
 		nodeCursor.width().set(3d);
 		nodeCursor.height().set(30d);

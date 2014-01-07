@@ -10,7 +10,7 @@ public class Label extends Widget {
 	
 	public Label() {
 		text = new Text();
-		text.setParent(area);
+		text.parent().set(area);
 	}
 	
 	public Property<String> text() {

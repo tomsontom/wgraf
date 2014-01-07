@@ -22,9 +22,11 @@ import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.ListChangeListener;
 import at.bestsolution.wgraf.properties.ListProperty;
 import at.bestsolution.wgraf.properties.Setter;
+import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.simple.SimpleDoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleListProperty;
+import at.bestsolution.wgraf.properties.simple.SimpleSignal;
 import at.bestsolution.wgraf.scene.Node;
 import at.bestsolution.wgraf.scene.Text;
 import at.bestsolution.wgraf.style.Font;
@@ -217,7 +219,10 @@ public class VirtualFlow<Model> extends Widget {
 	
 	private void onCellTap(Cell<Node<?>, Model> cell) {
 		System.err.println("tapped on " + cell.rowIdx);
+		onCellTap.signal(cell);
 	}
+	
+	protected Signal<Cell<Node<?>, Model>> onCellTap = new SimpleSignal<Cell<Node<?>, Model>>();
 	
 	private Cell<Node<?>, Model> createCell() {
 		Cell<Node<?>, Model> newNode;
@@ -229,6 +234,7 @@ public class VirtualFlow<Model> extends Widget {
 				@Override
 				public void onSignal(TapEvent data) {
 					onCellTap(n);
+					data.consume();
 				}
 			});
 		}
@@ -246,7 +252,7 @@ public class VirtualFlow<Model> extends Widget {
 				}
 			};
 		}
-		newNode.getNode().setParent(area);
+		newNode.getNode().parent().set(area);
 		return newNode;
 	}
 	
@@ -303,6 +309,7 @@ public class VirtualFlow<Model> extends Widget {
 			@Override
 			public void onSignal(ScrollEvent data) {
 				verticalRange.offset.incrementDynamic(data.deltaY);
+				data.consume();
 			}
 		});
 	}
@@ -310,6 +317,7 @@ public class VirtualFlow<Model> extends Widget {
 	private void resize() {
 		double height = area.height().get();
 		double width = area.width().get();
+		// TODO fix item size
 		area.clippingShape().set(new Rectangle(2, 2, width-4, height-4));
 	}
 	

@@ -12,6 +12,8 @@ import at.bestsolution.wgraf.scene.Container;
 
 public abstract class Widget {
 
+	Pane parent;
+	
 	private String id;
 	
 	public void setId(String id) {
@@ -45,6 +47,39 @@ public abstract class Widget {
 	
 	public Vec2d computePreferredSize() {
 		return area.computePreferredSize();
+	}
+	
+	public void showPopup(Vec2d offset, Widget popup) {
+		if (parent != null) {
+			offset = new Vec2d(offset.x + area.x().get(), offset.y + area.y().get());
+			parent.showPopup(offset, popup);
+		}
+		else {
+			System.err.println("PARENT IS NULL: " + this);
+		}
+	}
+	
+	public boolean isPopupVisible() {
+		if (parent != null) {
+			return parent.isPopupVisible();
+		}
+		else {
+			System.err.println("PARENT IS NULL: " + this);
+			return false;
+		}
+	}
+	
+	public void hidePopup() {
+		if (parent != null) {
+			parent.hidePopup();
+		}
+		else {
+			System.err.println("PARENT IS NULL: " + this);
+		}
+	}
+	
+	public void showModalPopup(Widget popup) {
+		
 	}
 	
 	@Override

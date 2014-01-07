@@ -5,6 +5,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import at.bestsolution.wgraf.backend.javafx.JavaFxBinder;
+import at.bestsolution.wgraf.backend.javafx.scene.JavaFxContainer.FxRegion;
 import at.bestsolution.wgraf.events.FlingEvent;
 import at.bestsolution.wgraf.events.MouseEventSupport;
 import at.bestsolution.wgraf.events.MouseEventSupport.MouseCoords;
@@ -204,8 +205,14 @@ public abstract class JavaFxNode<N extends Node> implements BackingNode {
 	
 	@Override
 	public void setParent(BackingContainer parent) {
-		JavaFxContainer p = (JavaFxContainer) parent;
-		p.addChild(node);
+		if (parent == null) {
+			FxRegion p = (FxRegion) node.getParent();
+			p.getChildren().remove(node);
+		}
+		else {
+			JavaFxContainer p = (JavaFxContainer) parent;
+			p.addChild(node);
+		}
 	}
 
 	

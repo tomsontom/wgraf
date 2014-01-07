@@ -41,7 +41,7 @@ public class TextNode extends Application {
 				r.height().set(stringExtent.y);
 				
 				
-				r.setParent(region);
+				r.parent().set(region);
 				r.background().set(new FillBackground(new Color(255, 0, 0, 50), new CornerRadii(0), new Insets(0, 0, 0, 0)));
 				
 				Text text = new Text();
@@ -52,7 +52,7 @@ public class TextNode extends Application {
 				
 				text.text().set(text0);
 				
-				text.setParent(region);
+				text.parent().set(region);
 				
 			}
 			
@@ -67,7 +67,7 @@ public class TextNode extends Application {
 				r.height().set(stringExtent.y);
 				
 				
-				r.setParent(region);
+				r.parent().set(region);
 				r.background().set(new FillBackground(new Color(255, 0, 0, 50), new CornerRadii(0), new Insets(0, 0, 0, 0)));
 				
 				Text text = new Text();
@@ -80,7 +80,7 @@ public class TextNode extends Application {
 				
 				text.text().set(text1);
 				
-				text.setParent(region);
+				text.parent().set(region);
 				
 			}
 		}

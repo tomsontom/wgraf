@@ -33,7 +33,7 @@ public class ScrollBar extends Widget {
 	public ScrollBar(Orientation orientation) {
 		this.orientation = orientation;
 		slider = new Container();
-		slider.setParent(area);
+		slider.parent().set(area);
 		
 		area.acceptTapEvents().set(true);
 		

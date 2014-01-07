@@ -9,7 +9,7 @@ public class TestButton extends Container {
 	
 	public TestButton() {
 		background = new Rectangle();
-		background.setParent(this);
+		background.parent().set(this);
 		
 	}
 }
