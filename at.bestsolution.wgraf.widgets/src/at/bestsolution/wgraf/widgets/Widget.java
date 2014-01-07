@@ -82,6 +82,10 @@ public abstract class Widget {
 		
 	}
 	
+	public void setBounds(double x, double y, double width, double height) {
+		
+	}
+	
 	@Override
 	public String toString() {
 		String r = getClass().getSimpleName();
@@ -89,5 +93,9 @@ public abstract class Widget {
 			r+= "#" + id;
 		}
 		return r;
+	}
+	
+	public void layout() {
+		// do nothing by default
 	}
 }
