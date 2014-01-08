@@ -8,7 +8,7 @@ import at.bestsolution.wgraf.scene.Node;
 
 public class Application extends Frontend<BackingApplication> {
 	
-	private static ThreadLocal<Application> app = new ThreadLocal<>();
+	private static ThreadLocal<Application> app = new ThreadLocal<Application>();
 	
 	public Application() {
 		backend.setInit(new Runnable() {

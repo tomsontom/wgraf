@@ -1,8 +1,5 @@
 package at.bestsolution.wgraf.widgets;
 
-import java.awt.Rectangle;
-
-import sun.misc.Signal;
 import at.bestsolution.wgraf.events.KeyCode;
 import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.ScrollEvent;
@@ -23,7 +20,6 @@ import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.scene.Container;
-import at.bestsolution.wgraf.style.Backgrounds;
 import at.bestsolution.wgraf.style.Border;
 import at.bestsolution.wgraf.style.BorderStroke;
 import at.bestsolution.wgraf.style.BorderWidths;
