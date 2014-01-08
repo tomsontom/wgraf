@@ -19,6 +19,7 @@ public class MouseEventSupport {
 	private VelocityTracker tracker = new VelocityTracker();
 	
 	private long beginTime;
+	private Object target;
 	private MouseCoords beginEvent;
 	private boolean withinTapBounds = false;
 	private boolean isLongTap = false;
@@ -97,10 +98,19 @@ public class MouseEventSupport {
 //		});
 	}
 	
+	protected Object lookupTarget(MouseCoords coords) {
+		return null;
+	}
+	
+	public Object getTarget() {
+		return target;
+	}
+	
 	public void mousePressed(MouseCoords coords, Runnable consumeCallback) {
 		final long now = System.currentTimeMillis();
 		
 		beginEvent = coords;
+		target = lookupTarget(coords);
 		withinTapBounds = true;
 		isLongTap = false;
 		tapDone = false;

@@ -48,6 +48,31 @@ public class SimpleDoubleTransitionProperty extends SimpleDoubleProperty impleme
 	}
 	
 	@Override
+	public void set(double value) {
+		super.set(value);
+		if (transition != null) {
+			transition.valueSet(value);
+		}
+	}
+	
+	@Override
+	public void increment(double delta) {
+		super.increment(delta);
+		if (transition != null) {
+			transition.valueSet(value);
+		}
+	}
+	
+	@Override
+	public void update(ValueUpdate<Double> update) {
+		super.update(update);
+		if (transition != null) {
+			transition.valueSet(value);
+		}
+	}
+	
+	
+	@Override
 	public void setDynamic(double value) {
 		if (transition == null) {
 			notify(this.value, this.value = value);

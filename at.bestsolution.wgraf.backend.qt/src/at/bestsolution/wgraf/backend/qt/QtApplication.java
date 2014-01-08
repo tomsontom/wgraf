@@ -1,12 +1,20 @@
 package at.bestsolution.wgraf.backend.qt;
 
+import java.text.DecimalFormat;
+import java.text.MessageFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Formatter;
 import java.util.List;
 import java.util.Queue;
 import java.util.LinkedList;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import at.bestsolution.wgraf.BackingApplication;
+import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.backend.qt.scene.QtContainer;
 import at.bestsolution.wgraf.backend.qt.scene.TapEventReceiver;
 import at.bestsolution.wgraf.events.MouseEventSupport;
@@ -21,6 +29,7 @@ import at.bestsolution.wgraf.scene.Container;
 
 import com.trolltech.qt.core.QPointF;
 import com.trolltech.qt.core.QRectF;
+import com.trolltech.qt.core.QTimer;
 import com.trolltech.qt.gui.QApplication;
 import com.trolltech.qt.gui.QBrush;
 import com.trolltech.qt.gui.QColor;
@@ -28,9 +37,14 @@ import com.trolltech.qt.gui.QGraphicsEllipseItem;
 import com.trolltech.qt.gui.QGraphicsItemInterface;
 import com.trolltech.qt.gui.QGraphicsScene;
 import com.trolltech.qt.gui.QGraphicsSceneMouseEvent;
+import com.trolltech.qt.gui.QGraphicsSimpleTextItem;
 import com.trolltech.qt.gui.QGraphicsView;
 import com.trolltech.qt.gui.QKeyEvent;
+import com.trolltech.qt.gui.QPixmapCache;
+import com.trolltech.qt.gui.QGraphicsView.CacheModeFlag;
 import com.trolltech.qt.gui.QGraphicsView.OptimizationFlag;
+import com.trolltech.qt.gui.QGraphicsView.ViewportUpdateMode;
+import com.trolltech.qt.gui.QMovie.CacheMode;
 import com.trolltech.qt.gui.QPainter;
 import com.trolltech.qt.gui.QStyleOptionGraphicsItem;
 import com.trolltech.qt.gui.QWidget;
@@ -94,14 +108,39 @@ public class QtApplication implements BackingApplication {
 		
 		scene = new QGraphicsScene() {
 			
-			private MouseEventSupport eventSupport = new MouseEventSupport();
+			private long frames = 0;
+			
+			private long begin = -1;
+			
+			
+			private void countFrame() { 
+				if (begin == -1) {
+					begin = System.currentTimeMillis();
+				}
+				long now = System.currentTimeMillis();
+				long passed = now - begin;
+				if (passed > 1000) {
+					System.err.println("repaints this second: " + frames);
+					begin = now;
+					frames = 0;
+				}
+				frames ++;
+			}
+			
+			private MouseEventSupport eventSupport = new MouseEventSupport() {
+				@Override
+				protected Object lookupTarget(MouseCoords coords) {
+					final QPointF point = new QPointF(coords.x, coords.y);
+					return items(point);
+				}
+			};
 			{
 				eventSupport.tap().registerSignalListener(new SignalListener<TapEvent>() {
 					@Override
 					public void onSignal(TapEvent data) {
 						// find nodes under tap position
 						final QPointF point = new QPointF(data.x, data.y);
-						List<QGraphicsItemInterface> items = items(point);
+						List<QGraphicsItemInterface> items = (List<QGraphicsItemInterface>) eventSupport.getTarget(); //items(point);
 						if (debugTapEvents) System.err.println("Tap event " + data + " on");
 						
 						for (QGraphicsItemInterface item : items) {
@@ -133,7 +172,7 @@ public class QtApplication implements BackingApplication {
 					public void onSignal(TapEvent data) {
 						// find nodes under tap position
 						final QPointF point = new QPointF(data.x, data.y);
-						List<QGraphicsItemInterface> items = items(point);
+						List<QGraphicsItemInterface> items =  (List<QGraphicsItemInterface>) eventSupport.getTarget(); //items(point);
 						if (debugTapEvents) System.err.println("LongTap event " + data + " on");
 						
 						for (QGraphicsItemInterface item : items) {
@@ -166,7 +205,7 @@ public class QtApplication implements BackingApplication {
 						// find nodes under tap position
 						final QPointF beginPoint = new QPointF(data.beginX, data.beginY);
 						final QPointF point = new QPointF(data.x, data.y);
-						List<QGraphicsItemInterface> items = items(beginPoint);
+						List<QGraphicsItemInterface> items =  (List<QGraphicsItemInterface>) eventSupport.getTarget(); //items(beginPoint);
 						if (debugTapEvents) System.err.println("Scroll event " + data + " on");
 						
 						for (QGraphicsItemInterface item : items) {
@@ -218,23 +257,11 @@ public class QtApplication implements BackingApplication {
 			}
 			
 			@Override
-			protected void drawItems(QPainter painter,
-					QGraphicsItemInterface[] items,
-					QStyleOptionGraphicsItem[] options, QWidget widget) {
-				
-//				System.err.println("SCENE DRAW ITEMS " + Arrays.toString(items));
-				super.drawItems(painter, items, options, widget);
-			}
-			
-			@Override
 			protected void drawBackground(QPainter painter, QRectF rect) {
+				
+				countFrame();
 //				System.err.println("SCENE DRAW BACKGROUND");
 				super.drawBackground(painter, rect);
-			}
-			
-			protected void drawForeground(QPainter painter, QRectF rect) {
-//				System.err.println("SCENE DRAW FOREGROUND");
-				super.drawForeground(painter, rect);
 			}
 		};
 		
@@ -245,25 +272,6 @@ public class QtApplication implements BackingApplication {
 			}
 			
 			
-			@Override
-			protected void drawItems(QPainter painter,
-					QGraphicsItemInterface[] items,
-					QStyleOptionGraphicsItem[] options) {
-				
-//				System.err.println("VIEW DRAW ITEMS " + Arrays.toString(items));
-				super.drawItems(painter, items, options);
-			}
-			
-			@Override
-			protected void drawBackground(QPainter painter, QRectF rect) {
-//				System.err.println("VIEW DRAW BACKGROUND");
-				super.drawBackground(painter, rect);
-			}
-			
-			protected void drawForeground(QPainter painter, QRectF rect) {
-//				System.err.println("VIEW DRAW FOREGROUND");
-				super.drawForeground(painter, rect);
-			}
 		};
 		view.setWindowTitle(title().get());
 		
@@ -279,21 +287,82 @@ public class QtApplication implements BackingApplication {
 		// TODO find out how it impacts performance
 		// https://qt.gitorious.org/qt/qt/source/319d4ad467364525a788c827ae04934ef4722eef:src/gui/graphicsview/qgraphicsview.cpp#L3385
 		
-		view.setOptimizationFlag(OptimizationFlag.IndirectPainting);
+		//view.setOptimizationFlag(OptimizationFlag.IndirectPainting);
 		
-		view.setRenderHints(RenderHint.HighQualityAntialiasing, RenderHint.Antialiasing, RenderHint.TextAntialiasing);
+		view.setRenderHints(
+				RenderHint.HighQualityAntialiasing, 
+				RenderHint.Antialiasing, 
+				RenderHint.TextAntialiasing
+				);
 		
+		view.setViewportUpdateMode(ViewportUpdateMode.MinimalViewportUpdate);
 		view.setVisible(true);
 		
 		view.setStyleSheet( "QGraphicsView { border-style: none; }" );
 		
 		scene.addItem(((QtContainer)root().get().internal_getBackend()).getNode());
 		
+//		scene.changed.connect(this, "change(List)");
+		
 		scene.setSceneRect(0, 0, w, h);
+		
+		fps = scene.addSimpleText("fps");
+		
+		System.err.println("Cache limit: " + QPixmapCache.cacheLimit());
+		
+//		redrawHammer.timeout.connect(this, "render()");
+//		redrawHammer.setInterval(16);
+//		redrawHammer.start();
 		
 		QApplication.exec();
 
 	}
+
+	private List<QRectF> changes = new ArrayList<QRectF>();
+	
+	private QTimer redrawHammer = new QTimer();
+	
+	private long frame = 0;
+	private long begin = -1;
+	
+	private QGraphicsSimpleTextItem fps;
+	
+	public void render() {
+		final long now = System.currentTimeMillis();
+		if (begin == -1) {
+			begin = now;
+		}
+		long duration = now - begin;
+		
+		
+		if (duration > 5000) {
+			float fps = frame / (float) duration * 1000;
+			this.fps.setText("fps: " + new DecimalFormat("##0").format(fps));
+			begin = now;
+			frame = 0;
+		}
+		if (changes.size() > 0) {
+			List<QRectF> x = new ArrayList<QRectF>(changes);
+			changes.clear();
+//			System.err.println("frame: " + x.size());
+//			System.err.println(x);
+			QRectF union = new QRectF();
+			for (QRectF r : x) {
+				union = union.united(r);
+			}
+//			System.err.println("union: " + union);
+			view.viewport().update(union.toAlignedRect());
+		}
+		frame++;
+	}
+	
+	public void change(List<QRectF> o) {
+		
+//		System.err.println("CHANGE" + o);
+		
+		changes.addAll(o);
+	}
+	
 	
 	private Runnable init;
 	

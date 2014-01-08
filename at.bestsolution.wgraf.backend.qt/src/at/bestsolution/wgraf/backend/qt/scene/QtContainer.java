@@ -1,8 +1,5 @@
 package at.bestsolution.wgraf.backend.qt.scene;
 
-import java.util.Map;
-import java.util.WeakHashMap;
-
 import at.bestsolution.wgraf.backend.qt.QtBinder;
 import at.bestsolution.wgraf.backend.qt.QtConverter;
 import at.bestsolution.wgraf.events.KeyEvent;
@@ -22,7 +19,6 @@ import at.bestsolution.wgraf.style.Border;
 import at.bestsolution.wgraf.style.Effect;
 
 import com.trolltech.qt.gui.QGraphicsItem.GraphicsItemFlag;
-import com.trolltech.qt.gui.QImage;
 import com.trolltech.qt.gui.QPainterPath;
 
 public class QtContainer extends QtNode<QGraphicsContainerItem> implements BackingContainer {
@@ -42,6 +38,7 @@ public class QtContainer extends QtNode<QGraphicsContainerItem> implements Backi
 			path = new QPainterPath();
 			path.addRoundedRect(((Rectangle) s).x, ((Rectangle) s).y, ((Rectangle) s).width, ((Rectangle) s).height, ((Rectangle) s).r, ((Rectangle) s).r);
 		}
+		
 		node.setFlag(GraphicsItemFlag.ItemClipsToShape, path != null);
 		node.setFlag(GraphicsItemFlag.ItemClipsChildrenToShape, path != null);
 		node.setShape(path);

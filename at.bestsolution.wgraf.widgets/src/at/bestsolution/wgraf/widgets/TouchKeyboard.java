@@ -1,6 +1,5 @@
 package at.bestsolution.wgraf.widgets;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,10 +7,22 @@ import java.util.Map;
 import at.bestsolution.wgraf.Application;
 import at.bestsolution.wgraf.events.KeyCode;
 import at.bestsolution.wgraf.events.KeyEvent;
+import at.bestsolution.wgraf.events.TapEvent;
+import at.bestsolution.wgraf.paint.Color;
+import at.bestsolution.wgraf.paint.LinearGradient;
+import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
+import at.bestsolution.wgraf.paint.LinearGradient.Spread;
+import at.bestsolution.wgraf.paint.LinearGradient.Stop;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.scene.Node;
+import at.bestsolution.wgraf.style.Border;
+import at.bestsolution.wgraf.style.BorderStroke;
+import at.bestsolution.wgraf.style.BorderWidths;
+import at.bestsolution.wgraf.style.CornerRadii;
+import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
+import at.bestsolution.wgraf.style.Insets;
 
 public class TouchKeyboard extends Widget {
 
@@ -171,8 +182,8 @@ public class TouchKeyboard extends Widget {
 	}
 	
 	private void initButtons() {
-		int y = 0;
-		int x = 0;
+		int y = 10;
+		int x = 10;
 		int keyIdx = 0;
 		for (int row = 0; row < rows.size(); row++ ) {
 			int length = rows.get(row);
@@ -219,11 +230,11 @@ public class TouchKeyboard extends Widget {
 					buttons.put(key, b);
 				}
 				
-				x += key.width + 2;
+				x += key.width + 4;
 				keyIdx++;
 			}
-			y += 42;
-			x = 0;
+			y += 44;
+			x = 10;
 		}
 		
 		
@@ -231,8 +242,27 @@ public class TouchKeyboard extends Widget {
 	
 	public TouchKeyboard() {
 		
-		area.width().set(800);
-		area.height().set(200);
+		area.width().set(700);
+		area.height().set(240);
+		area.x().set(50);
+		
+		area.onTap().registerSignalListener(new SignalListener<TapEvent>() {
+			@Override
+			public void onSignal(TapEvent data) {
+				data.consume();
+			}
+		});
+		
+		Insets bgInsets = new Insets(0, 0, 0, 0);
+		final FillBackground bg = new FillBackground(
+				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
+					new Stop(0, new Color(0, 0, 0, 200)),
+					new Stop(1, new Color(50, 50, 50, 200))
+				), 
+				new CornerRadii(10), bgInsets);
+		area.background().set(bg);
+		
+		area.border().set(new Border(new BorderStroke(new Color(240, 240, 240, 255), new CornerRadii(10), new BorderWidths(3), bgInsets)));
 		
 		initButtons();
 //		double off = 0;

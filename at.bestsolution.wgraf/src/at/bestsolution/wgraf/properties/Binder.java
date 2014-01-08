@@ -2,6 +2,8 @@ package at.bestsolution.wgraf.properties;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import at.bestsolution.wgraf.math.Rect;
+
 
 public class Binder {
 
@@ -43,6 +45,23 @@ public class Binder {
 		};
 	}
 	
+	public static Binding uniBind(final DoubleProperty propertyA, final DoubleProperty propertyB) {
+		final DoubleChangeListener listener = new DoubleChangeListener() {
+			@Override
+			public void onChange(double oldValue, double newValue) {
+				propertyB.set(newValue);
+			}
+		};
+		propertyA.registerChangeListener(listener);
+		propertyB.set(propertyA.get());
+		return new Binding() {
+			@Override
+			public void dispose() {
+				propertyA.unregisterChangeListener(listener);
+			}
+		};
+	}
+	
 	public static <A, B> Binding uniBind(final Property<A> propertyA, final Property<B> propertyB, final Converter<A, B> converter) {
 		final ChangeListener<A> listener = new ChangeListener<A>() {
 			@Override
@@ -59,6 +78,115 @@ public class Binder {
 			}
 		};
 	}
+	
+	public static Binding bidiBindRect(
+			final DoubleProperty propertyAx,
+			final DoubleProperty propertyAy,
+			final DoubleProperty propertyAwidth,
+			final DoubleProperty propertyAheight,
+			final Property<Rect> propertyB) {
+		final AtomicBoolean ignoreA = new AtomicBoolean(false);
+		final AtomicBoolean ignoreB = new AtomicBoolean(false);
+		
+		
+		final DoubleChangeListener xChange = new DoubleChangeListener() {
+			@Override
+			public void onChange(double oldValue, double newValue) {
+				if (!ignoreA.get()) {
+					try {
+						ignoreB.set(true);
+						propertyB.set(new Rect(newValue, propertyAy.get(), propertyAwidth.get(), propertyAheight.get()));
+					}
+					finally {
+						ignoreB.set(false);
+					}
+				}
+			}
+		};
+		
+		final DoubleChangeListener yChange = new DoubleChangeListener() {
+			@Override
+			public void onChange(double oldValue, double newValue) {
+				if (!ignoreA.get()) {
+					try {
+						ignoreB.set(true);
+						propertyB.set(new Rect(propertyAx.get(), newValue, propertyAwidth.get(), propertyAheight.get()));
+					}
+					finally {
+						ignoreB.set(false);
+					}
+				}
+			}
+		};
+		
+		final DoubleChangeListener widthChange = new DoubleChangeListener() {
+			@Override
+			public void onChange(double oldValue, double newValue) {
+				if (!ignoreA.get()) {
+					try {
+						ignoreB.set(true);
+						propertyB.set(new Rect(propertyAx.get(), propertyAx.get(), newValue, propertyAheight.get()));
+					}
+					finally {
+						ignoreB.set(false);
+					}
+				}
+			}
+		};
+		
+		final DoubleChangeListener heightChange = new DoubleChangeListener() {
+			@Override
+			public void onChange(double oldValue, double newValue) {
+				if (!ignoreA.get()) {
+					try {
+						ignoreB.set(true);
+						propertyB.set(new Rect(propertyAx.get(), propertyAx.get(), propertyAwidth.get(), newValue));
+					}
+					finally {
+						ignoreB.set(false);
+					}
+				}
+			}
+		};
+		
+		final ChangeListener<Rect> rectChange = new ChangeListener<Rect>() {
+			@Override
+			public void onChange(Rect oldValue, Rect newValue) {
+				if (!ignoreB.get()) {
+					try {
+						ignoreA.set(true);
+						propertyAx.set(newValue.x);
+						propertyAy.set(newValue.y);
+						propertyAwidth.set(newValue.width);
+						propertyAheight.set(newValue.height);
+					}
+					finally {
+						ignoreA.set(false);
+					}
+				}
+			}
+		};
+		
+		propertyAx.registerChangeListener(xChange);
+		propertyAy.registerChangeListener(yChange);
+		propertyAwidth.registerChangeListener(widthChange);
+		propertyAheight.registerChangeListener(heightChange);
+		propertyB.registerChangeListener(rectChange);
+		
+		return new Binding() {
+			@Override
+			public void dispose() {
+				propertyAx.unregisterChangeListener(xChange);
+				propertyAy.unregisterChangeListener(yChange);
+				propertyAwidth.unregisterChangeListener(widthChange);
+				propertyAheight.unregisterChangeListener(heightChange);
+				propertyB.unregisterChangeListener(rectChange);
+			}
+		};
+	}
+			
+	
+	
 	
 	public static Binding bidiBind(final DoubleProperty propertyA, final DoubleProperty propertyB, final Converter<Double, Double> converterAB, final Converter<Double, Double> converterBA) {
 		final AtomicBoolean ignoreA = new AtomicBoolean(false);
@@ -152,5 +280,7 @@ public class Binder {
 			}
 		};
 	}
+
+
 	
 }

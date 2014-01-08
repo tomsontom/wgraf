@@ -51,4 +51,8 @@ public class LinearDoubleTransition implements Transition<Double> {
 		
 	}
 
+	@Override
+	public void valueSet(double value) {
+		// TODO Auto-generated method stub
+	}
 }

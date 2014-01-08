@@ -15,6 +15,10 @@ public class Insets {
         this.left = left;
     }
 
+	public Insets(int width) {
+		this(width, width, width, width);
+	}
+
 	@Override
 	public String toString() {
 		return "Insets [top=" + top + ", left=" + left + ", right=" + right

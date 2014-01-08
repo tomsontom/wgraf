@@ -13,4 +13,8 @@ public class BorderWidths {
         this.bottom = bottom;
         this.left = left;
     }
+
+	public BorderWidths(int width) {
+		this(width, width, width, width);
+	}
 }

@@ -20,6 +20,9 @@ import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleSignal;
 import at.bestsolution.wgraf.style.Background;
 import at.bestsolution.wgraf.style.Backgrounds;
+import at.bestsolution.wgraf.style.Border;
+import at.bestsolution.wgraf.style.BorderStroke;
+import at.bestsolution.wgraf.style.BorderWidths;
 import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.DropShadow;
 import at.bestsolution.wgraf.style.FillBackground;
@@ -54,6 +57,7 @@ public class Button extends Widget {
 			@Override
 			public void onSignal(TapEvent data) {
 				triggerActivated();
+				data.consume();
 			}
 		});
 		
@@ -120,8 +124,11 @@ public class Button extends Widget {
 				new FillBackground(new Color(255, 255, 0, 144), new CornerRadii(4), new Insets(0, 0, 0, 0))
 			);
 		
-		area.cache().set(true);
+		
 		area.background().set(normal);
+		
+		area.border().set(new Border(new BorderStroke(new Color(100,100,100,100), new CornerRadii(4), new BorderWidths(1, 1, 1, 1), new Insets(0, 0, 0, 0))));
+		
 //		focus().registerChangeListener(new ChangeListener<Boolean>() {
 //			@Override
 //			public void onChange(Boolean oldValue, Boolean newValue) {
@@ -147,48 +154,40 @@ public class Button extends Widget {
 		active().registerChangeListener(new ChangeListener<Boolean>() {
 			@Override
 			public void onChange(Boolean oldValue, Boolean newValue) {
-				area.x().increment(newValue ? 2 : -2);
-				area.y().increment(newValue ? 2 : -2);
-//				if (newValue) {
-//					area.effect().set(null);
-////					if (focus().get()) {
-////						area.background().set(activeWithFocus);
-////					}
-////					else {
-//						area.background().set(active);
-////					}
-//				}
-//				else {
-//					area.effect().set(new DropShadow());
-////					if (focus().get()) {
-////						area.background().set(normalWithFocus);
-////					}
-////					else {
-//						area.background().set(normal);
-////					}
-//				}
+//				area.x().increment(newValue ? 2 : -2);
+//				area.y().increment(newValue ? 2 : -2);
+				if (newValue) {
+//					if (focus().get()) {
+//						area.background().set(activeWithFocus);
+//					}
+//					else {
+						area.background().set(active);
+//					}
+				}
+				else {
+//					if (focus().get()) {
+//						area.background().set(normalWithFocus);
+//					}
+//					else {
+						area.background().set(normal);
+//					}
+				}
 			}
 			
 		});
 		
-		area.effect().set(new DropShadow());
-		
+//		area.effect().set(new DropShadow());
+		area.cache().set(true);
 		nodeText.fill().set(new Color(255,255,255,255));
-		nodeText.effect().set(new DropShadow());
+		
+//		nodeText.effect().set(new DropShadow());
+		
+		nodeText.cache().set(true);
 	}
 	
 	private void triggerActivated() {
 		active.set(true);
-		Sync.get().asyncExecOnUIThread(new Runnable() {
-			@Override
-			public void run() {
-				active.set(false);
-				if (activated != null) {
-					activated.signal(null);
-				}
-			}
-		});
-//		Sync.get().execLaterOnUIThread(new Runnable() {
+//		Sync.get().asyncExecOnUIThread(new Runnable() {
 //			@Override
 //			public void run() {
 //				active.set(false);
@@ -196,7 +195,16 @@ public class Button extends Widget {
 //					activated.signal(null);
 //				}
 //			}
-//		}, 50);
+//		});
+		Sync.get().execLaterOnUIThread(new Runnable() {
+			@Override
+			public void run() {
+				active.set(false);
+				if (activated != null) {
+					activated.signal(null);
+				}
+			}
+		}, 50);
 	}
 	
 	private final DoubleChangeListener relayout = new DoubleChangeListener() {

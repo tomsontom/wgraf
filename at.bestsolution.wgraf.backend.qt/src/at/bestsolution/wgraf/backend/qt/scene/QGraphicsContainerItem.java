@@ -28,7 +28,9 @@ import at.bestsolution.wgraf.style.FillBackground;
 import com.trolltech.qt.core.QEvent;
 import com.trolltech.qt.core.QSize;
 import com.trolltech.qt.gui.QBrush;
+import com.trolltech.qt.gui.QColor;
 import com.trolltech.qt.gui.QFocusEvent;
+import com.trolltech.qt.gui.QFont;
 import com.trolltech.qt.gui.QGraphicsRectItem;
 import com.trolltech.qt.gui.QGraphicsSceneMouseEvent;
 import com.trolltech.qt.gui.QImage;
@@ -147,44 +149,66 @@ public class QGraphicsContainerItem extends QGraphicsRectItem implements QGraphi
 		
 		// renderBorder
 		renderBorder(painter);
+		
+//		renderDebugBorder(painter);
+	}
+	
+	QColor dbg0 = new QColor(255, 0, 0, 50);
+	QColor dbg1 = new QColor(255, 255, 0, 50);
+	
+	boolean dbgChooser = false;
+	long dbgDrawCount = 0;
+	
+	
+	private void renderDebugBorder(QPainter painter) {
+		painter.setBrush(dbgChooser ? dbg0 : dbg1);
+		painter.setPen(QPen.NoPen);
+		painter.drawRect(boundingRect());
+		
+		painter.setPen(QColor.black);
+		painter.setFont(new QFont("Sans", 6));
+		painter.drawText(0, (int)boundingRect().height(), "dc " + dbgDrawCount);
+		
+		dbgChooser = !dbgChooser;
+		dbgDrawCount ++;
 	}
 	
 	private void renderBackground(QPainter painter) {
 		if (background != null) {
-			long begin = System.nanoTime();
-			final String hash = background.getHexHash();
-			
-			QImage image = null;
-			if (backgroundCache.containsKey(hash)) {
-				System.err.println("from cache");
-				 image = backgroundCache.get(hash);
-			}
-			else {
-				System.err.println("new");
-				image = new QImage(new QSize((int)Math.ceil(rect().width()), (int)Math.ceil(rect().height())), Format.Format_ARGB32);
-				QPainter imagePainter = new QPainter(image);
-				
+//			long begin = System.nanoTime();
+//			final String hash = background.getHexHash();
+//			
+//			QImage image = null;
+//			if (backgroundCache.containsKey(hash)) {
+//				System.err.println("from cache");
+//				 image = backgroundCache.get(hash);
+//			}
+//			else {
+//				System.err.println("new");
+//				image = new QImage(new QSize((int)Math.ceil(rect().width()), (int)Math.ceil(rect().height())), Format.Format_ARGB32);
+//				QPainter imagePainter = new QPainter(image);
+//				
 				painter.setPen(QPen.NoPen);
 				if (background instanceof Backgrounds) {
 					List<BaseBackground> bg = new ArrayList<BaseBackground>(((Backgrounds) background).backgrounds);
 					Collections.reverse(bg);
 					for (BaseBackground b : bg) {
-						renderBackground(imagePainter, b);
+						renderBackground(painter, b);
 					}
 				}
 				else if (background instanceof BaseBackground ){
-					renderBackground(imagePainter, (BaseBackground)background);
+					renderBackground(painter, (BaseBackground)background);
 				}
-				imagePainter.end();
-				imagePainter.dispose();
-				
-				backgroundCache.put(hash, image);
-			}
-			
-			painter.drawImage(0, 0, image);
-			
-			long duration = (System.nanoTime() - begin) / 1000000;
-			System.err.println(this + " duration = " + duration );
+//				imagePainter.end();
+//				imagePainter.dispose();
+//				
+//				backgroundCache.put(hash, image);
+//			}
+//			
+//			painter.drawImage(0, 0, image);
+//			
+//			long duration = (System.nanoTime() - begin) / 1000000;
+//			System.err.println(this + " duration = " + duration );
 		}
 	}
 	
@@ -208,8 +232,8 @@ public class QGraphicsContainerItem extends QGraphicsRectItem implements QGraphi
 		
 		painter.setPen(pen);
 		
-		double width = boundingRect().width();
-		double height = boundingRect().height();
+		double width = boundingRect().width() -1;
+		double height = boundingRect().height() -1;
 		
 		double left = stroke.insets.left;
 		double right = width - stroke.insets.right;
@@ -323,6 +347,7 @@ public class QGraphicsContainerItem extends QGraphicsRectItem implements QGraphi
 			return shape;
 		}
 	}
+	
 	
 	@Override
 	public void keyPressEvent(QKeyEvent event) {

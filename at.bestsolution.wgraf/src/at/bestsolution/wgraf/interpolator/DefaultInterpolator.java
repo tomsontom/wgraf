@@ -5,6 +5,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import at.bestsolution.wgraf.Sync;
+import at.bestsolution.wgraf.Sync.PulseListener;
 import at.bestsolution.wgraf.transition.Transition;
 
 public class DefaultInterpolator implements Interpolator {
@@ -29,7 +31,7 @@ public class DefaultInterpolator implements Interpolator {
 			public void run() {
 				step();
 			}
-		}, 0, 10);
+		}, 0, 16);
 	}
 	
 	private long lastStepTime = -1;

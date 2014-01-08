@@ -5,7 +5,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.DoubleProperty;
-import at.bestsolution.wgraf.properties.DoubleValueUpdate;
 import at.bestsolution.wgraf.properties.ValueUpdate;
 
 public class SimpleDoubleProperty implements DoubleProperty {
@@ -22,12 +21,14 @@ public class SimpleDoubleProperty implements DoubleProperty {
 	}
 	
 	protected void notify(double oldValue, double newValue) {
-		for (DoubleChangeListener listener : listeners) {
-			try {
-				listener.onChange(oldValue, newValue);
-			}
-			catch (Throwable t) {
-				t.printStackTrace();
+		if (oldValue != newValue) {
+			for (DoubleChangeListener listener : listeners) {
+				try {
+					listener.onChange(oldValue, newValue);
+				}
+				catch (Throwable t) {
+					t.printStackTrace();
+				}
 			}
 		}
 	}

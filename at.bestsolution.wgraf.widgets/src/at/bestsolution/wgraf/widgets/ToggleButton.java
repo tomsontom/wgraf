@@ -200,10 +200,8 @@ public class ToggleButton extends Widget {
 			
 		});
 		
-		area.effect().set(new DropShadow());
 		
 		nodeText.fill().set(new Color(255,255,255,255));
-		nodeText.effect().set(new DropShadow());
 	}
 	
 	private void triggerActivated() {

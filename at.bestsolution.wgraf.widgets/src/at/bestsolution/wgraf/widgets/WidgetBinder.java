@@ -9,7 +9,7 @@ import at.bestsolution.wgraf.properties.DoubleProperty;
 public class WidgetBinder {
 
 	
-	public static Binding bindScrollBar(final ScrollBar bar, final DoubleProperty offset, final DoubleProperty windowSize, final DoubleProperty contentSize) {
+	public static Binding bindScrollBar(final ScrollBar bar, final DoubleProperty offset, final DoubleProperty windowOffset, final DoubleProperty windowSize, final DoubleProperty contentSize) {
 		
 		// configure bar
 		bar.minValue().set(0.0);
@@ -19,11 +19,16 @@ public class WidgetBinder {
 		final Binding offsetBinding = Binder.bidiBind(offset, bar.value(), new Converter<Double, Double>() {
 			@Override
 			public Double convert(Double value) {
+				value -= windowOffset.get();
+				
 				double content = contentSize.get();
 				double window = windowSize.get();
-				double maxOffset = -(content - window);
+				double maxOffset = content - window + windowOffset.get();
+				
 				double curOffset = value;
 				double barValue = -(curOffset / maxOffset);
+				
+//				System.err.println("pane -> bar: " + value + " -> " + barValue);
 				return barValue;
 			}
 		}, new Converter<Double, Double>() {
@@ -32,10 +37,10 @@ public class WidgetBinder {
 			public Double convert(Double value) {
 				double content = contentSize.get();
 				double window = windowSize.get();
-				double maxOffset = -(content - window);
+				double maxOffset = content - window + windowOffset.get();
 				
-				double newOffset = -(value * maxOffset);
-				
+				double newOffset = -(value * maxOffset) + windowOffset.get();
+//				System.err.println("bar -> pane: " + value + " -> " + newOffset);
 				return newOffset;
 			}
 		});
@@ -72,10 +77,12 @@ public class WidgetBinder {
 				double content = contentSize.get();
 				double window = windowSize.get();
 				
-				double sliderSize = content / window;
+				double sliderSize = window / content;
 				sliderSize = Math.min(1.0, sliderSize);
-				sliderSize = Math.max(0.2, sliderSize);
+				sliderSize = Math.max(0.1, sliderSize);
 				bar.sliderSizeFactor().set(sliderSize);
+				
+				offset.increment(0.000000001);
 			}
 		};
 		

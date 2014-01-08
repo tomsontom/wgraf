@@ -63,7 +63,7 @@ public class QtSync extends Sync {
 		
 		timer.timeout.connect(obj, "onPulse()");
 		
-		timer.setInterval(20);
+		timer.setInterval(35);
 		timer.start();
 	}
 	

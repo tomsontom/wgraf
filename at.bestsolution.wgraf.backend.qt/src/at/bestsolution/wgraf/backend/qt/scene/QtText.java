@@ -64,7 +64,6 @@ public class QtText extends QtNode<QGraphicsTextItem> implements BackingText {
 	}
 	
 	
-	
 	@Override
 	public void setEventSupport(MouseEventSupport support) {
 	}

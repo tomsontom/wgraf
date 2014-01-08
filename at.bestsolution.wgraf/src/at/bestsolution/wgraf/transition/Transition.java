@@ -18,4 +18,6 @@ public interface Transition<Type> {
 	boolean update(long time);
 	
 	void startUpdate(ValueUpdater<Type> myUpdater, ValueReader<Type> myReader, ValueUpdate<Type> update);
+	
+	void valueSet(double value);
 }

@@ -11,10 +11,17 @@ import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleSignal;
 
+import com.trolltech.qt.gui.QBrush;
+import com.trolltech.qt.gui.QColor;
 import com.trolltech.qt.gui.QFocusEvent;
+import com.trolltech.qt.gui.QFont;
 import com.trolltech.qt.gui.QGraphicsSimpleTextItem;
 import com.trolltech.qt.gui.QKeyEvent;
+import com.trolltech.qt.gui.QPainter;
 import com.trolltech.qt.gui.QPainterPath;
+import com.trolltech.qt.gui.QPen;
+import com.trolltech.qt.gui.QStyleOptionGraphicsItem;
+import com.trolltech.qt.gui.QWidget;
 
 
 public class QGraphicsTextItem extends QGraphicsSimpleTextItem implements QGraphicsItemInterfaceWithTapEventReceiver{
@@ -23,6 +30,33 @@ public class QGraphicsTextItem extends QGraphicsSimpleTextItem implements QGraph
 	
 	public void setShape(QPainterPath shape) {
 		this.shape = shape;
+	}
+	
+	
+	@Override
+	public void paint(QPainter painter, QStyleOptionGraphicsItem option,
+			QWidget widget) {
+		super.paint(painter, option, widget);
+//		renderDebugBorder(painter);
+	}
+	
+	QColor dbg0 = new QColor(255, 0, 0, 50);
+	QColor dbg1 = new QColor(255, 255, 0, 50);
+	
+	boolean dbgChooser = false;
+	long dbgDrawCount = 0;
+	
+	private void renderDebugBorder(QPainter painter) {
+		painter.setPen(QPen.NoPen);
+		painter.setBrush(dbgChooser ? dbg0 : dbg1);
+		painter.drawRect(boundingRect());
+		
+		painter.setPen(QColor.black);
+		painter.setFont(new QFont("Sans", 6));
+		painter.drawText(0, (int)boundingRect().height(), "dc " + dbgDrawCount);
+		
+		dbgChooser = !dbgChooser;
+		dbgDrawCount ++;
 	}
 	
 	@Override

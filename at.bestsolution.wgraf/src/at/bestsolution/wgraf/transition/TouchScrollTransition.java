@@ -8,8 +8,8 @@ public class TouchScrollTransition implements Transition<Double> {
 	private ValueUpdater<Double> updater;
 	private ValueReader<Double> reader;
 	
-	private double targetValue;
-	private double damping = 0.9;
+	protected double targetValue;
+	private double damping = 0.7;
 	
 	private static final double DIFF = 0.1;
 	
@@ -44,6 +44,11 @@ public class TouchScrollTransition implements Transition<Double> {
 		}
 		updater.updateValue(result);
 		return false;
+	}
+	
+	@Override
+	public void valueSet(double value) {
+		targetValue = value;
 	}
 	
 	

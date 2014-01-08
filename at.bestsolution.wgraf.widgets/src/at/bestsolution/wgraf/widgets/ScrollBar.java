@@ -37,9 +37,6 @@ public class ScrollBar extends Widget {
 		
 		area.acceptTapEvents().set(true);
 		
-		area.background().set(new FillBackground(new Color(130, 130, 130, 40), new CornerRadii(5), new Insets(0, 0, 0, 0)));
-		slider.background().set(new FillBackground(new Color(130, 130, 130, 150), new CornerRadii(5), new Insets(2, 2, 2, 2)));
-		
 		if (orientation == Orientation.HORIZONTAL) {
 			slider.x().setTransition(new TouchScrollTransition());
 		}
@@ -92,9 +89,26 @@ public class ScrollBar extends Widget {
 			}
 		});
 		
+		initDefaultSkin();
 	}
 	
-	private void relayout() {
+	private void initDefaultSkin() {
+//		area.background().set(new FillBackground(new Color(130, 130, 130, 30), new CornerRadii(3), new Insets(0, 0, 0, 0)));
+		slider.background().set(new FillBackground(new Color(130, 130, 130, 50), new CornerRadii(3), new Insets(2, 2, 2, 2)));
+		sliderSizeFactor.registerChangeListener(new DoubleChangeListener() {
+			@Override
+			public void onChange(double oldValue, double newValue) {
+				if (newValue == 1) {
+					slider.background().set(null);
+				}
+				else {
+					slider.background().set(new FillBackground(new Color(130, 130, 130, 50), new CornerRadii(3), new Insets(2, 2, 2, 2)));
+				}
+			}
+		});
+	}
+	
+	protected void relayout() {
 		double minValue = this.minValue.get();
 		double maxValue = this.maxValue.get();
 		double valueRange = Math.abs(maxValue - minValue);
@@ -104,21 +118,23 @@ public class ScrollBar extends Widget {
 		double sliderSpace;
 		
 		if (orientation == Orientation.VERTICAL) {
-			sliderSpace = area.height().get() - slider.height().get();
-			
 			double sliderSize = sliderSizeFactor * area.height().get();
+			sliderSpace = area.height().get() - sliderSize;
 			slider.height().set(sliderSize);
 			slider.width().set(area.width().get());
 			
 		} else {
-			sliderSpace = area.width().get() - slider.width().get();
-			
 			double sliderSize = sliderSizeFactor * area.width().get();
+			sliderSpace = area.width().get()- sliderSize;
 			slider.width().set(sliderSize);
 			slider.height().set(area.height().get());
 		}
-		
-		valueFactor = valueRange / sliderSpace;
+		if (sliderSpace == 0) {
+			valueFactor = 0;
+		}
+		else {
+			valueFactor = valueRange / sliderSpace;
+		}
 	}
 	
 	private void onScroll(ScrollEvent data) {
@@ -157,9 +173,13 @@ public class ScrollBar extends Widget {
 	}
 	
 	private void updatePosition(double value) {
-		double minValue = this.minValue.get();
-		
-		offset = (value - minValue) / valueFactor;
+		if (valueFactor == 0) {
+			offset = 0;
+		}
+		else {
+			double minValue = this.minValue.get();
+			offset = (value - minValue) / valueFactor;
+		}
 		if (orientation == Orientation.HORIZONTAL) {
 			slider.x().setDynamic(offset);
 		}

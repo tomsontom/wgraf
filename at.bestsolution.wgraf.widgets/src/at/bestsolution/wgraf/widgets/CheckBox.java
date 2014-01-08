@@ -63,6 +63,9 @@ public class CheckBox extends Widget {
 	
 	private Property<Boolean> selected = new SimpleProperty<Boolean>(true);
 	
+	public Property<Boolean> selected() {
+		return selected;
+	}
 	
 	public CheckBox() {
 		
@@ -98,6 +101,7 @@ public class CheckBox extends Widget {
 		Vec2d offExtent = font.stringExtent(TEXT_OFF);
 		
 		onText = new Text();
+		onText.cache().set(true);
 		onText.font().set(font);
 		onText.text().set(TEXT_ON);
 		onText.x().set(-60/2d - onExtent.x/2);
@@ -112,6 +116,7 @@ public class CheckBox extends Widget {
 		});
 		
 		offText = new Text();
+		offText.cache().set(true);
 		offText.font().set(font);
 		offText.text().set(TEXT_OFF);
 		offText.x().set(40 + 60/2d - offExtent.x/2);
@@ -177,7 +182,26 @@ public class CheckBox extends Widget {
 				new CornerRadii(6), bgInsets);
 		
 		slider.background().set(sliderBg);
-		slider.effect().set(new DropShadow());
+		Color lineA = new Color(0, 0, 0, 50);
+		Color lineB = new Color(255, 255, 255, 50);
+		
+		double w = 40;
+		double lineSpace = 5;
+		double btop = 8;
+		double bbottom = 8;
+		double bleft = 4;
+		slider.border().set(new Border(
+				new BorderStroke(lineA, new CornerRadii(0), new BorderWidths(1, 1, 1, 1), new Insets(btop-1, w - bleft - 0 * lineSpace - 1, bbottom, bleft + 0*lineSpace)),
+				new BorderStroke(lineA, new CornerRadii(0), new BorderWidths(1, 1, 1, 1), new Insets(btop-1, w - bleft - 1 * lineSpace - 1, bbottom, bleft + 1*lineSpace)),
+				new BorderStroke(lineA, new CornerRadii(0), new BorderWidths(1, 1, 1, 1), new Insets(btop-1, w - bleft - 2 * lineSpace - 1, bbottom, bleft + 2*lineSpace)),
+//				new BorderStroke(lineA, new CornerRadii(0), new BorderWidths(1, 1, 1, 1), new Insets(btop, w - bleft - 3 * lineSpace -1, bbottom, b + 3*lineSpace)),
+				new BorderStroke(lineB, new CornerRadii(1), new BorderWidths(1, 1, 1, 1), new Insets(btop, w - bleft - 0 * lineSpace - 1 - 1, bbottom-1, bleft + 0*lineSpace + 1)),
+				new BorderStroke(lineB, new CornerRadii(1), new BorderWidths(1, 1, 1, 1), new Insets(btop, w - bleft - 1 * lineSpace - 1  - 1, bbottom-1, bleft + 1*lineSpace + 1)),
+				new BorderStroke(lineB, new CornerRadii(1), new BorderWidths(1, 1, 1, 1), new Insets(btop, w - bleft - 2 * lineSpace - 1  - 1, bbottom-1, bleft + 2*lineSpace + 1))
+//				new BorderStroke(lineB, new CornerRadii(0), new BorderWidths(1, 1, 1, 1), new Insets(btop, w - bleft - 3 * lineSpace -1 - 1, bbottom-1, bleft + 3*lineSpace + 1))
+				
+				));
+//		slider.effect().set(new DropShadow());
 //		focus().registerChangeListener(new ChangeListener<Boolean>() {
 //			@Override
 //			public void onChange(Boolean oldValue, Boolean newValue) {

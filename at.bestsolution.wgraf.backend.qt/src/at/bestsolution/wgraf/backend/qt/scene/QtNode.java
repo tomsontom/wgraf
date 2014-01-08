@@ -15,6 +15,8 @@ import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.scene.BackingContainer;
 import at.bestsolution.wgraf.scene.BackingNode;
 
+import com.trolltech.qt.core.QRectF;
+import com.trolltech.qt.core.QSize;
 import com.trolltech.qt.core.Qt.MouseButton;
 import com.trolltech.qt.core.Qt.MouseButtons;
 import com.trolltech.qt.gui.QGraphicsItem.CacheMode;
@@ -42,7 +44,9 @@ public abstract class QtNode<N extends QGraphicsItemInterfaceWithTapEventReceive
 				@Override
 				public void doSet(Boolean value) {
 					if (value) {
-						node.setCacheMode(CacheMode.ItemCoordinateCache, null);
+//						System.err.println("Activating cache for " + node);
+						QRectF b = node.boundingRect();
+						node.setCacheMode(CacheMode.DeviceCoordinateCache, new QSize((int) Math.ceil(b.width()), (int) Math.ceil(b.height())));
 					}
 					else {
 						node.setCacheMode(CacheMode.NoCache, null);
@@ -149,7 +153,8 @@ public abstract class QtNode<N extends QGraphicsItemInterfaceWithTapEventReceive
 					node.setParentItem(((QtContainer)parent).node);
 				}
 				else {
-					node.scene().removeItem(node);
+					if (node.scene() != null)
+						node.scene().removeItem(node);
 				}
 			}
 		});
