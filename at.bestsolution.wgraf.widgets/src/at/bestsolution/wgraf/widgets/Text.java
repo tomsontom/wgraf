@@ -230,8 +230,7 @@ public class Text extends Widget {
 				else {
 					updateCursorIndex(result.index);
 				}
-				
-				
+				data.consume();
 			}
 		});
 		System.err.println("TextField: " + area.onKeyPress());
@@ -293,7 +292,7 @@ public class Text extends Widget {
 				), 
 				new CornerRadii(4), bgInsets);
 		
-		area.background().set(null);
+		area.background().set(normal);
 		
 		area.border().set(new Border(new BorderStroke( new Color(200, 200, 200, 255), new CornerRadii(4), new BorderWidths(1, 1, 1, 1), bgInsets)));
 		
@@ -374,12 +373,12 @@ public class Text extends Widget {
 		if (text == null) {
 			text = new SimpleProperty<String>("");
 			Binder.uniBind(text, nodeText.text());
-			text.registerChangeListener(new ChangeListener<String>() {
-				@Override
-				public void onChange(String oldValue, String newValue) {
-					updateCursorIndex(0);
-				}
-			});
+//			text.registerChangeListener(new ChangeListener<String>() {
+//				@Override
+//				public void onChange(String oldValue, String newValue) {
+//					updateCursorIndex(0);
+//				}
+//			});
 		}
 		return text;
 	}
