@@ -9,7 +9,7 @@ public class TouchScrollTransition implements Transition<Double> {
 	private ValueReader<Double> reader;
 	
 	protected double targetValue;
-	private double damping = 0.7;
+	private double damping = 0.9;
 	
 	private static final double DIFF = 0.1;
 	

@@ -15,9 +15,6 @@ public class KeyboardPane extends AbsolutePane {
 	private TouchKeyboard keyboard;
 	
 	public KeyboardPane() {
-		
-		
-		
 		contentArea = new ScrollPane();
 		contentArea.area.parent().set(area);
 		contentArea.area.x().set(0);

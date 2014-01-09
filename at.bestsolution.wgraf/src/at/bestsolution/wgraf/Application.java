@@ -35,6 +35,10 @@ public class Application extends Frontend<BackingApplication> {
 		});
 	}
 	
+	public Property<Boolean> fullscreen() {
+		return backend.fullscreen();
+	}
+	
 	private Property<Node<?>> focusNode = new SimpleProperty<Node<?>>(null);
 	
 	public Property<Node<?>> focusNode() {

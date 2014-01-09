@@ -77,6 +77,8 @@ public class CheckBox extends Widget {
 		area.acceptFocus().set(true);
 		area.acceptTapEvents().set(true);
 		
+		area.cache().set(true);
+		
 		Rectangle clipRect = new Rectangle(2, 2, 96, 36, 0);
 		
 		final Container sliderClip = new Container();
@@ -84,6 +86,7 @@ public class CheckBox extends Widget {
 		sliderClip.clippingShape().set(clipRect);
 		sliderClip.width().set(100d);
 		sliderClip.height().set(40d);
+		sliderClip.cache().set(true);
 		
 		slider = new Container();
 		slider.cache().set(true);
@@ -170,6 +173,7 @@ public class CheckBox extends Widget {
 		Binder.uniBind(selected, new Setter<Boolean>() {
 			@Override
 			public void set(Boolean value) {
+				setSelected(value);
 				area.background().set(value ? on : off);
 			}
 		});

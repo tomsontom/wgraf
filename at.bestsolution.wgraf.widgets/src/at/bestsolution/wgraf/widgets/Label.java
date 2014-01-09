@@ -11,6 +11,8 @@ public class Label extends Widget {
 	public Label() {
 		text = new Text();
 		text.parent().set(area);
+		text.cache().set(true);
+		area.cache().set(true);
 	}
 	
 	public Property<String> text() {

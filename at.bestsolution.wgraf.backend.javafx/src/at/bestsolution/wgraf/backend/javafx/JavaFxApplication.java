@@ -1,17 +1,14 @@
 package at.bestsolution.wgraf.backend.javafx;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
-import javafx.scene.effect.BlendMode;
 import javafx.stage.Stage;
 import at.bestsolution.wgraf.BackingApplication;
 import at.bestsolution.wgraf.backend.javafx.scene.JavaFxContainer;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
-import at.bestsolution.wgraf.scene.BackingContainer;
 import at.bestsolution.wgraf.scene.Container;
 
 public class JavaFxApplication implements BackingApplication {
@@ -19,6 +16,15 @@ public class JavaFxApplication implements BackingApplication {
 	private Runnable init = null;
 	
 	private static JavaFxApplication instance;
+	
+	private Property<Boolean> fullscreen;
+	@Override
+	public Property<Boolean> fullscreen() {
+		if (fullscreen == null) {
+			fullscreen = new SimpleProperty<Boolean>(false);
+		}
+		return fullscreen;
+	}
 	
 	public static class RealApp extends Application {
 		
@@ -91,6 +97,13 @@ public class JavaFxApplication implements BackingApplication {
 						ObservableValue<? extends Number> observable,
 						Number oldValue, Number newValue) {
 					r.height().set(newValue.doubleValue());
+				}
+			});
+			
+			JavaFxBinder.uniBind(instance.fullscreen(), new JavaFxBinder.JfxSetter<Boolean>() {
+				@Override
+				public void doSet(Boolean value) {
+					primaryStage.setFullScreen(value);
 				}
 			});
 		}

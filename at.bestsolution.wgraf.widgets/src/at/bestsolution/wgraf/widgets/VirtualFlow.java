@@ -16,17 +16,21 @@ import at.bestsolution.wgraf.events.ScrollEvent;
 import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.geom.shape.Rectangle;
 import at.bestsolution.wgraf.properties.Binder;
+import at.bestsolution.wgraf.properties.Binding;
 import at.bestsolution.wgraf.properties.Converter;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.ListChangeListener;
 import at.bestsolution.wgraf.properties.ListProperty;
+import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.Setter;
 import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.simple.SimpleDoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleListProperty;
+import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleSignal;
+import at.bestsolution.wgraf.scene.Container;
 import at.bestsolution.wgraf.scene.Node;
 import at.bestsolution.wgraf.scene.Text;
 import at.bestsolution.wgraf.style.Font;
@@ -39,10 +43,12 @@ public class VirtualFlow<Model> extends Widget {
 
 	public static abstract class Cell<Type extends Node<?>, Model> {
 		public abstract Type getNode();
-		public abstract void bind(Model model);
+		public abstract Binding bind(Model model);
 		
 		public int colIdx;
-		public int rowIdx;
+		public final Property<Integer> rowIdx = new SimpleProperty<Integer>(0);
+		public final Property<Boolean> active = new SimpleProperty<Boolean>(false);
+		
 	}
 	
 	public static interface Factory<Type> {
@@ -165,22 +171,22 @@ public class VirtualFlow<Model> extends Widget {
 		}
 	};
 	
-	private Factory<Cell<Node<?>, Model>> cellFactory;
+	private Factory<? extends Cell<? extends Node<?>, Model>> cellFactory;
 	
 	private ListProperty<Model> model = new SimpleListProperty<Model>();
 	
 	private VisualRange verticalRange = new VisualRange(model.size(), cellHeight, area.height().get());
 	
-	private Map<Integer, Cell<Node<?>, Model>> assignedCells = new ConcurrentHashMap<Integer, Cell<Node<?>, Model>>();
+	private Map<Integer, Cell<? extends Node<?>, Model>> assignedCells = new ConcurrentHashMap<Integer, Cell<? extends Node<?>, Model>>();
 	
-	private Queue<Cell<Node<?>, Model>> freeCells = new ConcurrentLinkedQueue<Cell<Node<?>, Model>>();
+	private Queue<Cell<? extends Node<?>, Model>> freeCells = new ConcurrentLinkedQueue<Cell<? extends Node<?>, Model>>();
 	
 	private Set<Integer> usedCells = Collections.synchronizedSet(new HashSet<Integer>());
 	
 	private void freeCells() {
-		Iterator<Entry<Integer, Cell<Node<?>, Model>>> iterator = assignedCells.entrySet().iterator();
+		Iterator<Entry<Integer, Cell<? extends Node<?>, Model>>> iterator = assignedCells.entrySet().iterator();
 		while (iterator.hasNext()) {
-			Entry<Integer, Cell<Node<?>, Model>> entry = iterator.next();
+			Entry<Integer, Cell<? extends Node<?>, Model>> entry = iterator.next();
 			if (!usedCells.contains(entry.getKey())) {
 //				System.err.println("freeing cell");
 				freeCells.add(entry.getValue());
@@ -192,8 +198,8 @@ public class VirtualFlow<Model> extends Widget {
 		usedCells.clear();
 	}
 	
-	private Cell<Node<?>, Model> getFreeCell() {
-		Cell<Node<?>, Model> c = freeCells.poll();
+	private Cell<? extends Node<?>, Model> getFreeCell() {
+		Cell<? extends Node<?>, Model> c = freeCells.poll();
 		if (c != null) {
 //			System.err.println("-> FREE");
 			return c;
@@ -201,34 +207,39 @@ public class VirtualFlow<Model> extends Widget {
 		return createCell();
 	}
 	
-	private Cell<Node<?>, Model> getCellByIdx(int idx) {
-		Cell<Node<?>, Model> n = assignedCells.get(idx);
+	private Cell<? extends Node<?>, Model> getCellByIdx(int idx) {
+		Cell<? extends Node<?>, Model> n = assignedCells.get(idx);
 		if (n != null) {
 //			System.err.println("-> ASSIGNED");
 			usedCells.add(idx);
-			n.rowIdx = idx;
+			n.rowIdx.set(idx);
 			return n;
 		}
 		
 		n = getFreeCell();
 		assignedCells.put(idx, n);
 		usedCells.add(idx);
-		n.rowIdx = idx;
+		n.rowIdx.set(idx);
 		return n;
 	}
 	
-	private void onCellTap(Cell<Node<?>, Model> cell) {
+	private void onCellTap(Cell<? extends Node<?>, Model> cell) {
 		System.err.println("tapped on " + cell.rowIdx);
 		onCellTap.signal(cell);
 	}
 	
-	protected Signal<Cell<Node<?>, Model>> onCellTap = new SimpleSignal<Cell<Node<?>, Model>>();
+	protected Signal<Cell<? extends Node<?>, Model>> onCellTap = new SimpleSignal<Cell<? extends Node<?>, Model>>();
 	
-	private Cell<Node<?>, Model> createCell() {
-		Cell<Node<?>, Model> newNode;
+	private Cell<? extends Node<?>, Model> createCell() {
+		Cell<? extends Node<?>, Model> newNode;
 		if (cellFactory != null) {
 			newNode = cellFactory.create();
-			final Cell<Node<?>, Model> n = newNode;
+			final Cell<? extends Node<?>, Model> n = newNode;
+			if (newNode.getNode() instanceof Container) {
+				Container co = (Container)newNode.getNode();
+				// TODO bind?
+				co.width().set(area.width().get());
+			}
 			newNode.getNode().acceptTapEvents().set(true);
 			newNode.getNode().onTap().registerSignalListener(new SignalListener<TapEvent>() {
 				@Override
@@ -248,7 +259,8 @@ public class VirtualFlow<Model> extends Widget {
 					return text;
 				}
 				@Override
-				public void bind(Model model) {
+				public Binding bind(Model model) {
+					return null;
 				}
 			};
 		}
@@ -256,7 +268,7 @@ public class VirtualFlow<Model> extends Widget {
 		return newNode;
 	}
 	
-	public void setCellFactory(Factory<Cell<Node<?>, Model>> cellFactory) {
+	public void setCellFactory(Factory<? extends Cell<? extends Node<?>, Model>> cellFactory) {
 		this.cellFactory = cellFactory;
 	}
 	
@@ -280,8 +292,12 @@ public class VirtualFlow<Model> extends Widget {
 			@Override
 			public void onChange(List<VisibleElement> newValue) {
 				for (VisibleElement e : newValue) {
-					Cell<Node<?>, Model> c = getCellByIdx(e.idx);
+					Cell<? extends Node<?>, Model> c = getCellByIdx(e.idx);
 					c.getNode().y().set(e.offset);
+					if (c.getNode() instanceof Container) {
+						Container co = (Container)c.getNode();
+						co.height().set(cellHeight.convert(e.idx));
+					}
 					c.bind(model.get(e.idx));
 				}
 				freeCells();

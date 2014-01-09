@@ -7,6 +7,7 @@ public interface BackingApplication {
 
 	Property<String> title();
 	Property<Container> root();
+	Property<Boolean> fullscreen();
 	void start(String[] args);
 	void setInit(Runnable init);
 }

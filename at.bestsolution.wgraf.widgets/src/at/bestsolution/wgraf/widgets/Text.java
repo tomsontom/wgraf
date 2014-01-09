@@ -140,6 +140,7 @@ public class Text extends Widget {
 		
 		area.width().set(200d);
 		area.height().set(40d);
+		area.cache().set(true);
 		
 		final Container textClip = new Container();
 		textClip.parent().set(area);
@@ -169,7 +170,7 @@ public class Text extends Widget {
 		nodeText.parent().set(textClip);
 		nodeText.x().set(0);
 		nodeText.x().setTransition(new TouchScrollTransition());
-		
+		nodeText.cache().set(true);
 		font().registerChangeListener(new ChangeListener<Font>() {
 			@Override
 			public void onChange(Font oldValue, Font newValue) {
@@ -185,7 +186,7 @@ public class Text extends Widget {
 //		nodeCursor.background().set(new FillBackground(new Color(0, 255, 255, 100), new CornerRadii(0), new Insets(0,0,0,0)));
 		nodeCursor.width().set(3d);
 		nodeCursor.height().set(30d);
-		
+		nodeCursor.cache().set(true);
 		
 		nodeText.x().registerChangeListener(new DoubleChangeListener() {
 			@Override

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import at.bestsolution.wgraf.backend.qt.QtConverter;
+import at.bestsolution.wgraf.backend.qt.QtDebug;
 import at.bestsolution.wgraf.events.FlingEvent;
 import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.MouseEventSupport;
@@ -150,7 +151,7 @@ public class QGraphicsContainerItem extends QGraphicsRectItem implements QGraphi
 		// renderBorder
 		renderBorder(painter);
 		
-//		renderDebugBorder(painter);
+		renderDebug(painter);
 	}
 	
 	QColor dbg0 = new QColor(255, 0, 0, 50);
@@ -160,17 +161,18 @@ public class QGraphicsContainerItem extends QGraphicsRectItem implements QGraphi
 	long dbgDrawCount = 0;
 	
 	
-	private void renderDebugBorder(QPainter painter) {
-		painter.setBrush(dbgChooser ? dbg0 : dbg1);
-		painter.setPen(QPen.NoPen);
-		painter.drawRect(boundingRect());
+	private void renderDebug(QPainter painter) {
+//		painter.setBrush(dbgChooser ? dbg0 : dbg1);
+//		painter.setPen(QPen.NoPen);
+//		painter.drawRect(boundingRect());
+//		dbgChooser = !dbgChooser;
 		
-		painter.setPen(QColor.black);
-		painter.setFont(new QFont("Sans", 6));
-		painter.drawText(0, (int)boundingRect().height(), "dc " + dbgDrawCount);
-		
-		dbgChooser = !dbgChooser;
-		dbgDrawCount ++;
+		if (QtDebug.showDrawCount) {
+			painter.setPen(QColor.black);
+			painter.setFont(new QFont("Sans", 6));
+			painter.drawText(0, (int)boundingRect().height(), "dc " + dbgDrawCount);
+			dbgDrawCount ++;
+		}
 	}
 	
 	private void renderBackground(QPainter painter) {

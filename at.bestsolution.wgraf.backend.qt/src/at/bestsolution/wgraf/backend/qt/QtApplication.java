@@ -12,6 +12,7 @@ import at.bestsolution.wgraf.events.MouseEventSupport;
 import at.bestsolution.wgraf.events.MouseEventSupport.MouseCoords;
 import at.bestsolution.wgraf.events.ScrollEvent;
 import at.bestsolution.wgraf.events.TapEvent;
+import at.bestsolution.wgraf.properties.Binder;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.SignalListener;
@@ -57,6 +58,15 @@ public class QtApplication implements BackingApplication {
 		return title;
 	}
 
+	private Property<Boolean> fullscreen;
+	@Override
+	public Property<Boolean> fullscreen() {
+		if (fullscreen == null) {
+			fullscreen = new SimpleProperty<Boolean>(false);
+		}
+		return fullscreen;
+	}
+	
 	private Property<Container> root = null;
 	@Override
 	public Property<Container> root() {
@@ -271,13 +281,25 @@ public class QtApplication implements BackingApplication {
 		//view.setOptimizationFlag(OptimizationFlag.IndirectPainting);
 		
 		view.setRenderHints(
-				RenderHint.HighQualityAntialiasing, 
+				//RenderHint.HighQualityAntialiasing, 
 				RenderHint.Antialiasing, 
 				RenderHint.TextAntialiasing
 				);
 		
 		view.setViewportUpdateMode(ViewportUpdateMode.MinimalViewportUpdate);
 		view.setVisible(true);
+		
+		QtBinder.uniBind(fullscreen(), new QtBinder.QtSetter<Boolean>() {
+			@Override
+			public void doSet(Boolean value) {
+				if (value) {
+					view.showFullScreen();
+				}
+				else  {
+					view.showNormal();
+				}
+			}
+		});
 		
 		view.setStyleSheet( "QGraphicsView { border-style: none; }" );
 		
@@ -289,7 +311,6 @@ public class QtApplication implements BackingApplication {
 		
 		fps = scene.addSimpleText("fps");
 		
-		System.err.println("Cache limit: " + QPixmapCache.cacheLimit());
 		
 //		redrawHammer.timeout.connect(this, "render()");
 //		redrawHammer.setInterval(16);
@@ -304,7 +325,7 @@ public class QtApplication implements BackingApplication {
 
 	private List<QRectF> changes = new ArrayList<QRectF>();
 	
-	private QTimer redrawHammer = new QTimer();
+//	private QTimer redrawHammer = new QTimer();
 	
 	private long frame = 0;
 	private long begin = -1;

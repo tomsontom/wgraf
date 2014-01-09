@@ -1,6 +1,7 @@
 package at.bestsolution.wgraf.backend.qt.scene;
 
 import at.bestsolution.wgraf.backend.qt.QtConverter;
+import at.bestsolution.wgraf.backend.qt.QtDebug;
 import at.bestsolution.wgraf.events.FlingEvent;
 import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.ScrollEvent;
@@ -37,7 +38,7 @@ public class QGraphicsTextItem extends QGraphicsSimpleTextItem implements QGraph
 	public void paint(QPainter painter, QStyleOptionGraphicsItem option,
 			QWidget widget) {
 		super.paint(painter, option, widget);
-//		renderDebugBorder(painter);
+		renderDebug(painter);
 	}
 	
 	QColor dbg0 = new QColor(255, 0, 0, 50);
@@ -46,17 +47,18 @@ public class QGraphicsTextItem extends QGraphicsSimpleTextItem implements QGraph
 	boolean dbgChooser = false;
 	long dbgDrawCount = 0;
 	
-	private void renderDebugBorder(QPainter painter) {
-		painter.setPen(QPen.NoPen);
-		painter.setBrush(dbgChooser ? dbg0 : dbg1);
-		painter.drawRect(boundingRect());
+	private void renderDebug(QPainter painter) {
+//		painter.setPen(QPen.NoPen);
+//		painter.setBrush(dbgChooser ? dbg0 : dbg1);
+//		painter.drawRect(boundingRect());
+//		dbgChooser = !dbgChooser;
 		
-		painter.setPen(QColor.black);
-		painter.setFont(new QFont("Sans", 6));
-		painter.drawText(0, (int)boundingRect().height(), "dc " + dbgDrawCount);
-		
-		dbgChooser = !dbgChooser;
-		dbgDrawCount ++;
+		if (QtDebug.showDrawCount) {
+			painter.setPen(QColor.black);
+			painter.setFont(new QFont("Sans", 6));
+			painter.drawText(0, (int)boundingRect().height(), "dc " + dbgDrawCount);
+			dbgDrawCount ++;
+		}
 	}
 	
 	@Override
