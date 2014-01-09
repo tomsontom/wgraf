@@ -9,8 +9,14 @@ public abstract class BackendFactory {
 	public abstract <Type> Type create(Class<?> type);
 	
 	public static BackendFactory get() {
+		String f = factory;
+		
+		if( f == null ) {
+			f = "at.bestsolution.wgraf.backend.javafx.JavaFxBackendFactory";
+		}
+		
 		try {
-			Class<?> forName = Class.forName(factory);
+			Class<?> forName = Class.forName(f);
 			return (BackendFactory) forName.newInstance();
 		}
 		catch (Throwable e) {
