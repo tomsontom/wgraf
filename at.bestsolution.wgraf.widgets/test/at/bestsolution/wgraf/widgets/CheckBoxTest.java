@@ -39,10 +39,10 @@ public class CheckBoxTest extends Application {
 			test.text().set("Checkbox");
 			test.font().set(font);
 			
-			pane.add(test, 10, yOffset);
+			pane.addWidget(test, 10, yOffset);
 			
 			CheckBox box = new CheckBox();
-			pane.add(box, 170 + 100, yOffset);
+			pane.addWidget(box, 170 + 100, yOffset);
 		}
 		
 		
@@ -51,14 +51,14 @@ public class CheckBoxTest extends Application {
 		add.font().set(font);
 		add.area.width().set(40);
 		add.area.height().set(40);
-		pane.add(add, 450, 10);
+		pane.addWidget(add, 450, 10);
 		
 		final Button remove = new Button();
 		remove.text().set("-");
 		remove.font().set(font);
 		remove.area.width().set(40);
 		remove.area.height().set(40);
-		pane.add(remove, 500, 10);
+		pane.addWidget(remove, 500, 10);
 		
 		root().set(pane.getAreaNode());
 		
@@ -66,7 +66,7 @@ public class CheckBoxTest extends Application {
 		counter.font().set(font);
 		counter.text().set("0");
 		
-		pane.add(counter, 550, 10);
+		pane.addWidget(counter, 550, 10);
 		
 		Insets bgInsets = new Insets(0, 0, 0, 0);
 		final FillBackground bg = new FillBackground(

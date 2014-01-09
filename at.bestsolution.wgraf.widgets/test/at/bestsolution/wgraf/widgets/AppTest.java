@@ -49,10 +49,10 @@ public class AppTest extends Application {
 				test.text().set("Checkbox " + i);
 				test.font().set(defaultFont);
 				
-				content.add(test, 10, yOffset);
+				content.addWidget(test, 10, yOffset);
 				
 				CheckBox box = new CheckBox();
-				content.add(box, w + 100, yOffset);
+				content.addWidget(box, w + 100, yOffset);
 			}
 			else if (i % 3 == 1) {
 				// Button
@@ -60,7 +60,7 @@ public class AppTest extends Application {
 				test.text().set("Button " + i);
 				test.font().set(defaultFont);
 				
-				content.add(test, 10, yOffset);
+				content.addWidget(test, 10, yOffset);
 				
 				final Button btn = new Button();
 				btn.font().set(defaultFont);
@@ -77,7 +77,7 @@ public class AppTest extends Application {
 						}
 					}
 				});
-				content.add(btn, w, yOffset);
+				content.addWidget(btn, w, yOffset);
 			}
 			else if (i % 3 == 2) {
 				// Text
@@ -85,12 +85,12 @@ public class AppTest extends Application {
 				test.text().set("Text " + i);
 				test.font().set(defaultFont);
 				
-				content.add(test, 10, yOffset);
+				content.addWidget(test, 10, yOffset);
 				
 				Text txt = new Text();
 				txt.font().set(defaultFont);
 				txt.text().set("Hallo Test");
-				content.add(txt, w, yOffset);
+				content.addWidget(txt, w, yOffset);
 			}
 			
 			yOffset += 70;

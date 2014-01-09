@@ -1,54 +1,148 @@
 package at.bestsolution.wgraf.widgets;
 
-import at.bestsolution.wgraf.math.Vec2d;
-import at.bestsolution.wgraf.properties.ValueUpdate;
-import at.bestsolution.wgraf.transition.LinearDoubleTransition;
-import at.bestsolution.wgraf.transition.Transition;
-import at.bestsolution.wgraf.transition.ValueReader;
-import at.bestsolution.wgraf.transition.ValueUpdater;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import at.bestsolution.wgraf.properties.Binder;
+import at.bestsolution.wgraf.properties.Binding;
+import at.bestsolution.wgraf.properties.GroupBinding;
+import at.bestsolution.wgraf.properties.Setter;
+import at.bestsolution.wgraf.scene.Container;
+import at.bestsolution.wgraf.widgets.Popup.PopupPosition;
 
 
 public class PopupPane extends AbsolutePane {
 
-	Widget currentPopup;
+	Set<Popup> activePopups = new HashSet<Popup>();
+	Map<Popup, Binding> activeBindings = new HashMap<Popup, Binding>();
+	
+	AbsolutePane contentArea;
+	Container popupArea;
+	Container absolutePopupArea;
+	
 	
 	public PopupPane() {
+		contentArea = new AbsolutePane();
+		super.addWidget(contentArea, 0, 0);
+		
+		Binder.uniBind(area.width(), contentArea.area.width());
+		Binder.uniBind(area.height(), contentArea.area.height());
+		
+		
+		popupArea = new Container();
+		popupArea.parent().set(area);
+		
+		Binder.uniBind(area.width(), popupArea.width());
+		Binder.uniBind(area.height(), popupArea.height());
+		
+		// TODO a popup which goes into absolutePopupArea hast to set the
+		// viewport, also the popupArea needs to be constrainted to the
+		// viewport
+		
+		absolutePopupArea = new Container();
+		absolutePopupArea.parent().set(area);
+		
+		Binder.uniBind(area.width(), absolutePopupArea.width());
+		Binder.uniBind(area.height(), absolutePopupArea.height());
 		
 	}
 	
-	public void showModal(Vec2d offset, Widget popup) {
-		if (currentPopup == null) {
-			currentPopup = popup;
-			currentPopup.area.x().set(offset.x);
-			currentPopup.area.y().set(offset.y);
+	@Override
+	public void addWidget(Widget widget, double x, double y) {
+		contentArea.addWidget(widget, x, y);
+	}
+	
+	@Override
+	public void showPopup(final Popup popup) {
+		System.err.println("showing popup");
+		activePopups.add(popup);
+		
+		final Container pop = popup.getContent().area;
+		
+		final boolean squeeze = popup.squeezeViewport().get();
+		
+		final Container target =  squeeze? absolutePopupArea : popupArea;
+		
+		
+		if (popup.position().get() == PopupPosition.BOTTOM_CENTER) {
 			
-			double height = currentPopup.area.height().get();
-			currentPopup.area.height().set(0);
-			currentPopup.area.height().setTransition(new LinearDoubleTransition(200));
-			currentPopup.area.parent().set(area);
-			currentPopup.area.height().setDynamic(height);
+			Setter<Double> xSetter = new Setter<Double>() {
+				@Override
+				public void set(Double value) {
+					pop.x().setDynamic(target.width().get()/2 - pop.width().get()/2);
+				}
+			};
+			Setter<Double> ySetter = new Setter<Double>() {
+				@Override
+				public void set(Double value) {
+					pop.y().setDynamic(target.height().get() - pop.height().get());
+				}
+			};
+			
+			GroupBinding gp = new GroupBinding();
+			gp.registerBindings(
+				Binder.uniBind(target.width(), xSetter),
+				Binder.uniBind(pop.width(), xSetter),
+			
+				Binder.uniBind(target.height(), ySetter),
+				Binder.uniBind(pop.height(), ySetter));
+			
+			activeBindings.put(popup, gp);
+			
+		}
+		else if (popup.position().get() == PopupPosition.CENTER){
+			
+			Setter<Double> xSetter = new Setter<Double>() {
+				@Override
+				public void set(Double value) {
+					pop.x().setDynamic(target.width().get()/2 - pop.width().get()/2);
+				}
+			};
+			Setter<Double> ySetter = new Setter<Double>() {
+				@Override
+				public void set(Double value) {
+					pop.y().setDynamic(target.height().get()/2 - pop.height().get()/2);
+				}
+			};
+			
+			GroupBinding gp = new GroupBinding();
+			gp.registerBindings(
+				Binder.uniBind(target.width(), xSetter),
+				Binder.uniBind(pop.width(), xSetter),
+			
+				Binder.uniBind(target.height(), ySetter),
+				Binder.uniBind(pop.height(), ySetter));
+			
+			activeBindings.put(popup, gp);
+		}
+		
+		pop.parent().set(popupArea);
+	}
+	
+	@Override
+	public void hidePopup(Popup popup) {
+		System.err.println("hiding popup");
+		activePopups.remove(popup);
+		activeBindings.remove(popup).dispose();
+		popup.getContent().area.parent().set(null);
+	}
+	
+	@Override
+	public void hideAllPopups() {
+		Iterator<Popup> it = activePopups.iterator();
+		while (it.hasNext()) {
+			Popup c = it.next();
+			c.getContent().area.parent().set(null);
+			it.remove();
 		}
 	}
 	
 	@Override
-	public void showPopup(Vec2d offset, Widget popup) {
-		showModal(offset, popup);
+	public boolean isPopupVisible(Popup popup) {
+		return activePopups.contains(popup);
 	}
 	
-	@Override
-	public void hidePopup() {
-		hide();
-	}
-	
-	@Override
-	public boolean isPopupVisible() {
-		return currentPopup != null;
-	}
-	
-	public void hide() {
-		if (currentPopup != null) {
-			currentPopup.area.parent().set(null);
-			currentPopup = null;
-		}
-	}
 }

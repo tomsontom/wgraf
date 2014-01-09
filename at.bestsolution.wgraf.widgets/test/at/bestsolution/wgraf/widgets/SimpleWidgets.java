@@ -15,10 +15,10 @@ public class SimpleWidgets extends AbsolutePane {
 			test.text().set("Checkbox");
 			test.font().set(font);
 			
-			add(test, 10, 10);
+			addWidget(test, 10, 10);
 			
 			CheckBox box = new CheckBox();
-			add(box, 170 + 100, 10);
+			addWidget(box, 170 + 100, 10);
 		}
 		
 		{
@@ -26,12 +26,12 @@ public class SimpleWidgets extends AbsolutePane {
 			test.text().set("Text");
 			test.font().set(font);
 			
-			add(test, 10, 80);
+			addWidget(test, 10, 80);
 			
 			Text txt = new Text();
 			txt.font().set(font);
 			txt.text().set("Hallo Test");
-			add(txt, 170, 80);
+			addWidget(txt, 170, 80);
 			
 		}
 		
@@ -40,7 +40,7 @@ public class SimpleWidgets extends AbsolutePane {
 			test.text().set("Button");
 			test.font().set(font);
 			
-			add(test, 10, 150);
+			addWidget(test, 10, 150);
 			
 			final Button btn = new Button();
 			btn.font().set(font);
@@ -57,7 +57,7 @@ public class SimpleWidgets extends AbsolutePane {
 					}
 				}
 			});
-			add(btn, 170, 150);
+			addWidget(btn, 170, 150);
 			
 		}
 		
@@ -66,7 +66,7 @@ public class SimpleWidgets extends AbsolutePane {
 			test.text().set("ScrollBar");
 			test.font().set(font);
 			
-			add(test, 10, 220);
+			addWidget(test, 10, 220);
 			
 			ScrollBar bar = new ScrollBar();
 			bar.sliderSizeFactor().set(0.2);
@@ -82,7 +82,7 @@ public class SimpleWidgets extends AbsolutePane {
 			bar.area.width().set(200d);
 			bar.area.height().set(40d);
 			
-			add(bar, 170, 220);
+			addWidget(bar, 170, 220);
 			
 		}
 	}

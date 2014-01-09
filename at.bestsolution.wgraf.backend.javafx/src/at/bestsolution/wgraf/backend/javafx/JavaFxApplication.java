@@ -2,6 +2,7 @@ package at.bestsolution.wgraf.backend.javafx;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.effect.BlendMode;
 import javafx.stage.Stage;
@@ -67,13 +68,31 @@ public class JavaFxApplication implements BackingApplication {
 					}
 				}
 			});
-			JavaFxContainer r = (JavaFxContainer) instance.root().get().internal_getBackend();
+			final JavaFxContainer r = (JavaFxContainer) instance.root().get().internal_getBackend();
 			javafx.scene.layout.Region node = r.getNode();
 			System.err.println("setting root to " + node);
 			System.err.println("kids: " + node.getChildrenUnmodifiable());
 			scene.setRoot(node);
 			primaryStage.setWidth(r.width().get());
 			primaryStage.setHeight(r.height().get());
+			
+			primaryStage.widthProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
+				@Override
+				public void changed(
+						ObservableValue<? extends Number> observable,
+						Number oldValue, Number newValue) {
+					r.width().set(newValue.doubleValue());
+				}
+			});
+			
+			primaryStage.heightProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
+				@Override
+				public void changed(
+						ObservableValue<? extends Number> observable,
+						Number oldValue, Number newValue) {
+					r.height().set(newValue.doubleValue());
+				}
+			});
 		}
 	}
 	

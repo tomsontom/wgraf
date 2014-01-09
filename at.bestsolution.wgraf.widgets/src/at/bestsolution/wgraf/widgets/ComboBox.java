@@ -17,6 +17,7 @@ import at.bestsolution.wgraf.widgets.VirtualFlow.Factory;
 public class ComboBox<Model> extends Widget {
 
 	private AbsolutePane popupPane;
+	private Popup popup;
 	
 	private List<Model> list;
 	private Button button;
@@ -42,11 +43,11 @@ public class ComboBox<Model> extends Widget {
 		button.activated().registerSignalListener(new SignalListener<Void>() {
 			@Override
 			public void onSignal(Void data) {
-				if (isPopupVisible()) {
-					hidePopup();
+				if (isPopupVisible(popup)) {
+					hidePopup(popup);
 				}
 				else {
-					showPopup(new Vec2d(0, 40), popupPane);
+					showPopup(popup);
 					
 				}
 			}
@@ -56,6 +57,8 @@ public class ComboBox<Model> extends Widget {
 		popupPane.area.width().set(200);
 		popupPane.area.height().set(200);
 		popupPane.area.background().set(new FillBackground(new Color(0,0,0,200), new CornerRadii(10), new Insets(0, 0, 0, 0)));
+		
+		popup = new Popup(popupPane);
 		
 		list = new List<Model>();
 		list.area.width().set(180);
@@ -92,7 +95,7 @@ public class ComboBox<Model> extends Widget {
 			@Override
 			public void onSignal(Model data) {
 				text.text().set(data.toString());
-				hidePopup();
+				hidePopup(popup);
 			}
 		});
 		
@@ -101,12 +104,12 @@ public class ComboBox<Model> extends Widget {
 			@Override
 			public void onChange(Boolean oldValue, Boolean newValue) {
 				if (!newValue) {
-					hidePopup();
+					hidePopup(popup);
 				}
 			}
 		});
 		
-		popupPane.add(list, 10, 10);
+		popupPane.addWidget(list, 10, 10);
 		
 		
 	}

@@ -71,7 +71,7 @@ public class ListTest extends Application {
 			for (int i = 0; i < 100; i ++)
 				myFirstList.model().add("Line " + i);
 			
-			pane.add(myFirstList, 10, 10);
+			pane.addWidget(myFirstList, 10, 10);
 		}
 		root().set(pane.getAreaNode());
 	}

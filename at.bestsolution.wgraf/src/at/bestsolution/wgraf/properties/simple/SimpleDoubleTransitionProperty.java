@@ -2,6 +2,8 @@ package at.bestsolution.wgraf.properties.simple;
 
 import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.DoubleValueUpdate;
+import at.bestsolution.wgraf.properties.Property;
+import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.ValueUpdate;
 import at.bestsolution.wgraf.transition.Transition;
 import at.bestsolution.wgraf.transition.ValueReader;
@@ -9,6 +11,13 @@ import at.bestsolution.wgraf.transition.ValueUpdater;
 
 public class SimpleDoubleTransitionProperty extends SimpleDoubleProperty implements DoubleTransitionProperty {
 
+	private final Property<Boolean> transistionActive = new SimpleProperty<Boolean>();
+	@Override
+	public ReadOnlyProperty<Boolean> transitionActive() {
+		return transistionActive;
+	}
+	
+	
 	protected static class IncrementUpdate implements ValueUpdate<Double> {
 
 		private double increment;

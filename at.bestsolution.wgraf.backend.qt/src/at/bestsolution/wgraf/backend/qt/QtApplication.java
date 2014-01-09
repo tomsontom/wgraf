@@ -1,26 +1,17 @@
 package at.bestsolution.wgraf.backend.qt;
 
 import java.text.DecimalFormat;
-import java.text.MessageFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Formatter;
 import java.util.List;
-import java.util.Queue;
-import java.util.LinkedList;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import at.bestsolution.wgraf.BackingApplication;
-import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.backend.qt.scene.QtContainer;
 import at.bestsolution.wgraf.backend.qt.scene.TapEventReceiver;
 import at.bestsolution.wgraf.events.MouseEventSupport;
+import at.bestsolution.wgraf.events.MouseEventSupport.MouseCoords;
 import at.bestsolution.wgraf.events.ScrollEvent;
 import at.bestsolution.wgraf.events.TapEvent;
-import at.bestsolution.wgraf.events.MouseEventSupport.MouseCoords;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.SignalListener;
@@ -31,25 +22,15 @@ import com.trolltech.qt.core.QPointF;
 import com.trolltech.qt.core.QRectF;
 import com.trolltech.qt.core.QTimer;
 import com.trolltech.qt.gui.QApplication;
-import com.trolltech.qt.gui.QBrush;
-import com.trolltech.qt.gui.QColor;
-import com.trolltech.qt.gui.QGraphicsEllipseItem;
 import com.trolltech.qt.gui.QGraphicsItemInterface;
 import com.trolltech.qt.gui.QGraphicsScene;
 import com.trolltech.qt.gui.QGraphicsSceneMouseEvent;
 import com.trolltech.qt.gui.QGraphicsSimpleTextItem;
 import com.trolltech.qt.gui.QGraphicsView;
-import com.trolltech.qt.gui.QKeyEvent;
-import com.trolltech.qt.gui.QPixmapCache;
-import com.trolltech.qt.gui.QGraphicsView.CacheModeFlag;
-import com.trolltech.qt.gui.QGraphicsView.OptimizationFlag;
 import com.trolltech.qt.gui.QGraphicsView.ViewportUpdateMode;
-import com.trolltech.qt.gui.QMovie.CacheMode;
 import com.trolltech.qt.gui.QPainter;
-import com.trolltech.qt.gui.QStyleOptionGraphicsItem;
-import com.trolltech.qt.gui.QWidget;
-import com.trolltech.qt.gui.QApplication.ColorSpec;
 import com.trolltech.qt.gui.QPainter.RenderHint;
+import com.trolltech.qt.gui.QPixmapCache;
 import com.trolltech.qt.gui.QResizeEvent;
 
 public class QtApplication implements BackingApplication {
@@ -269,12 +250,12 @@ public class QtApplication implements BackingApplication {
 			@Override
 			protected void resizeEvent(QResizeEvent event) {
 				scene.setSceneRect(0, 0, event.size().width(), event.size().height());
+				root().get().width().set(event.size().width());
+				root().get().height().set(event.size().height());
 			}
-			
 			
 		};
 		view.setWindowTitle(title().get());
-		
 		
 		int w = (int)Math.round(root().get().width().get());
 		int h = (int)Math.round(root().get().height().get());
@@ -313,6 +294,9 @@ public class QtApplication implements BackingApplication {
 //		redrawHammer.timeout.connect(this, "render()");
 //		redrawHammer.setInterval(16);
 //		redrawHammer.start();
+		
+		
+		
 		
 		QApplication.exec();
 

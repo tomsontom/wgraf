@@ -33,6 +33,8 @@ public class WidgetTest extends Application {
 		pane.getAreaNode().width().set(800);
 		pane.getAreaNode().height().set(600);
 	
+		KeyboardSupport keyboardSupport = new KeyboardSupport(pane);
+		
 		Font font = new Font("Sans", 22);
 		
 		double yOffset = 30;
@@ -41,10 +43,10 @@ public class WidgetTest extends Application {
 			test.text().set("Checkbox");
 			test.font().set(font);
 			
-			pane.add(test, 10, yOffset);
+			pane.addWidget(test, 10, yOffset);
 			
 			CheckBox box = new CheckBox();
-			pane.add(box, 170 + 100, yOffset);
+			pane.addWidget(box, 170 + 100, yOffset);
 			
 			box.selected().registerChangeListener(new ChangeListener<Boolean>() {
 				@Override
@@ -67,12 +69,12 @@ public class WidgetTest extends Application {
 			test.text().set("Text");
 			test.font().set(font);
 			
-			pane.add(test, 10, yOffset);
+			pane.addWidget(test, 10, yOffset);
 			
 			Text txt = new Text();
 			txt.font().set(font);
 			txt.text().set("Hallo Test");
-			pane.add(txt, 170, yOffset);
+			pane.addWidget(txt, 170, yOffset);
 			
 		}
 		yOffset += 70;
@@ -81,7 +83,7 @@ public class WidgetTest extends Application {
 			test.text().set("Combobox");
 			test.font().set(font);
 			
-			pane.add(test, 10, yOffset);
+			pane.addWidget(test, 10, yOffset);
 			
 			final ComboBox<String> box = new ComboBox<String>();
 			box.model().add("Test0");
@@ -90,7 +92,7 @@ public class WidgetTest extends Application {
 			box.model().add("Test3");
 			
 			
-			pane.add(box, 170, yOffset);
+			pane.addWidget(box, 170, yOffset);
 			
 		}
 		yOffset += 70;
@@ -99,36 +101,41 @@ public class WidgetTest extends Application {
 			test.text().set("Button");
 			test.font().set(font);
 			
-			pane.add(test, 10, yOffset);
+			pane.addWidget(test, 10, yOffset);
 			
 			final Button btn = new Button();
 			btn.font().set(font);
 			btn.text().set("Press me!");
 			btn.activated().registerSignalListener(new SignalListener<Void>() {
 				
+				private Popup p;
+				
 				@Override
 				public void onSignal(Void data) {
 					if (btn.text().get().equals("Press me!")) {
 						btn.text().set("Thanks!");
+						if (p == null) {
+							Pane pop = new AbsolutePane();
+							pop.area.background().set(new FillBackground(new Color(255,  0,  0, 50), new CornerRadii(2), new Insets(0, 0, 0, 0)));
+							
+							pop.area.width().set(100);
+							pop.area.height().set(100);
+							p = new Popup(pop);
+						}
 						
-						Pane pop = new AbsolutePane();
-						pop.area.background().set(new FillBackground(new Color(255,  0,  0, 50), new CornerRadii(2), new Insets(0, 0, 0, 0)));
 						
-						pop.area.width().set(100);
-						pop.area.height().set(100);
-						
-						pane.showModal(new Vec2d(0,0), pop);
+						pane.showPopup(p);
 						
 						
 					}
 					else {
 						btn.text().set("Press me!");
 						
-						pane.hide();
+						pane.hidePopup(p);
 					}
 				}
 			});
-			pane.add(btn, 170, yOffset);
+			pane.addWidget(btn, 170, yOffset);
 			
 		}
 		yOffset += 70;
@@ -137,7 +144,7 @@ public class WidgetTest extends Application {
 			test.text().set("ScrollBar");
 			test.font().set(font);
 			
-			pane.add(test, 10, yOffset);
+			pane.addWidget(test, 10, yOffset);
 			
 			ScrollBar bar = new ScrollBar();
 			bar.sliderSizeFactor().set(0.2);
@@ -153,7 +160,7 @@ public class WidgetTest extends Application {
 			bar.area.width().set(200d);
 			bar.area.height().set(40d);
 			
-			pane.add(bar, 170, yOffset);
+			pane.addWidget(bar, 170, yOffset);
 			
 		}
 		
@@ -192,13 +199,13 @@ public class WidgetTest extends Application {
 			test.text().set("ScrollPane");
 			test.font().set(font);
 			
-			pane.add(test, 390, yOffset);
+			pane.addWidget(test, 390, yOffset);
 			
 			scrollPane.area.width().set(390);
 			scrollPane.area.height().set(350);
 			
 //			scrollPane.area.background().set(new FillBackground(new Color(255,  0,  0, 50), new CornerRadii(2), new Insets(0, 0, 0, 0)));
-			pane.add(scrollPane, 390, yOffset + 40);
+			pane.addWidget(scrollPane, 390, yOffset + 40);
 			
 			AbsolutePane content = new AbsolutePane() {
 				@Override
@@ -254,35 +261,35 @@ public class WidgetTest extends Application {
 		}
 		
 		
-		final TouchKeyboard kb = new TouchKeyboard();
-		
-		pane.add(kb, 0, 400);
-		
-		kb.area.y().set(400);
-		kb.area.y().setTransition(new LinearDoubleTransition(200));
-		
-		Application.get().focusNode().registerChangeListener(new ChangeListener<Node<?>>() {
-			@Override
-			public void onChange(Node<?> oldValue, Node<?> newValue) {
-				if (newValue != null) {
-					if (newValue.requireKeyboard().get()) {
-						
-						// show keyboard
-						kb.area.y().setDynamic(400);
-						scrollPane.area.height().set(350);
-					}
-					else {
-						// hide keyboard
-						kb.area.y().setDynamic(600);
-						scrollPane.area.height().set(550);
-					}
-				}
-				else {
-					// hide keyboard
-					kb.area.y().setDynamic(600);
-				}
-			}
-		});
+//		final TouchKeyboard kb = new TouchKeyboard();
+//		
+//		pane.add(kb, 0, 400);
+//		
+//		kb.area.y().set(400);
+//		kb.area.y().setTransition(new LinearDoubleTransition(200));
+//		
+//		Application.get().focusNode().registerChangeListener(new ChangeListener<Node<?>>() {
+//			@Override
+//			public void onChange(Node<?> oldValue, Node<?> newValue) {
+//				if (newValue != null) {
+//					if (newValue.requireKeyboard().get()) {
+//						
+//						// show keyboard
+//						kb.area.y().setDynamic(400);
+//						scrollPane.area.height().set(350);
+//					}
+//					else {
+//						// hide keyboard
+//						kb.area.y().setDynamic(600);
+//						scrollPane.area.height().set(550);
+//					}
+//				}
+//				else {
+//					// hide keyboard
+//					kb.area.y().setDynamic(600);
+//				}
+//			}
+//		});
 		
 		root().set(pane.getAreaNode());
 	}

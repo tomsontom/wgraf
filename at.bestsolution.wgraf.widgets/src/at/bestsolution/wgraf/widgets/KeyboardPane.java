@@ -55,6 +55,14 @@ public class KeyboardPane extends AbsolutePane {
 				hideKeyboard();
 			}
 		});
+		
+		area.width().registerChangeListener(new DoubleChangeListener() {
+			@Override
+			public void onChange(double oldValue, double newValue) {
+				keyboard.area.x().set(newValue / 2 - keyboard.area.width().get() / 2);
+			}
+		});
+		
 	}
 	
 	private boolean keyboardVisible = false;
@@ -62,6 +70,7 @@ public class KeyboardPane extends AbsolutePane {
 	private void showKeyboard() {
 		System.err.println("SHOW KEYBOARD " + (area.height().get() - keyboard.area.height().get()));
 		if (!keyboardVisible) {
+			
 			
 			keyboard.area.y().setDynamic(area.height().get() - keyboard.area.height().get());
 			contentArea.viewport().set(new Rect(0, 0, contentArea.area.width().get(), contentArea.area.height().get() - keyboard.area.height().get()));

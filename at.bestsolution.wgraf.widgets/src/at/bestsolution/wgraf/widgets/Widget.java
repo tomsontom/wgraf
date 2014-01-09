@@ -3,11 +3,11 @@ package at.bestsolution.wgraf.widgets;
 import java.util.HashMap;
 import java.util.Map;
 
+import at.bestsolution.wgraf.math.Rect;
 import at.bestsolution.wgraf.math.Vec2d;
-import at.bestsolution.wgraf.properties.ListProperty;
+import at.bestsolution.wgraf.properties.DoubleProperty;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.ReadOnlyProperty;
-import at.bestsolution.wgraf.properties.simple.SimpleListProperty;
 import at.bestsolution.wgraf.scene.Container;
 
 public abstract class Widget {
@@ -33,35 +33,51 @@ public abstract class Widget {
 	}
 	
 	
+	
+	// bounds
+	public DoubleProperty width() {
+		return area.width();
+	}
+	
+	public DoubleProperty height() {
+		return area.height();
+	}
+	
+	public DoubleProperty x() {
+		return area.x();
+	}
+	
+	public DoubleProperty y() {
+		return area.y();
+	}
+	
+	// TODO add bounds
+//	public Property<Rect> bounds() {
+//		return area.bounds();
+//	}
+	
+	
 	public Container getAreaNode() {
 		return area;
-	}
-	
-	public Property<Double> width() {
-		return null;
-	}
-	
-	public Property<Double> height() {
-		return null;
 	}
 	
 	public Vec2d computePreferredSize() {
 		return area.computePreferredSize();
 	}
 	
-	public void showPopup(Vec2d offset, Widget popup) {
+	public void showPopup(Popup popup) {
 		if (parent != null) {
-			offset = new Vec2d(offset.x + area.x().get(), offset.y + area.y().get());
-			parent.showPopup(offset, popup);
+//			offset = new Vec2d(offset.x + area.x().get(), offset.y + area.y().get());
+			parent.showPopup(popup);
 		}
 		else {
 			System.err.println("PARENT IS NULL: " + this);
 		}
 	}
 	
-	public boolean isPopupVisible() {
+	public boolean isPopupVisible(Popup popup) {
 		if (parent != null) {
-			return parent.isPopupVisible();
+			return parent.isPopupVisible(popup);
 		}
 		else {
 			System.err.println("PARENT IS NULL: " + this);
@@ -69,17 +85,22 @@ public abstract class Widget {
 		}
 	}
 	
-	public void hidePopup() {
+	public void hidePopup(Popup popup) {
 		if (parent != null) {
-			parent.hidePopup();
+			parent.hidePopup(popup);
 		}
 		else {
 			System.err.println("PARENT IS NULL: " + this);
 		}
 	}
 	
-	public void showModalPopup(Widget popup) {
-		
+	public void hideAllPopups() {
+		if (parent != null) {
+			parent.hideAllPopups();
+		}
+		else {
+			System.err.println("PARENT IS NULL: " + this);
+		}
 	}
 	
 	public void setBounds(double x, double y, double width, double height) {

@@ -163,6 +163,7 @@ public class ScrollPane extends Pane {
 					realViewport.set(getBoundingRect());
 				}
 				resize();
+				if (content != null) updateRange(realViewport.get(), content);
 			}
 		});
 		
@@ -173,6 +174,7 @@ public class ScrollPane extends Pane {
 					realViewport.set(getBoundingRect());
 				}
 				resize();
+				if (content != null) updateRange(realViewport.get(), content);
 			}
 		});
 		
@@ -221,7 +223,6 @@ public class ScrollPane extends Pane {
 				}
 			}
 		});
-		
 		
 	}
 	

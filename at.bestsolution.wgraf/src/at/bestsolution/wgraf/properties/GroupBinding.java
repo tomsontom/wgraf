@@ -1,6 +1,7 @@
 package at.bestsolution.wgraf.properties;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,6 +22,10 @@ public class GroupBinding implements Binding {
 			next.dispose();
 			it.remove();
 		}
+	}
+
+	public void registerBindings(Binding ...bindings) {
+		this.bindings.addAll(Arrays.asList(bindings));
 	}
 
 }

@@ -13,8 +13,7 @@ public interface ListChangeListener<Type> {
 	public static class DeltaEntry<Type> {
 		EntryType type;
 		int idx;
-		Type oldValue;
-		Type newValue;
+		Type value;
 	}
 	
 	void onChange(List<DeltaEntry<Type>> changes);

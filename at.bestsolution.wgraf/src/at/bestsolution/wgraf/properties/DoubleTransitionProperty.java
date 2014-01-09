@@ -24,4 +24,6 @@ public interface DoubleTransitionProperty extends DoubleProperty {
 	
 	
 	void updateDynamic(ValueUpdate<Double> update);
+	
+	ReadOnlyProperty<Boolean> transitionActive();
 }
