@@ -34,6 +34,7 @@ public class PopupPane extends AbsolutePane {
 		
 		popupArea = new Container();
 		popupArea.parent().set(area);
+		popupArea.acceptTapEvents().set(false);
 		
 		// TODO XXX somehow the popup container 'eats' the javafx mouse events
 		
@@ -46,6 +47,7 @@ public class PopupPane extends AbsolutePane {
 		
 		absolutePopupArea = new Container();
 		absolutePopupArea.parent().set(area);
+		absolutePopupArea.acceptTapEvents().set(false);
 		
 		Binder.uniBind(area.width(), absolutePopupArea.width());
 		Binder.uniBind(area.height(), absolutePopupArea.height());

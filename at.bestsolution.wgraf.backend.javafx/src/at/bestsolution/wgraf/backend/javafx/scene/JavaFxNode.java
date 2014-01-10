@@ -108,6 +108,13 @@ public abstract class JavaFxNode<N extends Node> implements BackingNode {
 	public Property<Boolean> acceptTapEvents() {
 		if (acceptTapEvents == null) {
 			acceptTapEvents = new SimpleProperty<Boolean>(false);
+			JavaFxBinder.uniBind(acceptTapEvents, new JavaFxBinder.JfxSetter<Boolean>() {
+				@Override
+				public void doSet(Boolean value) {
+					node.setMouseTransparent(!value);
+				}
+			});
+			
 			acceptTapEvents.registerChangeListener(new ChangeListener<Boolean>() {
 				@Override
 				public void onChange(Boolean oldValue, Boolean newValue) {
