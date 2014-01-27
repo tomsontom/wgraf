@@ -21,7 +21,7 @@ import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.style.Insets;
 
 // TODO implement item selection
-public class List<Model> extends VirtualFlow<Model> {
+public class ListView<Model> extends VirtualFlow<Model> {
 
 	//private final DoubleTransitionProperty offset = new SimpleDoubleTransitionProperty(0);
 	//private final ListProperty<Model> model = new SimpleListProperty<Model>();
@@ -100,8 +100,13 @@ public class List<Model> extends VirtualFlow<Model> {
 			init();
 		}
 		
+		private static int cellIdCounter = 0;
+		
 		private void init() {
 			cell = new Container();
+			Text nfo = new Text();
+			nfo.text().set("" + (++cellIdCounter) + " birth: " + System.currentTimeMillis());
+			nfo.parent().set(cell);
 			label = new Text();
 			label.font().set(new Font("Sans", 20));
 			label.parent().set(cell);
@@ -124,51 +129,45 @@ public class List<Model> extends VirtualFlow<Model> {
 			initDefaultStyle();
 		}
 		
+		private void reSkin() {
+			final boolean active = this.active.get();
+			final int index = this.rowIdx.get();
+			
+			String log = "reSkin: skinning cell " + index;
+			if (active) {
+				log+= " as active";
+				cell.background().set(new FillBackground(new Color(255,200,200,255), new CornerRadii(0), new Insets(0)));
+			}
+			else {
+				if (index % 2 == 0) {
+					// even
+					log += " as even";
+					cell.background().set(new FillBackground(new Color(255,255,255,255), new CornerRadii(0), new Insets(0)));
+					
+				}
+				else {
+					// odd
+					log += " as odd";
+					cell.background().set(new FillBackground(new Color(220,220,220,255), new CornerRadii(0), new Insets(0)));
+				}
+			}
+			System.err.println(log);
+		}
 		
 		private void initDefaultStyle() {
 			cell.background().set(new FillBackground(new Color(222,222,222,255), new CornerRadii(0), new Insets(0)));
 			
-			Binder.uniBind(rowIdx, new Setter<Integer>() {
+			rowIdx.registerChangeListener(new ChangeListener<Integer>() {
 				@Override
-				public void set(Integer value) {
-					if (active.get()) {
-						cell.background().set(new FillBackground(new Color(255,200,200,255), new CornerRadii(0), new Insets(0)));
-					}
-					else {
-						if (value % 2 == 0) {
-							// event
-							cell.background().set(new FillBackground(new Color(255,255,255,255), new CornerRadii(0), new Insets(0)));
-							
-						}
-						else {
-							// odd
-							cell.background().set(new FillBackground(new Color(220,220,220,255), new CornerRadii(0), new Insets(0)));
-						}
-					}
+				public void onChange(Integer oldValue, Integer newValue) {
+					reSkin();
 				}
 			});
-			
-			Binder.uniBind(active, new Setter<Boolean>() {
-
+			active.registerChangeListener(new ChangeListener<Boolean>() {
 				@Override
-				public void set(Boolean value) {
-					System.err.println("active change!");
-					if (value) {
-						cell.background().set(new FillBackground(new Color(255,200,200,255), new CornerRadii(0), new Insets(0)));
-					}
-					else {
-						if (rowIdx.get() % 2 == 0) {
-							// event
-							cell.background().set(new FillBackground(new Color(255,255,255,255), new CornerRadii(0), new Insets(0)));
-							
-						}
-						else {
-							// odd
-							cell.background().set(new FillBackground(new Color(220,220,220,255), new CornerRadii(0), new Insets(0)));
-						}
-					}
+				public void onChange(Boolean oldValue, Boolean newValue) {
+					reSkin();
 				}
-				
 			});
 		}
 		
@@ -192,9 +191,11 @@ public class List<Model> extends VirtualFlow<Model> {
 		
 	}
 	
-	private Property<Cell<? extends Node<?>, Model>> activeCell = new SimpleProperty<VirtualFlow.Cell<? extends Node<?>,Model>>();
+//	private Property<Cell<? extends Node<?>, Model>> activeCell = new SimpleProperty<VirtualFlow.Cell<? extends Node<?>,Model>>();
 	
-	public List() {
+	private Property<Integer> activeRow = new SimpleProperty<Integer>(null);
+	
+	public ListView() {
 		
 		setCellFactory(new DefaultCellFactory<Model>());
 		area.addStyleClass("list");
@@ -203,7 +204,12 @@ public class List<Model> extends VirtualFlow<Model> {
 
 			@Override
 			public void onSignal(Cell<? extends Node<?>, Model> data) {
-				activeCell.set(data);
+				System.err.println("ON CELL TAP " + data.rowIdx.get());
+				activeRow.set(data.rowIdx.get());
+				
+				Model model = model().get(data.rowIdx.get());
+				selection.set(new SimpleSelectionModel<Model>(model));
+//				activeCell.set(data);
 //				if (onTap != null) {
 //					onTap.signal(model().get(data.rowIdx.get()));
 //				}
@@ -211,28 +217,52 @@ public class List<Model> extends VirtualFlow<Model> {
 			
 		});
 		
-		activeCell.registerChangeListener(new ChangeListener<VirtualFlow.Cell<? extends Node<?>,Model>>() {
+		activeRow.registerChangeListener(new ChangeListener<Integer>() {
 			@Override
-			public void onChange(
-					at.bestsolution.wgraf.widgets.VirtualFlow.Cell<? extends Node<?>, Model> oldValue,
-					at.bestsolution.wgraf.widgets.VirtualFlow.Cell<? extends Node<?>, Model> newValue) {
-				System.err.println("activeCell change: " + oldValue + " -> " + newValue);
-				
+			public void onChange(Integer oldValue, Integer newValue) {
 				if (oldValue != null) {
-					oldValue.active.set(false);
+					deactivateRow(oldValue);
 				}
-				
 				if (newValue != null) {
-					newValue.active.set(true);
-					selection.set(model().get(newValue.rowIdx.get()));
+					activateRow(newValue);
 				}
-				else {
-					selection.set(null);
-				}
-				
 			}
 		});
 		
+//		activeCell.registerChangeListener(new ChangeListener<VirtualFlow.Cell<? extends Node<?>,Model>>() {
+//			@Override
+//			public void onChange(
+//					at.bestsolution.wgraf.widgets.VirtualFlow.Cell<? extends Node<?>, Model> oldValue,
+//					at.bestsolution.wgraf.widgets.VirtualFlow.Cell<? extends Node<?>, Model> newValue) {
+//				System.err.println("activeCell change: " + oldValue + " -> " + newValue);
+//				
+//				if (oldValue != null) {
+//					oldValue.active.set(false);
+//				}
+//				
+//				if (newValue != null) {
+//					newValue.active.set(true);
+//					selection.set(model().get(newValue.rowIdx.get()));
+//				}
+//				else {
+//					selection.set(null);
+//				}
+//				
+//			}
+//		});
+		
+		
+		selection.registerChangeListener(new ChangeListener<MultiSelectionModel<Model>>() {
+			@Override
+			public void onChange(MultiSelectionModel<Model> oldValue, MultiSelectionModel<Model> newValue) {
+				if (newValue.isEmptySelection()) {
+					activeRow.set(null);
+				}
+				else {
+					activeRow.set(model().indexOf(newValue.getSingleSelection()));
+				}
+			}
+		});
 	}
 
 	private Signal<Model> onTap;
@@ -243,8 +273,8 @@ public class List<Model> extends VirtualFlow<Model> {
 		return onTap;
 	}
 	
-	private Property<Model> selection = new SimpleProperty<Model>();
-	public Property<Model> selection() {
+	private Property<MultiSelectionModel<Model>> selection = new SimpleProperty<MultiSelectionModel<Model>>(new SimpleSelectionModel<Model>());
+	public Property<MultiSelectionModel<Model>> selection() {
 		return selection;
 	}
 	

@@ -35,6 +35,6 @@ public class Binder {
 				target.set(newValue);
 			}
 		});
-		source.set(target.get());
+		target.set(source.get());
 	}
 }

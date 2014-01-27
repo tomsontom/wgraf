@@ -1,5 +1,7 @@
 package at.bestsolution.wgraf.widgets;
 
+import java.util.UUID;
+
 import at.bestsolution.wgraf.Application;
 import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.paint.Color;
@@ -34,50 +36,44 @@ public class ListTest extends Application {
 		Font font = new Font("Sans", 22);
 		
 		{
-			List<String> myFirstList = new List<String>();
+			final ListView<String> myFirstList = new ListView<String>();
 			
 			myFirstList.area.width().set(380);
-			myFirstList.area.height().set(480);
+			myFirstList.area.height().set(430);
 			
 			
-//			myFirstList.setCellFactory(new Factory<Cell<Node<?>, String>>() {
-//				@Override
-//				public Cell<Node<?>, String> create() {
-//					Color red100 = new Color(255, 0, 0, 100);
-//					Color red200 = new Color(255, 0, 0, 200);
-//					LinearGradient g = new LinearGradient(0.0, 0.0, 0.0, 1.0, CoordMode.OBJECT_BOUNDING, Spread.PAD, new Stop(0.0, red100), new Stop(1.0, red200));
-//					final Container c = new Container();
-//					c.background().set(
-//							new FillBackground(g, new CornerRadii(1), new Insets(0, 0, 0, 0))
-//							);
-//					final Text text = new Text();
-//					text.font().set(new Font("Sans", 25));
-//					text.parent().set(c);
-//					text.text().set("TODO: labelprovider!");
-//					c.width().set(380);
-//					c.height().set(40);
-//					return new Cell<Node<?>, String>() {
-//						@Override
-//						public Node<?> getNode() {
-//							return c;
-//						}
-//
-//						@Override
-//						public Binding bind(String model) {
-//							text.text().set(model);
-//							return null;
-//						}
-//						
-//					};
-//				}
-//				
-//			});
-			
-			
-			for (int i = 0; i < 100; i ++)
+			for (int i = 0; i < 10; i ++)
 				myFirstList.model().add("Line " + i);
 			
 			pane.addWidget(myFirstList, 10, 10);
+			
+			
+			Button addBtn = new Button();
+			addBtn.font().set(font);
+			addBtn.text().set("Add");
+			addBtn.width().set(100);
+			addBtn.height().set(40);
+			addBtn.activated().registerSignalListener(new SignalListener<Void>() {
+				@Override
+				public void onSignal(Void data) {
+					myFirstList.model().add("Added: " + UUID.randomUUID().toString());
+				}
+			});
+			pane.addWidget(addBtn, 10, 430);
+			
+			Button removeBtn = new Button();
+			removeBtn.font().set(font);
+			removeBtn.text().set("Remove");
+			removeBtn.width().set(100);
+			removeBtn.height().set(40);
+			removeBtn.activated().registerSignalListener(new SignalListener<Void>() {
+				@Override
+				public void onSignal(Void data) {
+					myFirstList.model().remove(myFirstList.model().size()-1);
+				}
+			});
+			pane.addWidget(removeBtn, 10 + 380/2, 430);
+			
 		}
 		root().set(pane.getAreaNode());
 	}

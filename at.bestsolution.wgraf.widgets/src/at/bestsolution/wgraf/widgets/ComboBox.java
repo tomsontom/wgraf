@@ -29,7 +29,7 @@ public class ComboBox<Model> extends Widget {
 	private AbsolutePane popupPane;
 	private Popup popup;
 	
-	private List<Model> list;
+	private ListView<Model> list;
 	private Button button;
 	private Text text;
 	private Label caption;
@@ -108,7 +108,7 @@ public class ComboBox<Model> extends Widget {
 		
 		popup = new Popup(popupPane);
 		
-		list = new List<Model>();
+		list = new ListView<Model>();
 		list.area.width().set(w - 2 * 25 - 20 - 40);
 		list.area.height().set(h - 2 * 25 - 2 * hh);
 		list.onTap().registerSignalListener(new SignalListener<Model>() {
@@ -143,7 +143,8 @@ public class ComboBox<Model> extends Widget {
 		okButton.activated().registerSignalListener(new SignalListener<Void>() {
 			@Override
 			public void onSignal(Void data) {
-				Model m = list.selection().get();
+				MultiSelectionModel<Model> sel = list.selection().get();
+				Model m = sel.getSingleSelection();
 				text.text().set(m==null?"":m.toString());
 				
 				hidePopup(popup);

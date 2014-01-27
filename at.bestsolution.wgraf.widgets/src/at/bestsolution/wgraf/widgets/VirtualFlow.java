@@ -15,8 +15,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import at.bestsolution.wgraf.events.ScrollEvent;
 import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.geom.shape.Rectangle;
+import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.properties.Binder;
 import at.bestsolution.wgraf.properties.Binding;
+import at.bestsolution.wgraf.properties.ClampedDoubleIncrement;
 import at.bestsolution.wgraf.properties.Converter;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
@@ -33,12 +35,16 @@ import at.bestsolution.wgraf.properties.simple.SimpleSignal;
 import at.bestsolution.wgraf.scene.Container;
 import at.bestsolution.wgraf.scene.Node;
 import at.bestsolution.wgraf.scene.Text;
+import at.bestsolution.wgraf.style.CornerRadii;
+import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
+import at.bestsolution.wgraf.style.Insets;
 import at.bestsolution.wgraf.transition.TouchScrollTransition;
 
 // TODO item resizing
 // TODO some converters like model -> label
 // TODO support multiple columns
+// TODO cell disposing & cell binding cleanup
 public class VirtualFlow<Model> extends Widget {
 
 	public static abstract class Cell<Type extends Node<?>, Model> {
@@ -46,7 +52,7 @@ public class VirtualFlow<Model> extends Widget {
 		public abstract Binding bind(Model model);
 		
 		public int colIdx;
-		public final Property<Integer> rowIdx = new SimpleProperty<Integer>(0);
+		public final Property<Integer> rowIdx = new SimpleProperty<Integer>(-1);
 		public final Property<Boolean> active = new SimpleProperty<Boolean>(false);
 		
 	}
@@ -171,7 +177,7 @@ public class VirtualFlow<Model> extends Widget {
 		}
 	};
 	
-	private Factory<? extends Cell<? extends Node<?>, Model>> cellFactory;
+	protected Factory<? extends Cell<? extends Node<?>, Model>> cellFactory;
 	
 	private ListProperty<Model> model = new SimpleListProperty<Model>();
 	
@@ -183,6 +189,26 @@ public class VirtualFlow<Model> extends Widget {
 	
 	private Set<Integer> usedCells = Collections.synchronizedSet(new HashSet<Integer>());
 	
+	private Set<Integer> activeRows = new HashSet<Integer>();
+	
+	protected void activateRow(int idx) {
+		System.err.println("ACTIVATE " + idx);
+		activeRows.add(idx);
+		Cell<? extends Node<?>, Model> cell = assignedCells.get(idx);
+		if (cell != null) {
+			cell.active.set(true);
+		}
+	}
+	
+	protected void deactivateRow(int idx) {
+		System.err.println("DEACTIVATE " + idx);
+		activeRows.remove(idx);
+		Cell<? extends Node<?>, Model> cell = assignedCells.get(idx);
+		if (cell != null) {
+			cell.active.set(false);
+		}
+	}
+	
 	private void freeCells() {
 		Iterator<Entry<Integer, Cell<? extends Node<?>, Model>>> iterator = assignedCells.entrySet().iterator();
 		while (iterator.hasNext()) {
@@ -191,6 +217,14 @@ public class VirtualFlow<Model> extends Widget {
 //				System.err.println("freeing cell");
 				freeCells.add(entry.getValue());
 				// send offscreen
+				// clean up cell state
+				
+				// offscrren debug
+				if (entry.getValue().getNode() instanceof Container) {
+					((Container) entry.getValue().getNode()).background().set(new FillBackground(new Color(0, 255, 0, 100), new CornerRadii(0), new Insets(0)));
+				}
+				
+				entry.getValue().active.set(false);
 				entry.getValue().getNode().y().set(-100);
 				iterator.remove();
 			}
@@ -220,6 +254,7 @@ public class VirtualFlow<Model> extends Widget {
 		assignedCells.put(idx, n);
 		usedCells.add(idx);
 		n.rowIdx.set(idx);
+		n.active.set(activeRows.contains(idx));
 		return n;
 	}
 	
@@ -238,7 +273,10 @@ public class VirtualFlow<Model> extends Widget {
 			if (newNode.getNode() instanceof Container) {
 				Container co = (Container)newNode.getNode();
 				// TODO bind?
-				co.width().set(area.width().get());
+				// TODO unbind?
+				
+				Binder.uniBind(area.width(), co.width());
+				//co.width().set(area.width().get());
 			}
 			newNode.getNode().acceptTapEvents().set(true);
 			newNode.getNode().onTap().registerSignalListener(new SignalListener<TapEvent>() {
@@ -314,6 +352,13 @@ public class VirtualFlow<Model> extends Widget {
 		model.registerChangeListener(new ListChangeListener<Model>() {
 			@Override
 			public void onChange(List<DeltaEntry<Model>> changes) {
+				for (DeltaEntry<Model> d : changes) {
+					if (d.type == EntryType.REMOVED) {
+						// if entry was removed we drop the focus
+						deactivateRow(d.oldIdx);
+					}
+				}
+				
 				int s = model.size();
 				verticalRange.setSize(s);
 			}
@@ -324,10 +369,19 @@ public class VirtualFlow<Model> extends Widget {
 		area.onScroll().registerSignalListener(new SignalListener<ScrollEvent>() {
 			@Override
 			public void onSignal(ScrollEvent data) {
-				verticalRange.offset.incrementDynamic(data.deltaY);
+				verticalRange.offset.update(new ClampedDoubleIncrement(data.deltaY, 0, calculateMaxYOffset()));
 				data.consume();
 			}
 		});
+	}
+	
+	private double calculateMaxYOffset() {
+		double result = 0;
+		for (int i = 0; i < model.size(); i++) {
+			result += verticalRange.elementSize.convert(i);
+		}
+		result -= verticalRange.windowSize;
+		return result;
 	}
 	
 	private void resize() {
