@@ -104,7 +104,10 @@ public abstract class Widget {
 	}
 	
 	public void setBounds(double x, double y, double width, double height) {
-		
+		area.x().set(x);
+		area.y().set(y);
+		area.width().set(width);
+		area.height().set(height);
 	}
 	
 	@Override
