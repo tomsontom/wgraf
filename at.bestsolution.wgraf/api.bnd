@@ -1,5 +1,6 @@
 Export-Package: at.bestsolution.wgraf,\
 	at.bestsolution.wgraf.properties,\
+	at.bestsolution.wgraf.properties.binding,\
 	at.bestsolution.wgraf.properties.simple,\
 	at.bestsolution.wgraf.scene,\
 	at.bestsolution.wgraf.scene.shapes,\

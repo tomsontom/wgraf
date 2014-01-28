@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Widgets
+Bundle-SymbolicName: at.bestsolution.wgraf.widgets
+Bundle-Version: 1.0.0.qualifier
+Export-Package: at.bestsolution.wgraf.widgets,
+ at.bestsolution.wgraf.widgets.popups
+Require-Bundle: at.bestsolution.wgraf;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
