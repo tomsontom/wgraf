@@ -280,9 +280,17 @@ public class ScrollPane extends Pane {
 	}
 	
 	public void setContent(Widget content) {
+		if (this.content != null) {
+			this.content.parent = null;
+			this.content.getAreaNode().parent().set(null);
+			this.content.getAreaNode().x().setTransition(null);
+			this.content.getAreaNode().y().setTransition(null);
+			
+		}
 		this.content = content;
 		
-		content.getAreaNode().parent().set(area);
+		addWidget(content);
+//		content.getAreaNode().parent().set(area);
 		content.getAreaNode().x().setTransition(new TouchScrollTransition());
 		content.getAreaNode().y().setTransition(new TouchScrollTransition());
 		
