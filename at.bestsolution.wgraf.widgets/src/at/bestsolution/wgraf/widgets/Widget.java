@@ -10,6 +10,7 @@ import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.scene.Container;
+import at.bestsolution.wgraf.scene.Node;
 
 public abstract class Widget {
 
@@ -129,5 +130,8 @@ public abstract class Widget {
 	}
 	
 	protected void restrictViewport(Rect viewport) {
+	}
+	
+	protected void scrollIntoViewport(Node<?> newValue) {
 	}
 }

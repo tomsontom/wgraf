@@ -25,8 +25,6 @@ public class PopupPane extends AbsolutePane {
 	
 	
 	public PopupPane() {
-		
-		
 		contentArea = new AbsolutePane();
 		super.addWidget(contentArea, 0, 0);
 		

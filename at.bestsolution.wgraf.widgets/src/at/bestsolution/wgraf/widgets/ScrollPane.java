@@ -364,4 +364,9 @@ public class ScrollPane extends Pane {
 		hBar.area.y().set(parentHeight - 20);
 		
 	}
+	
+	@Override
+	protected void restrictViewport(Rect viewport) {
+		viewport().set(viewport);
+	}
 }

@@ -24,7 +24,7 @@ public class KeyboardSupport {
 				if (newValue != null) {
 					if (newValue.requireKeyboard().get()) {
 						showKeyboard();
-//						contentArea.scrollIntoViewport(newValue);
+						KeyboardSupport.this.anyPane.scrollIntoViewport(newValue);
 					}
 					else {
 						hideKeyboard();
@@ -44,7 +44,7 @@ public class KeyboardSupport {
 			anyPane.showPopup(fullKeyboard);
 //			
 //			keyboard.area.y().setDynamic(area.height().get() - keyboard.area.height().get());
-//			contentArea.viewport().set(new Rect(0, 0, contentArea.area.width().get(), contentArea.area.height().get() - keyboard.area.height().get()));
+			anyPane.restrictViewport(new Rect(0, 0, anyPane.area.width().get(), anyPane.area.height().get() - fullKeyboard.getContent().area.height().get()));
 //			
 			keyboardVisible = true;
 		}
@@ -53,7 +53,7 @@ public class KeyboardSupport {
 	private void hideKeyboard() {
 			anyPane.hidePopup(fullKeyboard);
 //			keyboard.area.y().setDynamic(area.height().get());
-//			contentArea.viewport().set(null);
+			anyPane.restrictViewport(null);
 //			
 			keyboardVisible = false;
 	}
