@@ -11,7 +11,10 @@ import at.bestsolution.wgraf.scene.BackingText;
 import at.bestsolution.wgraf.util.FontUtil;
 
 public class QtBackendFactory extends BackendFactory{
-
+	public QtBackendFactory() {
+		INSTANCE = this;
+	}
+	
 	@Override
 	public <Type> Type create(Class<?> type) {
 		if (type == Sync.class) {

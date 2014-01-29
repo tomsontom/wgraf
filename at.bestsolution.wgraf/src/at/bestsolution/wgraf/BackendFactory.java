@@ -6,9 +6,15 @@ public abstract class BackendFactory {
 
 	private static String factory = System.getProperty("wgraf.factory");
 	
+	protected static BackendFactory INSTANCE;
+	
 	public abstract <Type> Type create(Class<?> type);
 	
 	public static BackendFactory get() {
+		if( INSTANCE != null ) {
+			return INSTANCE;
+		}
+		
 		String f = factory;
 		
 		if( f == null ) {

@@ -118,8 +118,7 @@ public class WidgetTest extends Application {
 							Pane pop = new AbsolutePane();
 							pop.area.background().set(new FillBackground(new Color(255,  0,  0, 50), new CornerRadii(2), new Insets(0, 0, 0, 0)));
 							
-							pop.area.width().set(100);
-							pop.area.height().set(100);
+							pop.setBounds(0, 0, 100, 100);
 							p = new Popup(pop);
 						}
 						
@@ -157,8 +156,7 @@ public class WidgetTest extends Application {
 					System.err.println(newValue);
 				}
 			});
-			bar.area.width().set(200d);
-			bar.area.height().set(40d);
+			bar.setBounds(0, 0, 200, 40);
 			
 			pane.addWidget(bar, 170, yOffset);
 			
@@ -201,8 +199,7 @@ public class WidgetTest extends Application {
 			
 			pane.addWidget(test, 390, yOffset);
 			
-			scrollPane.area.width().set(390);
-			scrollPane.area.height().set(350);
+			scrollPane.setBounds(0, 0, 390, 350);
 			
 //			scrollPane.area.background().set(new FillBackground(new Color(255,  0,  0, 50), new CornerRadii(2), new Insets(0, 0, 0, 0)));
 			pane.addWidget(scrollPane, 390, yOffset + 40);
@@ -222,8 +219,7 @@ public class WidgetTest extends Application {
 					new CornerRadii(4), bgInsets);
 			content.area.background().set(bg);
 		
-			content.area.width().set(390);
-			content.area.height().set(400);
+			content.setBounds(0, 0, 390, 400);
 			
 //			AbsolutePane content = new AbsolutePane() {
 //				@Override
