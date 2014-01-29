@@ -12,4 +12,13 @@ public class Rect {
 		this.width = width;
 		this.height = height;
 	}
+	
+	public Rect translate(double x, double y) {
+		return new Rect(this.x + x, this.y + y, this.width, this.height);
+	}
+
+	public Rect intersect(Rect other) {
+		// TODO
+		return null;
+	}
 }
