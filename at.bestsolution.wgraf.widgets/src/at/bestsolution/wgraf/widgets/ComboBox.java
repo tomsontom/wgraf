@@ -1,18 +1,15 @@
 package at.bestsolution.wgraf.widgets;
 
 import at.bestsolution.wgraf.events.TapEvent;
-import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.paint.LinearGradient;
 import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
 import at.bestsolution.wgraf.paint.LinearGradient.Spread;
 import at.bestsolution.wgraf.paint.LinearGradient.Stop;
-import at.bestsolution.wgraf.properties.Binding;
 import at.bestsolution.wgraf.properties.ChangeListener;
+import at.bestsolution.wgraf.properties.Converter;
 import at.bestsolution.wgraf.properties.ListProperty;
 import at.bestsolution.wgraf.properties.SignalListener;
-import at.bestsolution.wgraf.scene.Container;
-import at.bestsolution.wgraf.scene.Node;
 import at.bestsolution.wgraf.style.Backgrounds;
 import at.bestsolution.wgraf.style.Border;
 import at.bestsolution.wgraf.style.BorderStroke;
@@ -21,8 +18,6 @@ import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.style.Insets;
-import at.bestsolution.wgraf.widgets.VirtualFlow.Cell;
-import at.bestsolution.wgraf.widgets.VirtualFlow.Factory;
 
 public class ComboBox<Model> extends Widget {
 
@@ -36,7 +31,22 @@ public class ComboBox<Model> extends Widget {
 	
 	
 	private Button okButton;
+	public Converter<Model, String> labelProvider;
 	
+	private String getLabel(Model model) {
+		String label = null;
+		if (labelProvider != null) {
+			label = labelProvider.convert(model);
+		}
+		else {
+			if (model != null) {
+				label = model.toString();
+			}
+		}
+		
+		if (label == null) label = "null";
+		return label;
+	}
 	
 	public ComboBox() {
 		final Font font = new Font("Sans", 20);
@@ -109,12 +119,18 @@ public class ComboBox<Model> extends Widget {
 		popup = new Popup(popupPane);
 		
 		list = new ListView<Model>();
+		list.setCellFactory(new ListView.DefaultCellFactory<Model>(new ListView.SimpleLabelProvider<Model>() {
+			@Override
+			public String convert(Model value) {
+				return getLabel(value);
+			}
+		}));
 		list.area.width().set(w - 2 * 25 - 20 - 40);
 		list.area.height().set(h - 2 * 25 - 2 * hh);
 		list.onTap().registerSignalListener(new SignalListener<Model>() {
 			@Override
 			public void onSignal(Model data) {
-				text.text().set(data.toString());
+				text.text().set(getLabel(data));
 				hidePopup(popup);
 			}
 		});
@@ -145,7 +161,7 @@ public class ComboBox<Model> extends Widget {
 			public void onSignal(Void data) {
 				MultiSelectionModel<Model> sel = list.selection().get();
 				Model m = sel.getSingleSelection();
-				text.text().set(m==null?"":m.toString());
+				text.text().set(getLabel(m));
 				
 				hidePopup(popup);
 			}
