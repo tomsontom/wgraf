@@ -42,8 +42,8 @@ public class ListView<Model> extends VirtualFlow<Model> {
 	
 	public static class DefaultCellFactory<Model> implements Factory<DefaultCell<Model>> {
 		
-		private final SimpleLabelProvider<Model> simpleLabelProvider;
-		private final PropertyLabelProvider<Model> propertyLabelProvider;
+		protected final SimpleLabelProvider<Model> simpleLabelProvider;
+		protected final PropertyLabelProvider<Model> propertyLabelProvider;
 		
 		public DefaultCellFactory() {
 			this(new DefaultLabelProvider<Model>());
@@ -73,8 +73,8 @@ public class ListView<Model> extends VirtualFlow<Model> {
 	
 	public static class DefaultCell<Model> extends Cell<Container, Model> {
 
-		private Container cell;
-		private Text label;
+		protected Container cell;
+		protected Text label;
 		
 		
 		private final SimpleLabelProvider<Model> simpleLabelProvider;
@@ -102,7 +102,7 @@ public class ListView<Model> extends VirtualFlow<Model> {
 		
 		private static int cellIdCounter = 0;
 		
-		private void init() {
+		protected void init() {
 			cell = new Container();
 //			Text nfo = new Text();
 //			nfo.text().set("" + (++cellIdCounter) + " birth: " + System.currentTimeMillis());
@@ -136,22 +136,22 @@ public class ListView<Model> extends VirtualFlow<Model> {
 			String log = "reSkin: skinning cell " + index;
 			if (active) {
 				log+= " as active";
-				cell.background().set(new FillBackground(new Color(255,200,200,255), new CornerRadii(0), new Insets(0)));
+				cell.background().set(new FillBackground(new Color(255,200,200,150), new CornerRadii(0), new Insets(0)));
 			}
 			else {
 				if (index % 2 == 0) {
 					// even
 					log += " as even";
-					cell.background().set(new FillBackground(new Color(255,255,255,255), new CornerRadii(0), new Insets(0)));
+					cell.background().set(new FillBackground(new Color(255,255,255,150), new CornerRadii(0), new Insets(0)));
 					
 				}
 				else {
 					// odd
 					log += " as odd";
-					cell.background().set(new FillBackground(new Color(220,220,220,255), new CornerRadii(0), new Insets(0)));
+					cell.background().set(new FillBackground(new Color(220,220,220,150), new CornerRadii(0), new Insets(0)));
 				}
 			}
-			System.err.println(log);
+//			System.err.println(log);
 		}
 		
 		private void initDefaultStyle() {

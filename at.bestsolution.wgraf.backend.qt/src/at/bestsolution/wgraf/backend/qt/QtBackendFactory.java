@@ -5,8 +5,10 @@ import at.bestsolution.wgraf.BackingApplication;
 import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.backend.qt.internal.util.QtFontUtil;
 import at.bestsolution.wgraf.backend.qt.scene.QtContainer;
+import at.bestsolution.wgraf.backend.qt.scene.QtImage;
 import at.bestsolution.wgraf.backend.qt.scene.QtText;
 import at.bestsolution.wgraf.scene.BackingContainer;
+import at.bestsolution.wgraf.scene.BackingImage;
 import at.bestsolution.wgraf.scene.BackingText;
 import at.bestsolution.wgraf.util.FontUtil;
 
@@ -31,6 +33,9 @@ public class QtBackendFactory extends BackendFactory{
 		}
 		else if (type == FontUtil.class) {
 			return (Type) new QtFontUtil();
+		}
+		else if (type == BackingImage.class) {
+			return (Type) new QtImage();
 		}
 		throw new UnsupportedOperationException(type + " not supported");
 	}

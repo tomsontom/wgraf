@@ -122,4 +122,7 @@ public abstract class Widget {
 	public void layout() {
 		// do nothing by default
 	}
+	
+	protected void restrictViewport(Rect viewport) {
+	}
 }

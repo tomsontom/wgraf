@@ -1,9 +1,11 @@
 package at.bestsolution.wgraf.properties.binding;
 
+import at.bestsolution.wgraf.properties.Binding;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.DoubleProperty;
 import at.bestsolution.wgraf.properties.Property;
+import at.bestsolution.wgraf.style.ImageSource;
 
 public class Binder {
 	
@@ -36,5 +38,22 @@ public class Binder {
 			}
 		});
 		target.set(source.get());
+	}
+
+	public static Binding uniBind(final Property<ImageSource> source, final Property<ImageSource> target) {
+		final ChangeListener<ImageSource> listener = new ChangeListener<ImageSource>() {
+			@Override
+			public void onChange(ImageSource oldValue, ImageSource newValue) {
+				target.set(newValue);
+			}
+		};
+		source.registerChangeListener(listener);
+		target.set(source.get());
+		return new Binding() {
+			@Override
+			public void dispose() {
+				source.unregisterChangeListener(listener);
+			}
+		};
 	}
 }

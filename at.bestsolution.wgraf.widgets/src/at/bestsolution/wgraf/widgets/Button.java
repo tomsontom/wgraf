@@ -16,8 +16,10 @@ import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.SignalListener;
+import at.bestsolution.wgraf.properties.binding.Binder;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleSignal;
+import at.bestsolution.wgraf.scene.Image;
 import at.bestsolution.wgraf.style.Background;
 import at.bestsolution.wgraf.style.Backgrounds;
 import at.bestsolution.wgraf.style.Border;
@@ -27,12 +29,14 @@ import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.DropShadow;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
+import at.bestsolution.wgraf.style.ImageSource;
 import at.bestsolution.wgraf.style.Insets;
 
 
 public class Button extends Widget {
 
 	private final at.bestsolution.wgraf.scene.Text nodeText;
+	
 	
 	public Button() {
 		
@@ -91,6 +95,20 @@ public class Button extends Widget {
 		registerPseudoClassState("focus", focus());
 		
 		initDefaultStyle();
+	}
+	
+	private Property<ImageSource> icon = null;
+	public Property<ImageSource> icon() {
+		if (icon == null) {
+			icon = new SimpleProperty<ImageSource>();
+			Image img = new Image();
+			img.parent().set(area);
+			Binder.uniBind(icon, img.image());
+			// TODO this is only a quick hack to get an icon in here
+			img.x().set(10);
+			img.y().set(10);
+		}
+		return icon;
 	}
 	
 	private void initDefaultStyle() {
