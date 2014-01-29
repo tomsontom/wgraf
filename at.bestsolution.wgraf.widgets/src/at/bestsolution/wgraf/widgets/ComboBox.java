@@ -12,7 +12,9 @@ import at.bestsolution.wgraf.paint.LinearGradient.Stop;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.Converter;
 import at.bestsolution.wgraf.properties.ListProperty;
+import at.bestsolution.wgraf.properties.Setter;
 import at.bestsolution.wgraf.properties.SignalListener;
+import at.bestsolution.wgraf.properties.binding.Binder;
 import at.bestsolution.wgraf.style.Backgrounds;
 import at.bestsolution.wgraf.style.Border;
 import at.bestsolution.wgraf.style.BorderStroke;
@@ -60,15 +62,25 @@ public class ComboBox<Model> extends Widget {
 		
 		text = new Text();
 		text.area.parent().set(area);
-		text.area.width().set(160);
+//		text.area.width().set(160);
 		text.area.height().set(40);
 		text.font().set(font);
+		
+		
 		
 		button = new Button();
 		button.area.parent().set(area);
 		button.area.width().set(40);
 		button.area.height().set(40);
-		button.area.x().set(160);
+//		button.area.x().set(160);
+		
+		Binder.uniBind(area.width(), new at.bestsolution.wgraf.properties.binding.Setter<Double>() {
+			@Override
+			public void set(Double value) {
+				text.area.width().set(value - 40);
+				button.area.x().set(value - 40);
+			}
+		});
 		
 		try {
 			button.icon().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowdown.png")));
