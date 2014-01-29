@@ -388,7 +388,7 @@ public class VirtualFlow<Model> extends Widget {
 		double height = area.height().get();
 		double width = area.width().get();
 		// TODO fix item size
-		area.clippingShape().set(new Rectangle(2, 2, width-4, height-4));
+		area.clippingShape().set(new Rectangle(0, 0, width, height));
 	}
 	
 	public ListProperty<Model> model() {

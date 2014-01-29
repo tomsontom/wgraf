@@ -1,5 +1,8 @@
 package at.bestsolution.wgraf.widgets;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.paint.LinearGradient;
@@ -17,6 +20,7 @@ import at.bestsolution.wgraf.style.BorderWidths;
 import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
+import at.bestsolution.wgraf.style.ImageSource;
 import at.bestsolution.wgraf.style.Insets;
 
 public class ComboBox<Model> extends Widget {
@@ -66,6 +70,12 @@ public class ComboBox<Model> extends Widget {
 		button.area.height().set(40);
 		button.area.x().set(160);
 		
+		try {
+			button.icon().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowdown.png")));
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		
 		button.activated().registerSignalListener(new SignalListener<Void>() {
 			@Override
 			public void onSignal(Void data) {
@@ -95,21 +105,40 @@ public class ComboBox<Model> extends Widget {
 		popupPane.area.height().set(h);
 		
 		final Button up = new Button();
-		up.text().set("^");
-		up.font().set(font);
+//		up.text().set("^");
+//		up.font().set(font);
 		up.area.width().set(40);
 		up.area.height().set(40);
+		
+
+		try {
+			up.icon().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowup.png")));
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		
+		
 		popupPane.addWidget(up, w - 25 - 40, hh + 25);
 
 		final Button down = new Button();
-		down.text().set("v");
-		down.font().set(font);
+//		down.text().set("v");
+//		down.font().set(font);
 		down.area.width().set(40);
 		down.area.height().set(40);
+		
+
+		try {
+			down.icon().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowdown.png")));
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		
+		
 		popupPane.addWidget(down, w - 25 - 40, h - 40 - 25 - 40);
 
 		caption = new Label();
 		caption.font().set(font);
+		// TODO bind caption to some text widget
 		caption.text().set("Caption");
 		
 		popupPane.addWidget(caption, 10, 10);
@@ -181,8 +210,8 @@ public class ComboBox<Model> extends Widget {
 				new Stop(1, new Color(50, 50, 50, 200))
 			);
 		LinearGradient header = new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
-				new Stop(0, new Color(255, 0, 0, 200)),
-				new Stop(1, new Color(255, 50, 50, 200))
+				new Stop(0, new Color(255, 105, 105, 200)),
+				new Stop(1, new Color(255, 80, 80, 200))
 			);
 		
 		CornerRadii headerRadii = new CornerRadii(10, 10, 10, 10, 0, 0, 0, 0);

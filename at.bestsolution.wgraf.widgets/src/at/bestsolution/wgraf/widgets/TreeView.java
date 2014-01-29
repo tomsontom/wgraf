@@ -5,7 +5,14 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import at.bestsolution.wgraf.Application;
+import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.events.TapEvent;
+import at.bestsolution.wgraf.paint.Color;
+import at.bestsolution.wgraf.paint.LinearGradient;
+import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
+import at.bestsolution.wgraf.paint.LinearGradient.Spread;
+import at.bestsolution.wgraf.paint.LinearGradient.Stop;
 import at.bestsolution.wgraf.properties.Binding;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.Converter;
@@ -17,8 +24,13 @@ import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.scene.Container;
 import at.bestsolution.wgraf.scene.Image;
 import at.bestsolution.wgraf.scene.Node;
+import at.bestsolution.wgraf.scene.Text;
+import at.bestsolution.wgraf.style.Background;
+import at.bestsolution.wgraf.style.CornerRadii;
+import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.style.ImageSource;
+import at.bestsolution.wgraf.style.Insets;
 import at.bestsolution.wgraf.widgets.ListView.DefaultCell;
 import at.bestsolution.wgraf.widgets.ListView.PropertyLabelProvider;
 import at.bestsolution.wgraf.widgets.ListView.SimpleLabelProvider;
@@ -31,6 +43,15 @@ public class TreeView<Model> extends Widget {
 		private TreeView<Model> treeView;
 		public void setTreeView(TreeView<Model> treeView) {
 			this.treeView = treeView;
+		}
+		
+		public String getLabel(Model m) {
+			if (simpleLabelProvider == null) {
+				return propertyLabelProvider.convert(m).get();
+			}
+			else {
+				return simpleLabelProvider.convert(m);
+			}
 		}
 		
 		public DefaultCellFactory(SimpleLabelProvider<Model> p) {
@@ -78,6 +99,11 @@ public class TreeView<Model> extends Widget {
 		@Override
 		protected void init() {
 			super.init();
+			
+			// we modify the layout a bit
+			label.x().set(40 + 10);
+			
+			
 			// TODO platform uri will not work outside osgi
 			try {
 				childIcon = new Image();
@@ -148,7 +174,7 @@ public class TreeView<Model> extends Widget {
 		}
 	}
 	
-	private Button upButton = new Button(); 
+//	private Button upButton = new Button(); 
 	
 	private Cell<? extends Node<?>, Model> current;
 	
@@ -195,7 +221,73 @@ public class TreeView<Model> extends Widget {
 		if (current != null) {
 			current.getNode().parent().set(null);
 		}
-		current = cellFactory.create();
+		
+		current = new Cell<Container, Model>() {
+			private Container cell;
+			private at.bestsolution.wgraf.scene.Text label;
+			{
+				cell = new Container();
+				label = new Text();
+				label.parent().set(cell);
+				label.x().set(10);
+				label.font().set(new Font("Sans", 20));
+				Binder.uniBind(cell.height(), new Setter<Double>() {
+					@Override
+					public void set(Double value) {
+						final double textH = label.font().get().stringExtent("Aq").y;
+						label.y().set(value/2 - textH/2);
+					}
+				});
+				
+				Binder.uniBind(label.font(), new Setter<Font>() {
+					@Override
+					public void set(Font value) {
+						final double textH = value.stringExtent("Aq").y;
+						label.y().set(cell.height().get()/2 - textH/2);
+					}
+				});
+				
+				
+				// style
+				final Background odd = new FillBackground(
+						new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
+								new Stop(0, new Color(210,210,210,150)),
+								new Stop(0.4, new Color(240,240,240,150)),
+								new Stop(1, new Color(240,240,240,150))
+								),
+								new CornerRadii(0), new Insets(0)
+						);
+				
+				final Background focus = new FillBackground(
+						new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
+								new Stop(0, new Color(225,0,0,150)),
+								new Stop(0.4, new Color(255,30,30,150)),
+								new Stop(1, new Color(255,30,30,150))
+								),
+								new CornerRadii(0), new Insets(0)
+						);
+				Binder.uniBind(active, new Setter<Boolean>() {
+					@Override
+					public void set(Boolean value) {
+						cell.background().set(value?focus:odd);
+					}
+				});
+			}
+			
+			@Override
+			public Container getNode() {
+				return cell;
+			}
+			@Override
+			public Binding bind(Model model) {
+				if (cellFactory instanceof DefaultCellFactory) {
+					label.text().set(((DefaultCellFactory) cellFactory).getLabel(model));
+				}
+				return null;
+			}
+		};
+		
+//		current = cellFactory.create();
 		current.getNode().parent().set(area);
 		current.getNode().x().set(40);
 		current.getNode().y().set(0);
@@ -248,32 +340,84 @@ public class TreeView<Model> extends Widget {
 			}
 		});
 		
+		final Container upButtonBase = new Container();
+		final Image upButton = new Image();
+		upButton.parent().set(upButtonBase);
+		upButton.x().set(10);
+		upButton.y().set(10);
 //		upButton.font().set(new Font("Sans", 18));
 //		upButton.text().set("up");
 		try {
-			upButton.icon().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/treeuparrow.png")));
+			upButton.image().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowup-black.png")));
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		final Background odd = new FillBackground(
+				new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
+						new Stop(0, new Color(210,210,210,150)),
+						new Stop(0.4, new Color(240,240,240,150)),
+						new Stop(1, new Color(240,240,240,150))
+						),
+						new CornerRadii(0), new Insets(0)
+				);
+		final Background focus = new FillBackground(
+				new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
+						new Stop(0, new Color(225,0,0,150)),
+						new Stop(0.4, new Color(255,30,30,150)),
+						new Stop(1, new Color(255,30,30,150))
+						),
+						new CornerRadii(0), new Insets(0)
+				);
+		upButtonBase.background().set(odd);
+		upButtonBase.parent().set(area);
+		upButtonBase.width().set(40);
+		upButtonBase.height().set(40);
+		upButtonBase.x().set(0);
+		upButtonBase.y().set(0);
 		
-		upButton.area.parent().set(area);
-		upButton.width().set(40);
-		upButton.height().set(40);
-		upButton.x().set(0);
-		upButton.y().set(0);
-		
-		upButton.activated().registerSignalListener(new SignalListener<Void>() {
+		upButtonBase.acceptTapEvents().set(true);
+		upButtonBase.onTap().registerSignalListener(new SignalListener<TapEvent>() {
+
 			@Override
-			public void onSignal(Void data) {
+			public void onSignal(TapEvent data) {
 				if (currentNode != null) {
 					Model parent = parentConverter.convert(currentNode);
 					if (parent != null) {
 						internalSetCurrent(parent);
 					}
 				}
+				upButtonBase.background().set(focus);
+				try {
+					upButton.image().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowup.png")));
+				} catch (URISyntaxException e) {
+					e.printStackTrace();
+				}
+				Sync.get().execLaterOnUIThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						upButtonBase.background().set(odd);
+						try {
+							upButton.image().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowup-black.png")));
+						} catch (URISyntaxException e) {
+							e.printStackTrace();
+						}
+					}
+				}, 100);
+				
 			}
 		});
+//		upButton.activated().registerSignalListener(new SignalListener<Void>() {
+//			@Override
+//			public void onSignal(Void data) {
+//				if (currentNode != null) {
+//					Model parent = parentConverter.convert(currentNode);
+//					if (parent != null) {
+//						internalSetCurrent(parent);
+//					}
+//				}
+//			}
+//		});
 		
 		listView.selection().registerChangeListener(new ChangeListener<MultiSelectionModel<Model>>() {
 			@Override

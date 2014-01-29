@@ -154,13 +154,23 @@ public class ListView<Model> extends VirtualFlow<Model> {
 							new CornerRadii(0), new Insets(0)
 					);
 			
+			Background focus = new FillBackground(
+					new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
+							new Stop(0, new Color(225,0,0,150)),
+							new Stop(0.4, new Color(255,30,30,150)),
+							new Stop(1, new Color(255,30,30,150))
+							),
+							new CornerRadii(0), new Insets(0)
+					);
+			
+			
 			final boolean active = this.active.get();
 			final int index = this.rowIdx.get();
 			
 			String log = "reSkin: skinning cell " + index;
 			if (active) {
 				log+= " as active";
-				cell.background().set(new FillBackground(new Color(255,200,200,150), new CornerRadii(0), new Insets(0)));
+				cell.background().set(focus);
 			}
 			else {
 				if (index % 2 == 0) {

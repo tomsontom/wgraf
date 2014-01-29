@@ -293,6 +293,12 @@ public class Text extends Widget {
 				), 
 				new CornerRadii(4), bgInsets);
 		
+		// TODO implement visibility
+//		nodeCursor.background().set(new FillBackground(
+//				new Color(255, 105, 105, 200),
+//				new CornerRadii(0), new Insets(0)
+//				));
+		
 		area.background().set(normal);
 		
 		area.border().set(new Border(new BorderStroke( new Color(200, 200, 200, 255), new CornerRadii(4), new BorderWidths(1, 1, 1, 1), bgInsets)));
@@ -324,7 +330,7 @@ public class Text extends Widget {
 			@Override
 			public void onChange(Boolean oldValue, Boolean newValue) {
 				if (newValue) {
-					nodeCursor.background().set(new FillBackground(new Color(0, 255, 255, 100), new CornerRadii(0), new Insets(0,0,0,0)));
+					nodeCursor.background().set(new FillBackground(new Color(255, 105, 105, 255), new CornerRadii(0), new Insets(0,0,0,0)));
 				}
 				else {
 					nodeCursor.background().set(null);
