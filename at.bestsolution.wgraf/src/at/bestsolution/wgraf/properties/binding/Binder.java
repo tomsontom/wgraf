@@ -40,10 +40,10 @@ public class Binder {
 		target.set(source.get());
 	}
 
-	public static Binding uniBind(final Property<ImageSource> source, final Property<ImageSource> target) {
-		final ChangeListener<ImageSource> listener = new ChangeListener<ImageSource>() {
+	public static <Type> Binding uniBind(final Property<Type> source, final Property<Type> target) {
+		final ChangeListener<Type> listener = new ChangeListener<Type>() {
 			@Override
-			public void onChange(ImageSource oldValue, ImageSource newValue) {
+			public void onChange(Type oldValue, Type newValue) {
 				target.set(newValue);
 			}
 		};
@@ -56,4 +56,5 @@ public class Binder {
 			}
 		};
 	}
+
 }

@@ -2,11 +2,71 @@ package at.bestsolution.wgraf.properties;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.math.Rect;
 
 
 public class Binder {
 
+	public static <Type> Binding uniBindDelayed(final Property<Type> property, final Setter<Type> setter, final long delay) {
+		final ChangeListener<Type> listener = new ChangeListener<Type>() {
+			private Object current = null;
+			@Override
+			public void onChange(Type oldValue, final Type newValue) {
+				final Object currentChange = new Object();
+				current = currentChange;
+				
+				Sync.get().execLaterOnUIThread(new Runnable() {
+					@Override
+					public void run() {
+						// drop 
+						if (current != currentChange) return;
+						setter.set(newValue);
+					}
+				}, delay);
+				
+			}
+		};
+		property.registerChangeListener(listener);
+		
+		return new Binding() {
+			
+			@Override
+			public void dispose() {
+				property.unregisterChangeListener(listener);
+			}
+		};
+	}
+	
+	public static <Type> Binding uniBindDelayed(final Property<Type> source, final Property<Type> target, final long delay) {
+		final ChangeListener<Type> listener = new ChangeListener<Type>() {
+			private Object current = null;
+			@Override
+			public void onChange(Type oldValue, final Type newValue) {
+				final Object currentChange = new Object();
+				current = currentChange;
+				
+				Sync.get().execLaterOnUIThread(new Runnable() {
+					@Override
+					public void run() {
+						// drop 
+						if (current != currentChange) return;
+						target.set(newValue);
+					}
+				}, delay);
+				
+			}
+		};
+		source.registerChangeListener(listener);
+		
+		return new Binding() {
+			@Override
+			public void dispose() {
+				source.unregisterChangeListener(listener);
+			}
+		};
+	}
+	
 	public static <Type> Binding uniBind(final Property<Type> property, final Setter<Type> setter) {
 		final ChangeListener<Type> listener = new ChangeListener<Type>() {
 			@Override
@@ -280,6 +340,8 @@ public class Binder {
 			}
 		};
 	}
+
+	
 
 
 	

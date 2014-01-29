@@ -8,6 +8,7 @@ import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.properties.DoubleProperty;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.ReadOnlyProperty;
+import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.scene.Container;
 
 public abstract class Widget {
@@ -32,6 +33,10 @@ public abstract class Widget {
 		area = new Container();
 	}
 	
+	private Property<Boolean> enabled = new SimpleProperty<Boolean>(true);
+	public Property<Boolean> enabled() {
+		return enabled;
+	}
 	
 	
 	// bounds

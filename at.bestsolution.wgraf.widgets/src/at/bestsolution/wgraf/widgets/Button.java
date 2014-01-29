@@ -17,6 +17,7 @@ import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.binding.Binder;
+import at.bestsolution.wgraf.properties.binding.Setter;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleSignal;
 import at.bestsolution.wgraf.scene.Image;
@@ -60,16 +61,20 @@ public class Button extends Widget {
 		area.onTap().registerSignalListener(new SignalListener<TapEvent>() {
 			@Override
 			public void onSignal(TapEvent data) {
-				triggerActivated();
-				data.consume();
+				if (enabled().get()) {
+					triggerActivated();
+					data.consume();
+				}
 			}
 		});
 		
 		area.onKeyPress().registerSignalListener(new SignalListener<KeyEvent>() {
 			@Override
 			public void onSignal(KeyEvent data) {
-				if (data.code == KeyCode.SPACE || data.code == KeyCode.ENTER) {
-					triggerActivated();
+				if (enabled().get()) {
+					if (data.code == KeyCode.SPACE || data.code == KeyCode.ENTER) {
+						triggerActivated();
+					}
 				}
 			}
 		});
@@ -122,6 +127,13 @@ public class Button extends Widget {
 				), 
 				new CornerRadii(4), bgInsets);
 		
+		final FillBackground disabled = new FillBackground(
+				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
+					new Stop(0, new Color(251, 251, 251, 255)),
+					new Stop(1, new Color(194, 194, 194, 255))
+				), 
+				new CornerRadii(4), bgInsets);
+		
 		final Background normalWithFocus = new Backgrounds(
 			normal,
 			new FillBackground(new Color(255, 255, 255, 255), new CornerRadii(4), bgInsets),
@@ -169,6 +181,17 @@ public class Button extends Widget {
 //				}
 //			}
 //		});
+		Binder.uniBind(enabled(), new Setter<Boolean>() {
+			@Override
+			public void set(Boolean value) {
+				if (value) {
+					area.background().set(normal);
+				}
+				else {
+					area.background().set(disabled);
+				}
+			}
+		});
 		active().registerChangeListener(new ChangeListener<Boolean>() {
 			@Override
 			public void onChange(Boolean oldValue, Boolean newValue) {
