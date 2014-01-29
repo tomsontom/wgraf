@@ -30,6 +30,10 @@
 		<module>../at.bestsolution.wgraf.backend.javafx</module>
 		<module>../at.bestsolution.wgraf.backend.qt</module>
 		<module>../at.bestsolution.wgraf.widgets</module>
+		<module>../com.trolltech.qt</module>
+		<module>../com.trolltech.qt.linux32</module>
+		<module>../com.trolltech.qt.linux64</module>
+		<module>../com.trolltech.qt.win32</module>
 	</modules>
 
 	<repositories>
@@ -37,6 +41,11 @@
 			<id>kepler</id>
 			<layout>p2</layout>
 			<url>http://download.eclipse.org/releases/kepler</url>
+		</repository>
+		<repository>
+			<id>efx</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/efxclipse/runtime-nightly/site/</url>
 		</repository>
 		<!--  repository>
 			<id>kepler-ecf</id>

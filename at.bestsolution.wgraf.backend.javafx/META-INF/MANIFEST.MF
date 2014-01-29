@@ -8,7 +8,7 @@ Export-Package: at.bestsolution.wgraf.backend.javafx,
  at.bestsolution.wgraf.backend.javafx.scene.shape,
  at.bestsolution.wgraf.backend.javafx.util
 Require-Bundle: at.bestsolution.wgraf;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.sun.javafx.tk;version="2.2.0",
  javafx.animation;version="2.2.0",
  javafx.application;version="2.2.0",

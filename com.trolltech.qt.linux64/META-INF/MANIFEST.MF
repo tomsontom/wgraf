@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Linux64
 Bundle-SymbolicName: com.trolltech.qt.linux64
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 4.6.3
 Bundle-Vendor: TROLLTECH
-Fragment-Host: com.trolltech.qt;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Fragment-Host: com.trolltech.qt;bundle-version="4.6.3"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: libs/qtjambi-linux64-gcc-4.6.3.jar,
  .
