@@ -19,3 +19,4 @@ Export-Package: at.bestsolution.wgraf,
  at.bestsolution.wgraf.test.ui,
  at.bestsolution.wgraf.transition,
  at.bestsolution.wgraf.util
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
