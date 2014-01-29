@@ -309,7 +309,7 @@ public class QtApplication implements BackingApplication {
 		
 		scene.setSceneRect(0, 0, w, h);
 		
-		fps = scene.addSimpleText("fps");
+//		fps = scene.addSimpleText("fps");
 		
 		
 //		redrawHammer.timeout.connect(this, "render()");
@@ -330,7 +330,7 @@ public class QtApplication implements BackingApplication {
 	private long frame = 0;
 	private long begin = -1;
 	
-	private QGraphicsSimpleTextItem fps;
+//	private QGraphicsSimpleTextItem fps;
 	
 	public void render() {
 		final long now = System.currentTimeMillis();
@@ -342,7 +342,7 @@ public class QtApplication implements BackingApplication {
 		
 		if (duration > 5000) {
 			float fps = frame / (float) duration * 1000;
-			this.fps.setText("fps: " + new DecimalFormat("##0").format(fps));
+//			this.fps.setText("fps: " + new DecimalFormat("##0").format(fps));
 			begin = now;
 			frame = 0;
 		}

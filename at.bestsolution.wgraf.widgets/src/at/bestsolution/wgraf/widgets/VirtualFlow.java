@@ -220,9 +220,9 @@ public class VirtualFlow<Model> extends Widget {
 				// clean up cell state
 				
 				// offscrren debug
-				if (entry.getValue().getNode() instanceof Container) {
-					((Container) entry.getValue().getNode()).background().set(new FillBackground(new Color(0, 255, 0, 100), new CornerRadii(0), new Insets(0)));
-				}
+//				if (entry.getValue().getNode() instanceof Container) {
+//					((Container) entry.getValue().getNode()).background().set(new FillBackground(new Color(0, 255, 0, 100), new CornerRadii(0), new Insets(0)));
+//				}
 				
 				entry.getValue().active.set(false);
 				entry.getValue().getNode().y().set(-100);

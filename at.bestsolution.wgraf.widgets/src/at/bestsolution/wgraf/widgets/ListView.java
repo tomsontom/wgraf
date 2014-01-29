@@ -1,6 +1,10 @@
 package at.bestsolution.wgraf.widgets;
 
 import at.bestsolution.wgraf.paint.Color;
+import at.bestsolution.wgraf.paint.LinearGradient;
+import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
+import at.bestsolution.wgraf.paint.LinearGradient.Spread;
+import at.bestsolution.wgraf.paint.LinearGradient.Stop;
 import at.bestsolution.wgraf.properties.Binder;
 import at.bestsolution.wgraf.properties.Binding;
 import at.bestsolution.wgraf.properties.ChangeListener;
@@ -15,6 +19,7 @@ import at.bestsolution.wgraf.properties.simple.SimpleSignal;
 import at.bestsolution.wgraf.scene.Container;
 import at.bestsolution.wgraf.scene.Node;
 import at.bestsolution.wgraf.scene.Text;
+import at.bestsolution.wgraf.style.Background;
 import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
@@ -130,6 +135,25 @@ public class ListView<Model> extends VirtualFlow<Model> {
 		}
 		
 		private void reSkin() {
+			
+			Background even = new FillBackground(
+					new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
+							new Stop(0, new Color(220,220,220,150)),
+							new Stop(0.4, new Color(250,250,250,150)),
+							new Stop(1, new Color(250,250,250,150))
+							),
+							new CornerRadii(0), new Insets(0)
+					);
+			
+			Background odd = new FillBackground(
+					new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
+							new Stop(0, new Color(210,210,210,150)),
+							new Stop(0.4, new Color(240,240,240,150)),
+							new Stop(1, new Color(240,240,240,150))
+							),
+							new CornerRadii(0), new Insets(0)
+					);
+			
 			final boolean active = this.active.get();
 			final int index = this.rowIdx.get();
 			
@@ -142,13 +166,13 @@ public class ListView<Model> extends VirtualFlow<Model> {
 				if (index % 2 == 0) {
 					// even
 					log += " as even";
-					cell.background().set(new FillBackground(new Color(255,255,255,150), new CornerRadii(0), new Insets(0)));
+					cell.background().set(even);
 					
 				}
 				else {
 					// odd
 					log += " as odd";
-					cell.background().set(new FillBackground(new Color(220,220,220,150), new CornerRadii(0), new Insets(0)));
+					cell.background().set(odd);
 				}
 			}
 //			System.err.println(log);

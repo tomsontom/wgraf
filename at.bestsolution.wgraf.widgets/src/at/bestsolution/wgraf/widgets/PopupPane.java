@@ -6,15 +6,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.properties.Binder;
 import at.bestsolution.wgraf.properties.Binding;
 import at.bestsolution.wgraf.properties.GroupBinding;
 import at.bestsolution.wgraf.properties.Setter;
 import at.bestsolution.wgraf.scene.Container;
-import at.bestsolution.wgraf.style.CornerRadii;
-import at.bestsolution.wgraf.style.FillBackground;
-import at.bestsolution.wgraf.style.Insets;
 import at.bestsolution.wgraf.widgets.Popup.PopupPosition;
 
 
@@ -54,13 +50,10 @@ public class PopupPane extends AbsolutePane {
 		absolutePopupArea = new Container();
 		absolutePopupArea.parent().set(area);
 		absolutePopupArea.acceptTapEvents().set(false);
-		absolutePopupArea.background().set(new FillBackground(new Color(0, 255, 0, 100), new CornerRadii(0), new Insets(0)));
 		
 		
 		Binder.uniBind(area.width(), absolutePopupArea.width());
 		Binder.uniBind(area.height(), absolutePopupArea.height());
-		
-		
 		
 	}
 	
@@ -68,6 +61,11 @@ public class PopupPane extends AbsolutePane {
 	public void addWidget(Widget widget, double x, double y) {
 		contentArea.addWidget(widget, x, y);
 	}
+	
+//	@Override
+//	public void addWidget(Widget w) {
+//		contentArea.addWidget(w);
+//	}
 	
 	@Override
 	public void showPopup(final Popup popup) {

@@ -26,6 +26,7 @@ public abstract class Pane extends Widget {
 			Rect widgetAreaInWidgetSpace = new Rect(0, 0, widget.width().get(), widget.height().get());
 			Rect widgetViewport = widgetAreaInWidgetSpace.intersect(viewportInWidgetSpace);
 			
+			
 			widget.restrictViewport(widgetViewport);
 		}
 	}
