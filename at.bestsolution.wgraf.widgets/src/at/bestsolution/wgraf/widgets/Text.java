@@ -1,5 +1,9 @@
 package at.bestsolution.wgraf.widgets;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.events.KeyCode;
 import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.ScrollEvent;
@@ -16,16 +20,22 @@ import at.bestsolution.wgraf.properties.ClampedDoubleIncrement;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.ReadOnlyProperty;
+import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.binding.Binder;
+import at.bestsolution.wgraf.properties.binding.Setter;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
+import at.bestsolution.wgraf.properties.simple.SimpleSignal;
 import at.bestsolution.wgraf.scene.Container;
+import at.bestsolution.wgraf.scene.Image;
+import at.bestsolution.wgraf.style.Background;
 import at.bestsolution.wgraf.style.Border;
 import at.bestsolution.wgraf.style.BorderStroke;
 import at.bestsolution.wgraf.style.BorderWidths;
 import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
+import at.bestsolution.wgraf.style.ImageSource;
 import at.bestsolution.wgraf.style.Insets;
 import at.bestsolution.wgraf.transition.TouchScrollTransition;
 
@@ -35,6 +45,141 @@ import at.bestsolution.wgraf.transition.TouchScrollTransition;
 // TODO we need some kind of delayed text change listener
 //      to prevent model updates on every stroke
 public class Text extends Widget {
+	
+	public static class TextButton extends Widget {
+		
+		private Image icon;
+		
+		private Property<Boolean> active = new SimpleProperty<Boolean>(false);
+		public Property<Boolean> active() {
+			return active;
+		}
+		
+		private Property<Boolean> right = new SimpleProperty<Boolean>(false);
+		public Property<Boolean> right() {
+			return right;
+		}
+		
+		private Property<Boolean> left = new SimpleProperty<Boolean>(false);
+		public Property<Boolean> left() {
+			return right;
+		}
+		
+		public Property<ImageSource> icon() {
+			return icon.image();
+		}
+		
+		private Signal<Void> activated = new SimpleSignal<Void>();
+		public Signal<Void> activated() {
+			return activated;
+		}
+		
+		public TextButton() {
+			
+			icon = new Image();
+			icon.x().set(10);
+			icon.y().set(10);
+			icon.parent().set(area);
+			
+			area.acceptTapEvents().set(true);
+			area.onTap().registerSignalListener(new SignalListener<TapEvent>() {
+				@Override
+				public void onSignal(TapEvent data) {
+					active.set(true);
+					Sync.get().execLaterOnUIThread(new Runnable() {
+						@Override
+						public void run() {
+							active.set(false);
+						}
+					}, 100);
+					activated.signal(null);
+					data.consume();
+				}
+			});
+			
+			registerPseudoClassState("active", active);
+			registerPseudoClassState("left", left);
+			registerPseudoClassState("right", right);
+			
+			initDefaultStyle();
+		}
+		
+		protected void initDefaultStyle() {
+			LinearGradient focusGradient = new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
+					new Stop(0, new Color(225,0,0,150)),
+					new Stop(0.4, new Color(255,30,30,150)),
+					new Stop(1, new Color(255,30,30,150))
+					);
+			final Background focusRight = new FillBackground(
+					focusGradient,
+					new CornerRadii(0, 0, 4, 4, 0, 0, 4, 4), new Insets(1, 2, 2, 0)
+					);
+			final Background focusLeft = new FillBackground(
+					focusGradient,
+					new CornerRadii(4, 4, 0, 0, 4, 4, 0, 0), new Insets(1, 0, 2, 2)
+					);
+			final Background focusMiddle = new FillBackground(
+					focusGradient,
+					new CornerRadii(0), new Insets(1, 0, 2, 0)
+					);
+			
+			active.registerChangeListener(new ChangeListener<Boolean>() {
+				@Override
+				public void onChange(Boolean oldValue, Boolean newValue) {
+					if (newValue) {
+						Background focus = left.get() ? focusLeft :
+							right.get() ? focusRight : focusMiddle;
+						area.background().set(focus);
+					}
+					else {
+						area.background().set(null);
+					}
+				}
+			});
+			
+		}
+		
+	}
+	
+	private List<TextButton> leftButtons = new ArrayList<TextButton>();
+	private List<TextButton> rightButtons = new ArrayList<TextButton>();
+	
+	public static enum ButtonPosition {
+		LEFT, RIGHT;
+	}
+	
+	public TextButton addButton(ButtonPosition pos) {
+		TextButton btn = new TextButton();
+		if (pos == ButtonPosition.LEFT) {
+			leftButtons.add(btn);
+			// fix left
+			for (int i = 0; i < leftButtons.size(); i++) {
+				TextButton iBtn = leftButtons.get(i);
+				if (i == 0) {
+					iBtn.left().set(true);
+				}
+				else {
+					iBtn.left().set(false);
+				}
+			}
+		}
+		else {
+			rightButtons.add(btn);
+			// fix right
+			for (int i = 0; i < rightButtons.size(); i++) {
+				TextButton iBtn = rightButtons.get(i);
+				if (i == rightButtons.size() - 1) {
+					iBtn.right().set(true);
+				}
+				else {
+					iBtn.right().set(false);
+				}
+			}
+		}
+		btn.area.parent().set(area);
+		resize();
+		return btn;
+	}
 	
 	private static final String BACKSPACE = "\u0008";
 	private static final String DELETE = "\u007F";
@@ -133,6 +278,41 @@ public class Text extends Widget {
 		return null;
 	}
 	
+	private void resize() {
+		double width = width().get();
+		double widthLeftButtons = 40 * leftButtons.size();
+		double widthRightButtons = 40 * rightButtons.size();
+		
+		double widthText = width - widthLeftButtons - widthRightButtons;
+		
+		double leftSpace = leftButtons.size() == 0 ? 10 : 0;
+		double rightSpace = rightButtons.size() == 0 ? 10 : 0;
+		
+		textClip.x().set(widthLeftButtons + leftSpace);
+		textClip.width().set(widthText - (leftSpace + rightSpace));
+		
+		textClip.clippingShape().set(new at.bestsolution.wgraf.geom.shape.Rectangle(0, 5, textClip.width().get(), 30));
+		
+		for (TextButton b : leftButtons) {
+			int idx = leftButtons.indexOf(b);
+			
+			b.x().set(idx * 40);
+			b.width().set(40);
+			b.height().set(40);
+		}
+		
+		for (TextButton b : rightButtons) {
+			int idx = rightButtons.indexOf(b);
+			
+			b.x().set(widthLeftButtons + widthText + idx * 40);
+			b.width().set(40);
+			b.height().set(40);
+		}
+		
+	}
+	
+	private Container textClip = new Container();
+	
 	public Text() {
 		
 		area.acceptFocus().set(true);
@@ -142,7 +322,14 @@ public class Text extends Widget {
 		area.height().set(40d);
 		area.cache().set(true);
 		
-		final Container textClip = new Container();
+		
+		Binder.uniBind(area.width(), new Setter<Double>() {
+			@Override
+			public void set(Double value) {
+				resize();
+			}
+		});
+		
 		textClip.parent().set(area);
 		textClip.width().set(180);
 		textClip.height().set(40);

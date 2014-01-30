@@ -199,7 +199,7 @@ public class VirtualFlow<Model> extends Widget {
 	}
 	
 	protected void deactivateRow(int idx) {
-		System.err.println("DEACTIVATE " + idx);
+//		System.err.println("DEACTIVATE " + idx);
 		activeRows.remove(idx);
 		Cell<? extends Node<?>, Model> cell = assignedCells.get(idx);
 		if (cell != null) {
@@ -327,14 +327,25 @@ public class VirtualFlow<Model> extends Widget {
 		verticalRange.setListener(new VisualRangeChangeListener() {
 			@Override
 			public void onChange(List<VisibleElement> newValue) {
-				for (VisibleElement e : newValue) {
-					Cell<? extends Node<?>, Model> c = getCellByIdx(e.idx);
-					c.getNode().y().set(e.offset);
-					if (c.getNode() instanceof Container) {
-						Container co = (Container)c.getNode();
-						co.height().set(cellHeight.convert(e.idx));
+				try {
+					for (VisibleElement e : newValue) {
+						if (e.idx < model.size()) {
+							Cell<? extends Node<?>, Model> c = getCellByIdx(e.idx);
+							c.getNode().y().set(e.offset);
+							if (c.getNode() instanceof Container) {
+								Container co = (Container)c.getNode();
+								co.height().set(cellHeight.convert(e.idx));
+							}
+							c.bind(model.get(e.idx));
+						}
+						else {
+							System.err.println("dropping update: " + e);
+						}
 					}
-					c.bind(model.get(e.idx));
+				}
+				catch (IndexOutOfBoundsException e) {
+					// this happens when the model changes while updating
+					e.printStackTrace();
 				}
 				freeCells();
 			}
@@ -359,6 +370,8 @@ public class VirtualFlow<Model> extends Widget {
 				
 				int s = model.size();
 				verticalRange.setSize(s);
+				
+				verticalRange.offset.update(new ClampedDoubleIncrement(0, 0, calculateMaxYOffset()));
 			}
 			
 		});

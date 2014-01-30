@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 
 import com.trolltech.qt.gui.QPixmap;
 
+import at.bestsolution.wgraf.backend.qt.QtBinder;
 import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.MouseEventSupport;
 import at.bestsolution.wgraf.geom.shape.Shape;
@@ -25,9 +26,9 @@ public class QtImage extends QtNode<QGraphicsImageItem> implements BackingImage 
 
 	public QtImage() {
 		
-		Binder.uniBind(image, new Setter<ImageSource>() {
+		QtBinder.uniBind(image, new QtBinder.QtSetter<ImageSource>() {
 			@Override
-			public void set(ImageSource value) {
+			public void doSet(ImageSource value) {
 				if (value == null) {
 					getNode().setPixmap(null);
 				}
@@ -35,8 +36,6 @@ public class QtImage extends QtNode<QGraphicsImageItem> implements BackingImage 
 					try {
 						// load the pixmap
 						QPixmap pixmap = new QPixmap();
-						
-						
 						InputStream in = value.source.toURL().openStream();
 						ByteArrayOutputStream o = new ByteArrayOutputStream();
 						int nRead;

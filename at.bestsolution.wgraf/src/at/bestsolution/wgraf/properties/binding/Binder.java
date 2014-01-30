@@ -335,6 +335,7 @@ public class Binder {
 			}
 		};
 		sourceProperty.registerChangeListener(listener);
+		targetProperty.set(sourceProperty.get());
 		
 		return new Binding() {
 			@Override

@@ -12,7 +12,6 @@ import at.bestsolution.wgraf.paint.LinearGradient.Stop;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.Converter;
 import at.bestsolution.wgraf.properties.ListProperty;
-import at.bestsolution.wgraf.properties.Setter;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.binding.Binder;
 import at.bestsolution.wgraf.style.Backgrounds;
@@ -24,6 +23,8 @@ import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.style.ImageSource;
 import at.bestsolution.wgraf.style.Insets;
+import at.bestsolution.wgraf.widgets.Text.ButtonPosition;
+import at.bestsolution.wgraf.widgets.Text.TextButton;
 
 public class ComboBox<Model> extends Widget {
 
@@ -31,7 +32,6 @@ public class ComboBox<Model> extends Widget {
 	private Popup popup;
 	
 	private ListView<Model> list;
-	private Button button;
 	private Text text;
 	private Label caption;
 	
@@ -66,29 +66,34 @@ public class ComboBox<Model> extends Widget {
 		text.area.height().set(40);
 		text.font().set(font);
 		
-		
-		
-		button = new Button();
-		button.area.parent().set(area);
-		button.area.width().set(40);
-		button.area.height().set(40);
-//		button.area.x().set(160);
-		
-		Binder.uniBind(area.width(), new at.bestsolution.wgraf.properties.binding.Setter<Double>() {
-			@Override
-			public void set(Double value) {
-				text.area.width().set(value - 40);
-				button.area.x().set(value - 40);
-			}
-		});
-		
+		final TextButton popbutton = text.addButton(ButtonPosition.RIGHT);
 		try {
-			button.icon().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowdown.png")));
+			popbutton.icon().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowdown-black.png")));
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
+		// TODO this is conditional styling -> needs css
+		popbutton.active().registerChangeListener(new ChangeListener<Boolean>() {
+			@Override
+			public void onChange(Boolean oldValue, Boolean newValue) {
+				if (newValue) {
+					try {
+						popbutton.icon().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowdown.png")));
+					} catch (URISyntaxException e) {
+						e.printStackTrace();
+					}
+				}
+				else {
+					try {
+						popbutton.icon().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowdown-black.png")));
+					} catch (URISyntaxException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
 		
-		button.activated().registerSignalListener(new SignalListener<Void>() {
+		popbutton.activated().registerSignalListener(new SignalListener<Void>() {
 			@Override
 			public void onSignal(Void data) {
 				if (isPopupVisible(popup)) {
@@ -100,6 +105,10 @@ public class ComboBox<Model> extends Widget {
 				}
 			}
 		});
+		
+		
+		
+		Binder.uniBind(width(), text.width());
 		
 		int hh = 40;
 		
