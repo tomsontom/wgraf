@@ -62,7 +62,7 @@ public class Text extends Widget {
 		
 		private Property<Boolean> left = new SimpleProperty<Boolean>(false);
 		public Property<Boolean> left() {
-			return right;
+			return left;
 		}
 		
 		public Property<ImageSource> icon() {
@@ -85,6 +85,8 @@ public class Text extends Widget {
 			area.onTap().registerSignalListener(new SignalListener<TapEvent>() {
 				@Override
 				public void onSignal(TapEvent data) {
+					if (!enabled().get()) return;
+					
 					active.set(true);
 					Sync.get().execLaterOnUIThread(new Runnable() {
 						@Override
@@ -116,7 +118,7 @@ public class Text extends Widget {
 					);
 			final Background focusLeft = new FillBackground(
 					focusGradient,
-					new CornerRadii(4, 4, 0, 0, 4, 4, 0, 0), new Insets(1, 0, 2, 2)
+					new CornerRadii(4, 4, 0, 0, 4, 4, 0, 0), new Insets(1, 0, 2, 1)
 					);
 			final Background focusMiddle = new FillBackground(
 					focusGradient,
@@ -156,6 +158,7 @@ public class Text extends Widget {
 			for (int i = 0; i < leftButtons.size(); i++) {
 				TextButton iBtn = leftButtons.get(i);
 				if (i == 0) {
+					System.err.println("L: setting " + i + " to left");
 					iBtn.left().set(true);
 				}
 				else {
@@ -169,6 +172,7 @@ public class Text extends Widget {
 			for (int i = 0; i < rightButtons.size(); i++) {
 				TextButton iBtn = rightButtons.get(i);
 				if (i == rightButtons.size() - 1) {
+					System.err.println("R: setting " + i + " to right");
 					iBtn.right().set(true);
 				}
 				else {
@@ -582,12 +586,13 @@ public class Text extends Widget {
 		if (text == null) {
 			text = new SimpleProperty<String>("");
 			Binder.uniBind(text, nodeText.text());
-//			text.registerChangeListener(new ChangeListener<String>() {
-//				@Override
-//				public void onChange(String oldValue, String newValue) {
-//					updateCursorIndex(0);
-//				}
-//			});
+			text.registerChangeListener(new ChangeListener<String>() {
+				@Override
+				public void onChange(String oldValue, String newValue) {
+					// refresh the cursor index - in case its now out of bounds
+					updateCursorIndex(cursorIndex.get());
+				}
+			});
 		}
 		return text;
 	}

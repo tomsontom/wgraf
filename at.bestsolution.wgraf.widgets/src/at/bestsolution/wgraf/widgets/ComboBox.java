@@ -262,5 +262,9 @@ public class ComboBox<Model> extends Widget {
 	public ListProperty<Model> model() {
 		return list.model();
 	}
+
+	public TextButton addButton(ButtonPosition pos) {
+		return text.addButton(pos);
+	}
 	
 }
