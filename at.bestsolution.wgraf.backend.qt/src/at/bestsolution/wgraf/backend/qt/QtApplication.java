@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import at.bestsolution.wgraf.BackingApplication;
 import at.bestsolution.wgraf.backend.qt.scene.QtContainer;
 import at.bestsolution.wgraf.backend.qt.scene.TapEventReceiver;
+import at.bestsolution.wgraf.events.FlingEvent;
 import at.bestsolution.wgraf.events.MouseEventSupport;
 import at.bestsolution.wgraf.events.MouseEventSupport.MouseCoords;
 import at.bestsolution.wgraf.events.ScrollEvent;
@@ -223,6 +224,39 @@ public class QtApplication implements BackingApplication {
 						}
 						
 					}
+				});
+				
+				eventSupport.fling().registerSignalListener(new SignalListener<FlingEvent>() {
+					@Override
+					public void onSignal(FlingEvent data) {
+						// find nodes under tap position
+						final QPointF beginPoint = new QPointF(data.beginX, data.beginY);
+						List<QGraphicsItemInterface> items =  (List<QGraphicsItemInterface>) eventSupport.getTarget(); //items(beginPoint);
+						if (debugTapEvents) System.err.println("Scroll event " + data + " on");
+						
+						for (QGraphicsItemInterface item : items) {
+							if (debugTapEvents) System.err.println(" * " + item + ":");
+							if (item instanceof TapEventReceiver) {
+								final AtomicBoolean consumed = new AtomicBoolean(false);
+								
+								if (debugTapEvents) System.err.println(" => sending fling");
+								final QPointF itemLocalBeginPoint = item.mapFromScene(beginPoint);
+								((TapEventReceiver) item).sendFling(new FlingEvent(itemLocalBeginPoint.x(), itemLocalBeginPoint.y(), data.velocityX, data.velocityY) {
+									@Override
+									public void consume() {
+										consumed.set(true);
+									}
+								});
+								if (consumed.get()) {
+									if (debugTapEvents) System.err.println(" => was consumed, stopping propagation");
+									break;
+								}
+							}
+							
+							
+						}
+					}
+					
 				});
 			}
 			

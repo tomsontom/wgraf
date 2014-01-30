@@ -136,7 +136,7 @@ public class MouseEventSupport {
 				tracker.computeCurrentVelocity(1000);
 				float velocityX = tracker.getXVelocity(), velocityY = tracker.getYVelocity();
 				
-				emitTFling(coords, velocityX, velocityY, consumeCallback);
+				emitTFling(beginEvent.x, beginEvent.y, coords, velocityX, velocityY, consumeCallback);
 			}
 			if (beginEvent != null) {
 				MouseCoords eBegin = beginEvent;
@@ -275,14 +275,14 @@ public class MouseEventSupport {
 //		}
 	}
 	
-	private void emitTFling(MouseCoords e, float velocityX, float velocityY, final Runnable consumeCallback) {
+	private void emitTFling(double beginX, double beginY, MouseCoords e, double velocityX, double velocityY, final Runnable consumeCallback) {
 		if (debug) System.err.println("emitTFling " + velocityX + ", " + velocityY);
 		
 		if (consumeCallback == null) {
-			fling().signal(new FlingEvent());
+			fling().signal(new FlingEvent(beginX, beginY, velocityX, velocityY));
 		}
 		else {
-			fling().signal(new FlingEvent() {
+			fling().signal(new FlingEvent(beginX, beginY, velocityX, velocityY) {
 				@Override
 				public void consume() {
 					consumeCallback.run();
@@ -326,6 +326,8 @@ public class MouseEventSupport {
 //		}
 //		return mouseDragged;
 //	}
+	
+	
 	
 	private Signal<TapEvent> tap = null;
 	public Signal<TapEvent> tap() {
