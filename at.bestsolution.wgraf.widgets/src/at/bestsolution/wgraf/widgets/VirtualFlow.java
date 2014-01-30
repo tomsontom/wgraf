@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import at.bestsolution.wgraf.events.FlingEvent;
 import at.bestsolution.wgraf.events.ScrollEvent;
 import at.bestsolution.wgraf.events.TapEvent;
+import at.bestsolution.wgraf.events.FlingEvent.Type;
 import at.bestsolution.wgraf.geom.shape.Rectangle;
 import at.bestsolution.wgraf.properties.ClampedDoubleIncrement;
 import at.bestsolution.wgraf.properties.Converter;
@@ -366,10 +367,7 @@ public class VirtualFlow<Model> extends Widget {
 		area.onScroll().registerSignalListener(new SignalListener<ScrollEvent>() {
 			@Override
 			public void onSignal(ScrollEvent data) {
-				System.err.println("SCROLL");
-				// stop eventual fling
-				verticalRange.offset.set(verticalRange.offset.get());
-				
+				//System.err.println("SCROLL");
 				verticalRange.offset.update(new ClampedDoubleIncrement(data.deltaY, 0, calculateMaxYOffset()));
 				data.consume();
 			}
@@ -378,11 +376,17 @@ public class VirtualFlow<Model> extends Widget {
 		area.onFling().registerSignalListener(new SignalListener<FlingEvent>() {
 			@Override
 			public void onSignal(FlingEvent data) {
-				System.err.println(data.velocityY);
-				if (Math.abs(data.velocityY) > 500) {
-					System.err.println("FLING");
-					// DO THE FLING!
-					verticalRange.offset.updateDynamic(new ClampedDoubleIncrement(-data.velocityY * 10, 0, calculateMaxYOffset()));
+				if (data.type == Type.STOP) {
+					// STOP THE FLING
+					verticalRange.offset.setDynamic(verticalRange.offset.get());
+					verticalRange.offset.set(verticalRange.offset.get());
+				}
+				else {
+					System.err.println(data.velocityY);
+					if (Math.abs(data.velocityY) > 500) {
+						// DO THE FLING!
+						verticalRange.offset.updateDynamic(new ClampedDoubleIncrement(-data.velocityY * 10, 0, calculateMaxYOffset()));
+					}
 				}
 			}
 		});

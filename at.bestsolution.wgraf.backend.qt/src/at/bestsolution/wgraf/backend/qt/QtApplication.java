@@ -241,7 +241,7 @@ public class QtApplication implements BackingApplication {
 								
 								if (debugTapEvents) System.err.println(" => sending fling");
 								final QPointF itemLocalBeginPoint = item.mapFromScene(beginPoint);
-								((TapEventReceiver) item).sendFling(new FlingEvent(itemLocalBeginPoint.x(), itemLocalBeginPoint.y(), data.velocityX, data.velocityY) {
+								((TapEventReceiver) item).sendFling(new FlingEvent(data.type, itemLocalBeginPoint.x(), itemLocalBeginPoint.y(), data.velocityX, data.velocityY) {
 									@Override
 									public void consume() {
 										consumed.set(true);

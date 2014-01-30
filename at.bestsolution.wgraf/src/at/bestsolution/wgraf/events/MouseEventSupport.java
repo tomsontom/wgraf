@@ -4,6 +4,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import at.bestsolution.wgraf.Sync;
+import at.bestsolution.wgraf.events.FlingEvent.Type;
 import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.simple.SimpleSignal;
@@ -117,6 +118,7 @@ public class MouseEventSupport {
 		
 		tracker.addMovement(now, (float) coords.x, (float) coords.y);
 		
+		emitTFling(Type.STOP, coords.x, coords.y, beginEvent, 0, 0, null);
 		scheduleLongTapCheck(beginEvent, consumeCallback);
 	}
 	
@@ -136,7 +138,7 @@ public class MouseEventSupport {
 				tracker.computeCurrentVelocity(1000);
 				float velocityX = tracker.getXVelocity(), velocityY = tracker.getYVelocity();
 				
-				emitTFling(beginEvent.x, beginEvent.y, coords, velocityX, velocityY, consumeCallback);
+				emitTFling(Type.FLING, beginEvent.x, beginEvent.y, coords, velocityX, velocityY, consumeCallback);
 			}
 			if (beginEvent != null) {
 				MouseCoords eBegin = beginEvent;
@@ -275,14 +277,14 @@ public class MouseEventSupport {
 //		}
 	}
 	
-	private void emitTFling(double beginX, double beginY, MouseCoords e, double velocityX, double velocityY, final Runnable consumeCallback) {
+	private void emitTFling(FlingEvent.Type type, double beginX, double beginY, MouseCoords e, double velocityX, double velocityY, final Runnable consumeCallback) {
 		if (debug) System.err.println("emitTFling " + velocityX + ", " + velocityY);
 		
 		if (consumeCallback == null) {
-			fling().signal(new FlingEvent(beginX, beginY, velocityX, velocityY));
+			fling().signal(new FlingEvent(type, beginX, beginY, velocityX, velocityY));
 		}
 		else {
-			fling().signal(new FlingEvent(beginX, beginY, velocityX, velocityY) {
+			fling().signal(new FlingEvent(type, beginX, beginY, velocityX, velocityY) {
 				@Override
 				public void consume() {
 					consumeCallback.run();
