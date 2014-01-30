@@ -1,4 +1,4 @@
-package at.bestsolution.wgraf.properties;
+package at.bestsolution.wgraf.properties.binding;
 
 import at.bestsolution.wgraf.util.Disposable;
 

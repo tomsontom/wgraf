@@ -4,8 +4,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.math.Rect;
+import at.bestsolution.wgraf.properties.binding.Binding;
 
-
+@Deprecated
 public class Binder {
 
 	public static <Type> Binding uniBindDelayed(final Property<Type> property, final Setter<Type> setter, final long delay) {

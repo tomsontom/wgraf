@@ -1,10 +1,10 @@
 package at.bestsolution.wgraf.widgets;
 
-import at.bestsolution.wgraf.properties.Binder;
-import at.bestsolution.wgraf.properties.Binding;
+import at.bestsolution.wgraf.properties.binding.Binder;
 import at.bestsolution.wgraf.properties.Converter;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.DoubleProperty;
+import at.bestsolution.wgraf.properties.binding.Binding;
 
 public class WidgetBinder {
 

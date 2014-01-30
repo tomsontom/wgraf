@@ -2,12 +2,13 @@ package at.bestsolution.wgraf.widgets;
 
 import at.bestsolution.wgraf.Application;
 import at.bestsolution.wgraf.math.Rect;
-import at.bestsolution.wgraf.properties.Binder;
+import at.bestsolution.wgraf.properties.binding.Binder;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.scene.Node;
 import at.bestsolution.wgraf.transition.LinearDoubleTransition;
 
+@Deprecated
 public class KeyboardPane extends AbsolutePane {
 
 	private ScrollPane contentArea;

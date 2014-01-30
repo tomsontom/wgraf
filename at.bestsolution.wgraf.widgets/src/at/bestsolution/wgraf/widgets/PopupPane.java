@@ -6,10 +6,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import at.bestsolution.wgraf.properties.Binder;
-import at.bestsolution.wgraf.properties.Binding;
+import at.bestsolution.wgraf.properties.binding.Binder;
 import at.bestsolution.wgraf.properties.GroupBinding;
-import at.bestsolution.wgraf.properties.Setter;
+import at.bestsolution.wgraf.properties.binding.Setter;
+import at.bestsolution.wgraf.properties.binding.Binding;
 import at.bestsolution.wgraf.scene.Container;
 import at.bestsolution.wgraf.widgets.Popup.PopupPosition;
 

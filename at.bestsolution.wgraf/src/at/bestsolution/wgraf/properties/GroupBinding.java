@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import at.bestsolution.wgraf.properties.binding.Binding;
+
 
 public class GroupBinding implements Binding {
 

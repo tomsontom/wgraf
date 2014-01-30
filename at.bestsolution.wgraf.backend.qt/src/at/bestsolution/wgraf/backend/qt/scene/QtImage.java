@@ -36,6 +36,7 @@ public class QtImage extends QtNode<QGraphicsImageItem> implements BackingImage 
 						// load the pixmap
 						QPixmap pixmap = new QPixmap();
 						
+						
 						InputStream in = value.source.toURL().openStream();
 						ByteArrayOutputStream o = new ByteArrayOutputStream();
 						int nRead;

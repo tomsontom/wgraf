@@ -1,9 +1,8 @@
 package at.bestsolution.wgraf.widgets;
 
 import at.bestsolution.wgraf.Application;
-import at.bestsolution.wgraf.properties.Binder;
-import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.SignalListener;
+import at.bestsolution.wgraf.properties.binding.Binder;
 import at.bestsolution.wgraf.style.Font;
 
 public class AppTest extends Application {

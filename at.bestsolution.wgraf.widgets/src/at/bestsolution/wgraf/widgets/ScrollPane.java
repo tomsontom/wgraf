@@ -3,30 +3,20 @@ package at.bestsolution.wgraf.widgets;
 import at.bestsolution.wgraf.events.ScrollEvent;
 import at.bestsolution.wgraf.geom.shape.Rectangle;
 import at.bestsolution.wgraf.math.Rect;
-import at.bestsolution.wgraf.math.Vec2d;
-import at.bestsolution.wgraf.paint.Color;
-import at.bestsolution.wgraf.properties.Binder;
-import at.bestsolution.wgraf.properties.Binding;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.ClampedDoubleIncrement;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.DoubleProperty;
 import at.bestsolution.wgraf.properties.GroupBinding;
 import at.bestsolution.wgraf.properties.Property;
-import at.bestsolution.wgraf.properties.Setter;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.ValueUpdate;
+import at.bestsolution.wgraf.properties.binding.Binder;
+import at.bestsolution.wgraf.properties.binding.Setter;
 import at.bestsolution.wgraf.properties.simple.SimpleDoubleProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.scene.Node;
-import at.bestsolution.wgraf.style.Border;
-import at.bestsolution.wgraf.style.BorderStroke;
-import at.bestsolution.wgraf.style.BorderWidths;
-import at.bestsolution.wgraf.style.CornerRadii;
-import at.bestsolution.wgraf.style.Insets;
 import at.bestsolution.wgraf.transition.TouchScrollTransition;
-import at.bestsolution.wgraf.transition.ValueReader;
-import at.bestsolution.wgraf.transition.ValueUpdater;
 
 // TODO scrollbar visibility - hide scrollbars and only show them while scrolling
 // TODO allow only vertical or horizontal scrollbar
