@@ -313,10 +313,23 @@ public class Text extends Widget {
 	
 	private Container textClip = new Container();
 	
+	
+	private Property<Boolean> editable = new SimpleProperty<Boolean>(true);
+	public Property<Boolean> editable() {
+		return editable;
+	}
+	
 	public Text() {
 		
+		Binder.uniBind(editable, new Setter<Boolean>() {
+			@Override
+			public void set(Boolean value) {
+				area.acceptTapEvents().set(value);
+				area.requireKeyboard().set(value);
+			}
+		});
+		
 		area.acceptFocus().set(true);
-		area.acceptTapEvents().set(true);
 		
 		area.width().set(200d);
 		area.height().set(40d);
@@ -403,6 +416,8 @@ public class Text extends Widget {
 		area.onTap().registerSignalListener(new SignalListener<TapEvent>() {
 			@Override
 			public void onSignal(TapEvent data) {
+				if (!editable().get()) return;
+				
 				final Font currentFont = font().get();
 				final String currentText = text().get();
 				
@@ -421,11 +436,11 @@ public class Text extends Widget {
 				data.consume();
 			}
 		});
-		System.err.println("TextField: " + area.onKeyPress());
 		area.onKeyPress().registerSignalListener(new SignalListener<KeyEvent>() {
 			@Override
 			public void onSignal(KeyEvent data) {
-				System.err.println(data.code + " - " + data.key);
+				if (!editable().get()) return;
+//				System.err.println(data.code + " - " + data.key);
 				
 				if (data.code == KeyCode.BACKSPACE || BACKSPACE.equals(data.key)) {
 					triggerBackspace();
@@ -516,7 +531,7 @@ public class Text extends Widget {
 		focus().registerChangeListener(new ChangeListener<Boolean>() {
 			@Override
 			public void onChange(Boolean oldValue, Boolean newValue) {
-				if (newValue) {
+				if (newValue && editable().get()) {
 					nodeCursor.background().set(new FillBackground(new Color(255, 105, 105, 255), new CornerRadii(0), new Insets(0,0,0,0)));
 				}
 				else {
