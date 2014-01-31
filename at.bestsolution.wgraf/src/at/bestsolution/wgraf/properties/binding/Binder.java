@@ -8,9 +8,126 @@ import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.Converter;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.DoubleProperty;
+import at.bestsolution.wgraf.properties.InvalidValueException;
 import at.bestsolution.wgraf.properties.Property;
+import at.bestsolution.wgraf.properties.Signal;
+import at.bestsolution.wgraf.properties.SignalListener;
 
 public class Binder {
+	
+	public static <A, B> Binding bidiBind(final Property<A> propertyA, final Property<B> propertyB, final BindingConverter<A, B> converterAB, final BindingConverter<B, A> converterBA) {
+		return bidiBindDelayed(propertyA, propertyB, converterAB, converterBA, 0, 0);
+	}
+	
+	public static <A, B> Binding bidiBindDelayed(final Property<A> propertyA, final Property<B> propertyB, final BindingConverter<A, B> converterAB, final BindingConverter<B, A> converterBA, final long delayAB, final long delayBA) {
+		final AtomicBoolean ignoreA = new AtomicBoolean(false);
+		final AtomicBoolean ignoreB = new AtomicBoolean(false);
+		
+		final ChangeListener<A> listenerA = new ChangeListener<A>() {
+			private Object current = null;
+			@Override
+			public void onChange(A oldValue, final A newValue) throws InvalidValueException {
+				if (!ignoreA.get()) {
+					try {
+						final B convertedValue = converterAB.convert(newValue);
+						
+						if (delayAB > 0) {
+							final Object currentChange = new Object();
+							current = currentChange;
+							Sync.get().execLaterOnUIThread(new Runnable() {
+								@Override
+								public void run() {
+									// drop 
+									if (current != currentChange) return;
+									
+									// apply change
+									try {
+										ignoreB.set(true);
+										propertyB.set(convertedValue);
+									}
+									finally {
+										ignoreB.set(false);
+									}
+								}
+							}, delayAB);
+						}
+						else {
+							// apply change
+							try {
+								ignoreB.set(true);
+								propertyB.set(convertedValue);
+							}
+							finally {
+								ignoreB.set(false);
+							}
+						}
+					}
+					catch (ConversionException e) {
+						// conversion failed!
+						throw new InvalidValueException(e.getMessage(), e.getCause());
+					}
+					
+				}
+			}
+		};
+		final ChangeListener<B> listenerB = new ChangeListener<B>() {
+			private Object current = null;
+			@Override
+			public void onChange(B oldValue, final B newValue) throws InvalidValueException {
+				if (!ignoreB.get()) {
+					try {
+						final A convertedValue = converterBA.convert(newValue);
+						if (delayBA > 0) {
+							final Object currentChange = new Object();
+							current = currentChange;
+							Sync.get().execLaterOnUIThread(new Runnable() {
+								@Override
+								public void run() {
+									// drop 
+									if (current != currentChange) return;
+									
+									// apply change
+									try {
+										ignoreA.set(true);
+										propertyA.set(convertedValue);
+									}
+									finally {
+										ignoreA.set(false);
+									}
+								}
+							}, delayBA);
+						}
+						else {
+							try {
+								ignoreA.set(true);
+								propertyA.set(converterBA.convert(newValue));
+							}
+							finally {
+								ignoreA.set(false);
+							}
+						}
+					}
+					catch (ConversionException e) {
+						// conversion failed!
+						throw new InvalidValueException(e.getMessage(), e.getCause());
+					}
+				}
+			}
+		};
+		
+		propertyA.registerChangeListener(listenerA);
+		propertyB.registerChangeListener(listenerB);
+		
+		return new Binding() {
+			@Override
+			public void dispose() {
+				propertyA.unregisterChangeListener(listenerA);
+				propertyB.unregisterChangeListener(listenerB);
+			}
+		};
+	}
+	
+	
 	public static <Type> Binding uniBindDelayed(final Property<Type> property, final Setter<Type> setter, final long delay) {
 		final ChangeListener<Type> listener = new ChangeListener<Type>() {
 			private Object current = null;
@@ -341,6 +458,23 @@ public class Binder {
 			@Override
 			public void dispose() {
 				sourceProperty.unregisterChangeListener(listener);
+			}
+		};
+	}
+
+
+	public static <T> Binding uniBind(final Signal<T> source, final Signal<T> target) {
+		final SignalListener<T> listener = new SignalListener<T>() {
+			@Override
+			public void onSignal(T data) {
+				target.signal(data);
+			}
+		};
+		source.registerSignalListener(listener);
+		return new Binding() {
+			@Override
+			public void dispose() {
+				source.unregisterSignalListener(listener);
 			}
 		};
 	}

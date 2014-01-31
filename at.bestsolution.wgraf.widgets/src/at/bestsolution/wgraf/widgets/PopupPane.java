@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import at.bestsolution.wgraf.properties.binding.Binder;
-import at.bestsolution.wgraf.properties.GroupBinding;
+import at.bestsolution.wgraf.properties.binding.GroupBinding;
 import at.bestsolution.wgraf.properties.binding.Setter;
 import at.bestsolution.wgraf.properties.binding.Binding;
 import at.bestsolution.wgraf.scene.Container;

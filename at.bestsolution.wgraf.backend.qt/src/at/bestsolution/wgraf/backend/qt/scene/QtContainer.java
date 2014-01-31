@@ -1,5 +1,6 @@
 package at.bestsolution.wgraf.backend.qt.scene;
 
+import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.backend.qt.QtBinder;
 import at.bestsolution.wgraf.backend.qt.QtConverter;
 import at.bestsolution.wgraf.events.KeyEvent;
@@ -32,7 +33,7 @@ public class QtContainer extends QtNode<QGraphicsContainerItem> implements Backi
 	}
 	
 	@Override
-	protected void applyClippingShape(Shape s) {
+	protected void applyClippingShape(final Shape s) {
 		QPainterPath path = null;
 		if (s instanceof Rectangle) {
 			path = new QPainterPath();
@@ -59,12 +60,11 @@ public class QtContainer extends QtNode<QGraphicsContainerItem> implements Backi
 	public Property<Background> background() {
 		if (background == null) {
 			background = new SimpleProperty<Background>();
-			background.registerChangeListener(new ChangeListener<Background>() {
+			QtBinder.uniBind(background, new QtBinder.QtSetter<Background>() {
 				@Override
-				public void onChange(Background oldValue, Background newValue) {
-					node.setBackground(newValue);
+				public void doSet(Background value) {
+					node.setBackground(value);
 				}
-				
 			});
 		}
 		return background;

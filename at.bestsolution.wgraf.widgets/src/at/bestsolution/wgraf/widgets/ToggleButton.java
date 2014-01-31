@@ -234,7 +234,7 @@ public class ToggleButton extends Widget {
 	private void layoutChilds() {
 		final Font font = font().get();
 		
-		if (font != null) {
+		if (font != null && text().get() != null) {
 			final double fontHeight = font.stringExtent("Ay").y;
 			
 			final double width = font.stringExtent(text().get()).x;
