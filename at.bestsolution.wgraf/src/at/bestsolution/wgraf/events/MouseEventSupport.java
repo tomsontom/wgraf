@@ -280,17 +280,18 @@ public class MouseEventSupport {
 	private void emitTFling(FlingEvent.Type type, double beginX, double beginY, MouseCoords e, double velocityX, double velocityY, final Runnable consumeCallback) {
 		if (debug) System.err.println("emitTFling " + velocityX + ", " + velocityY);
 		
-		if (consumeCallback == null) {
-			fling().signal(new FlingEvent(type, beginX, beginY, velocityX, velocityY));
-		}
-		else {
-			fling().signal(new FlingEvent(type, beginX, beginY, velocityX, velocityY) {
-				@Override
-				public void consume() {
-					consumeCallback.run();
-				}
-			});
-		}
+//		TODO fling disabled for now
+//		if (consumeCallback == null) {
+//			fling().signal(new FlingEvent(type, beginX, beginY, velocityX, velocityY));
+//		}
+//		else {
+//			fling().signal(new FlingEvent(type, beginX, beginY, velocityX, velocityY) {
+//				@Override
+//				public void consume() {
+//					consumeCallback.run();
+//				}
+//			});
+//		}
 	}
 	
 	
