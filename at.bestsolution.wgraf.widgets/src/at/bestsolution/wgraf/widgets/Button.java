@@ -39,6 +39,8 @@ public class Button extends Widget {
 	private final at.bestsolution.wgraf.scene.Text nodeText;
 	
 	
+	public int tempLeftLabelOffset = 0;
+	
 	public Button() {
 		
 		area.width().set(200d);
@@ -263,7 +265,7 @@ public class Button extends Widget {
 			
 			final double width = font.stringExtent(text().get()).x;
 			nodeText.y().set(area.height().get() / 2 - fontHeight / 2);
-			nodeText.x().set(area.width().get() / 2 - width / 2);
+			nodeText.x().set(tempLeftLabelOffset + (area.width().get()-tempLeftLabelOffset) / 2 - width / 2);
 		}
 	}
 	
