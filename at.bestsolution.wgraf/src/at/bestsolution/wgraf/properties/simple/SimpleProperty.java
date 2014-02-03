@@ -1,17 +1,20 @@
 package at.bestsolution.wgraf.properties.simple;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import at.bestsolution.wgraf.properties.ChangeListener;
+import at.bestsolution.wgraf.properties.InvalidValueException;
 import at.bestsolution.wgraf.properties.Property;
+import at.bestsolution.wgraf.properties.ValidState;
 import at.bestsolution.wgraf.properties.ValueUpdate;
 
 public class SimpleProperty<Type> implements Property<Type> {
 
 	protected volatile Type value;
 	
-	private List<ChangeListener<Type>> listeners = new CopyOnWriteArrayList<ChangeListener<Type>>();
+	protected final List<ChangeListener<Type>> listeners = new CopyOnWriteArrayList<ChangeListener<Type>>();
 	
 	public SimpleProperty() {
 	}
@@ -24,13 +27,17 @@ public class SimpleProperty<Type> implements Property<Type> {
 		if (oldValue != newValue) {
 			for (ChangeListener<Type> listener : listeners) {
 				try {
-					listener.onChange(oldValue, newValue);
+					notifyListener(listener, oldValue, newValue);
 				}
 				catch (Throwable t) {
 					t.printStackTrace();
 				}
 			}
 		}
+	}
+	
+	protected void notifyListener(ChangeListener<Type> listener, Type oldValue, Type newValue) throws InvalidValueException {
+		listener.onChange(oldValue, newValue);
 	}
 	
 	@Override

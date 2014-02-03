@@ -12,8 +12,11 @@ import at.bestsolution.wgraf.paint.LinearGradient.Stop;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.Converter;
 import at.bestsolution.wgraf.properties.ListProperty;
+import at.bestsolution.wgraf.properties.Property;
+import at.bestsolution.wgraf.properties.binding.Setter;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.binding.Binder;
+import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.style.Backgrounds;
 import at.bestsolution.wgraf.style.Border;
 import at.bestsolution.wgraf.style.BorderStroke;
@@ -52,6 +55,11 @@ public class ComboBox<Model> extends Widget {
 		
 		if (label == null) label = "null";
 		return label;
+	}
+	
+	private Property<Model> selection = new SimpleProperty<Model>();
+	public Property<Model> selection() {
+		return selection;
 	}
 	
 	public ComboBox() {
@@ -102,6 +110,11 @@ public class ComboBox<Model> extends Widget {
 					hidePopup(popup);
 				}
 				else {
+					Model s = selection.get();
+					
+					SimpleSelectionModel<Model> x = s == null ? new SimpleSelectionModel<Model>() : new SimpleSelectionModel<Model>(s);
+					list.selection().set(x);
+					
 					showPopup(popup);
 					
 				}
@@ -213,9 +226,15 @@ public class ComboBox<Model> extends Widget {
 			public void onSignal(Void data) {
 				MultiSelectionModel<Model> sel = list.selection().get();
 				Model m = sel.getSingleSelection();
-				text.text().set(getLabel(m));
-				
+				selection().set(m);
 				hidePopup(popup);
+			}
+		});
+		
+		Binder.uniBind(selection(), new Setter<Model>() {
+			@Override
+			public void set(Model value) {
+				text.text().set(getLabel(value));
 			}
 		});
 		

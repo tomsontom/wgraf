@@ -59,12 +59,12 @@ public class QtSync extends Sync {
 	public synchronized static void init() {
 		obj = new QSyncObject();
 		
-		timer = new QTimer(obj);
-		
-		timer.timeout.connect(obj, "onPulse()");
-		
-		timer.setInterval(35);
-		timer.start();
+//		timer = new QTimer(obj);
+//		
+//		timer.timeout.connect(obj, "onPulse()");
+//		
+//		timer.setInterval(35);
+//		timer.start();
 	}
 	
 	public static void runLater(Runnable r) {
@@ -77,12 +77,24 @@ public class QtSync extends Sync {
 	}
 	
 	@Override
-	public void syncExecOnUIThread(Runnable runnable) {
+	public void syncExecOnUIThread(final Runnable runnable) {
 		if (QApplication.instance().thread() == Thread.currentThread()) {
 			runnable.run();
 		}
 		else {
-			runLater(runnable);
+//			final Object w = new Object();
+			runLater(new Runnable() {
+				@Override
+				public void run() {
+					runnable.run();
+//					w.notify();
+				}
+			});
+//			try {
+//				w.wait();
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
 		}
 	}
 	

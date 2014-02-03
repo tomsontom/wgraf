@@ -18,14 +18,18 @@ import at.bestsolution.wgraf.paint.LinearGradient.Stop;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.ClampedDoubleIncrement;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
+import at.bestsolution.wgraf.properties.InvalidValueException;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.SignalListener;
+import at.bestsolution.wgraf.properties.ValidState;
+import at.bestsolution.wgraf.properties.ValidationProperty;
 import at.bestsolution.wgraf.properties.binding.Binder;
 import at.bestsolution.wgraf.properties.binding.Setter;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleSignal;
+import at.bestsolution.wgraf.properties.simple.SimpleValidationProperty;
 import at.bestsolution.wgraf.scene.Container;
 import at.bestsolution.wgraf.scene.Image;
 import at.bestsolution.wgraf.style.Background;
@@ -240,6 +244,13 @@ public class Text extends Widget {
 		result.beginX = font.stringExtent(str0).x;
 		result.endX = font.stringExtent(str1).x;
 		
+		// ensure that xPos is never negative
+		xPos = Math.max(0, xPos);
+		
+//		System.err.println("xpos = " + xPos);
+//		System.err.println("str0: " + str0 + " -> " + result.beginX);
+//		System.err.println("str1: " + str1 + " -> " + result.endX);
+		
 		if (xPos < result.beginX) {
 			result.cmp = Cmp.LESSER;
 			return result;
@@ -424,6 +435,7 @@ public class Text extends Widget {
 				
 				final Font currentFont = font().get();
 				final String currentText = text().get();
+				System.err.println("currentText = " + currentText);
 				
 				final int firstIdx = 0;
 				final int lastIdx = Math.max(0, currentText.length());
@@ -486,28 +498,42 @@ public class Text extends Widget {
 		
 		area.requireKeyboard().set(true);
 		
+		registerPseudoClassState("valid", valid());
+		
 		initDefaultStyle();
 	}
 	
 	private void initDefaultStyle() {
 		// this should come from css:
 		Insets bgInsets = new Insets(0, 0, 0, 0);
-		final FillBackground normal = new FillBackground(
+		final FillBackground normalBackground = new FillBackground(
 				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
 					new Stop(0, new Color(240, 240, 240, 255)),
 					new Stop(1, new Color(255, 255, 255, 255))
 				), 
 				new CornerRadii(4), bgInsets);
+		final FillBackground invalidBackground = new FillBackground(
+				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
+					new Stop(0, new Color(240, 200, 200, 255)),
+					new Stop(1, new Color(255, 200, 200, 255))
+				), 
+				new CornerRadii(4), bgInsets);
 		
+		final Border normalBorder = new Border(new BorderStroke( new Color(200, 200, 200, 255), new CornerRadii(4), new BorderWidths(1, 1, 1, 1), bgInsets));
+		final Border invalidBorder = new Border(new BorderStroke( new Color(200, 0, 0, 255), new CornerRadii(4), new BorderWidths(1, 1, 1, 1), bgInsets));
 		// TODO implement visibility
 //		nodeCursor.background().set(new FillBackground(
 //				new Color(255, 105, 105, 200),
 //				new CornerRadii(0), new Insets(0)
 //				));
 		
-		area.background().set(normal);
-		
-		area.border().set(new Border(new BorderStroke( new Color(200, 200, 200, 255), new CornerRadii(4), new BorderWidths(1, 1, 1, 1), bgInsets)));
+		Binder.uniBind(valid(), new Setter<Boolean>() {
+			@Override
+			public void set(Boolean value) {
+				area.border().set(value ? normalBorder : invalidBorder);
+				area.background().set(value ? normalBackground : invalidBackground);
+			}
+		});
 		
 //		focus().registerChangeListener(new ChangeListener<Boolean>() {
 //			@Override
@@ -581,10 +607,15 @@ public class Text extends Widget {
 		return font().get().stringExtent(text.get());
 	}
 	
-	private Property<String> text = null;
+	private Property<Boolean> valid = new SimpleProperty<Boolean>(true);
+	public Property<Boolean> valid() {
+		return valid;
+	}
+	
+	private ValidationProperty<String> text = null;
 	public Property<String> text() {
 		if (text == null) {
-			text = new SimpleProperty<String>("");
+			text = new SimpleValidationProperty<String>("");
 			Binder.uniBind(text, nodeText.text());
 			text.registerChangeListener(new ChangeListener<String>() {
 				@Override
@@ -593,8 +624,22 @@ public class Text extends Widget {
 					updateCursorIndex(cursorIndex.get());
 				}
 			});
+			text.valid().registerChangeListener(new ChangeListener<ValidState>() {
+				@Override
+				public void onChange(ValidState oldValue, ValidState newValue) throws InvalidValueException {
+					valid().set(newValue.isValid());
+				}
+			});
 		}
 		return text;
+	}
+	
+	private void hideInvalidMarker() {
+		System.err.println("hideValidMarker()");
+	}
+	
+	private void showInvalidMarker() {
+		System.err.println("showValidMarker()");
 	}
 	
 	public Property<Font> font() {

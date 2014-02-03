@@ -1,5 +1,6 @@
 package at.bestsolution.wgraf.backend.qt.scene;
 
+import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.backend.qt.QtBinder;
 import at.bestsolution.wgraf.backend.qt.QtConverter;
 import at.bestsolution.wgraf.events.KeyEvent;
@@ -36,7 +37,7 @@ public class QtText extends QtNode<QGraphicsTextItem> implements BackingText {
 	}
 	
 	@Override
-	protected void applyClippingShape(Shape s) {
+	protected void applyClippingShape(final Shape s) {
 		QPainterPath path = null;
 		if (s instanceof Rectangle) {
 			path = new QPainterPath();
@@ -52,10 +53,10 @@ public class QtText extends QtNode<QGraphicsTextItem> implements BackingText {
 	public Property<String> text() {
 		if (text == null) {
 			text = new SimpleProperty<String>();
-			text.registerChangeListener(new ChangeListener<String>() {
+			QtBinder.uniBind(text, new QtBinder.QtSetter<String>() {
 				@Override
-				public void onChange(String oldValue, String newValue) {
-					node.setText(newValue);
+				public void doSet(String value) {
+					node.setText(value);
 				}
 			});
 			
