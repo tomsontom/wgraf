@@ -175,6 +175,11 @@ public class VirtualFlow<Model> extends Widget {
 		}
 	};
 	
+	public void setCellHeight(Converter<Integer, Double> cellHeight) {
+		this.cellHeight = cellHeight;
+		verticalRange.setElementSize(cellHeight);
+	}
+	
 	protected Factory<? extends Cell<? extends Node<?>, Model>> cellFactory;
 	
 	private ListProperty<Model> model = new SimpleListProperty<Model>();
