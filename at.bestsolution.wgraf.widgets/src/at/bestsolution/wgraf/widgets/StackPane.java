@@ -2,6 +2,7 @@ package at.bestsolution.wgraf.widgets;
 
 import at.bestsolution.wgraf.properties.binding.Binder;
 import at.bestsolution.wgraf.properties.ChangeListener;
+import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.binding.Setter;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
@@ -13,6 +14,13 @@ public class StackPane extends Pane {
 	
 	public Property<Widget> current() {
 		return current;
+	}
+	
+	@Override
+	public void addWidget(Widget w) {
+		super.addWidget(w);
+		w.setWidth(width().get());
+		w.setHeight(height().get());
 	}
 	
 	protected void updateChildWidth(double width) {
@@ -61,7 +69,7 @@ public class StackPane extends Pane {
 		Binder.uniBind(height(), new Setter<Double>() {
 			@Override
 			public void set(Double value) {
-				updateChildWidth(value);
+				updateChildHeight(value);
 			}
 		});
 		
