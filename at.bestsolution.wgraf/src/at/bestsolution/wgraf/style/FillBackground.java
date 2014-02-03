@@ -4,17 +4,18 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.paint.Paint;
 
 public class FillBackground extends BaseBackground {
-	
+
 	public final Paint fill;
-	
+
 	public FillBackground(Paint fill, CornerRadii radii, Insets insets) {
 		super(radii, insets);
 		this.fill = fill;
 	}
-	
+
 	@Override
 	public byte[] getHash() {
 		try {
@@ -30,5 +31,9 @@ public class FillBackground extends BaseBackground {
 		catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static FillBackground simple(Paint fill, double radii, int insets) {
+		return new FillBackground(fill, new CornerRadii(radii), new Insets(insets));
 	}
 }
