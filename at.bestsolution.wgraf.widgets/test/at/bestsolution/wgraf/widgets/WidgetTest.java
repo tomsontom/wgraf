@@ -119,7 +119,7 @@ public class WidgetTest extends Application {
 							pop.area.background().set(new FillBackground(new Color(255,  0,  0, 50), new CornerRadii(2), new Insets(0, 0, 0, 0)));
 							
 							pop.setBounds(0, 0, 100, 100);
-							p = new Popup(pop);
+							p = new Popup(pop, false);
 						}
 						
 						

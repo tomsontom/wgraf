@@ -8,10 +8,13 @@ import at.bestsolution.wgraf.properties.simple.SimpleSignal;
 
 public class Popup {
 
+	public final boolean modal;
+	
 	private Pane content;
 	
 	public static enum PopupPosition {
 		BOTTOM_CENTER,
+		BOTTOM_RIGHT,
 		CENTER
 	}
 	
@@ -19,7 +22,6 @@ public class Popup {
 	public Signal<Void> onCancel() {
 		return onCancel;
 	}
-	
 	
 	private Property<Boolean> squeezeViewport = null;
 	public Property<Boolean> squeezeViewport() {
@@ -37,8 +39,9 @@ public class Popup {
 		return position;
 	}
 	
-	public Popup(Pane content) {
+	public Popup(Pane content, boolean modal) {
 		this.content = content;
+		this.modal = modal;
 	}
 	
 	

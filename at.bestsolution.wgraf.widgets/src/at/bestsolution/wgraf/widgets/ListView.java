@@ -229,7 +229,6 @@ public class ListView<Model> extends VirtualFlow<Model> {
 	private Property<Integer> activeRow = new SimpleProperty<Integer>(null);
 	
 	public ListView() {
-		
 		setCellFactory(new DefaultCellFactory<Model>());
 		area.addStyleClass("list");
 		

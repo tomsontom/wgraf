@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import at.bestsolution.wgraf.Sync;
+import at.bestsolution.wgraf.events.InputMethod;
 import at.bestsolution.wgraf.events.KeyCode;
 import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.ScrollEvent;
@@ -340,7 +341,12 @@ public class Text extends Widget {
 			@Override
 			public void set(Boolean value) {
 				area.acceptTapEvents().set(value);
-				area.requireKeyboard().set(value);
+				if (value) {
+					area.inputMethod().set(InputMethod.TEXT_ANY);
+				}
+				else {
+					area.inputMethod().set(InputMethod.NONE);
+				}
 			}
 		});
 		
@@ -496,7 +502,7 @@ public class Text extends Widget {
 		
 		
 		
-		area.requireKeyboard().set(true);
+		area.inputMethod().set(InputMethod.TEXT_ANY);
 		
 		registerPseudoClassState("valid", valid());
 		

@@ -254,7 +254,7 @@ public class FullKeyboard extends Popup {
 	}
 	
 	public FullKeyboard() {
-		super(new AbsolutePane());
+		super(new AbsolutePane(), false);
 		
 		position().set(PopupPosition.BOTTOM_CENTER);
 		squeezeViewport().set(true);

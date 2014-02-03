@@ -193,7 +193,7 @@ public class ComboBox<Model> extends Widget {
 		
 		
 		
-		popup = new Popup(popupPane);
+		popup = new Popup(popupPane, true);
 		
 		
 		list = new ListView<Model>();
@@ -353,6 +353,8 @@ public class ComboBox<Model> extends Widget {
 						new Stop(1, new Color(255,30,30,150))
 						);
 		
+		Paint background = new Color(255, 255, 255, 255);
+		
 		LinearGradient bg = new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
 				new Stop(0, new Color(255, 255, 255, 200)),
 				new Stop(1, new Color(250, 250, 250, 200))
@@ -374,8 +376,8 @@ public class ComboBox<Model> extends Widget {
 		
 		popupPane.area.background().set(new Backgrounds(
 				new FillBackground(headerPaint, headerRadii, headerInsets),
-				new FillBackground(headerPaint, radii10, listInsets),
-				new FillBackground(bg, radii10, popupInsets))
+				//new FillBackground(background, radii10, listInsets),
+				new FillBackground(background, radii10, popupInsets))
 				);
 		
 		

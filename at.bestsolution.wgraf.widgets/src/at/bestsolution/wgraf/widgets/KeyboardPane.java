@@ -31,13 +31,13 @@ public class KeyboardPane extends AbsolutePane {
 			@Override
 			public void onChange(Node<?> oldValue, Node<?> newValue) {
 				if (newValue != null) {
-					if (newValue.requireKeyboard().get()) {
-						showKeyboard();
-						contentArea.scrollIntoViewport(newValue);
-					}
-					else {
-						hideKeyboard();
-					}
+//					if (newValue.inputMethod().get()) {
+//						showKeyboard();
+//						contentArea.scrollIntoViewport(newValue);
+//					}
+//					else {
+//						hideKeyboard();
+//					}
 				}
 				else {
 					hideKeyboard();
