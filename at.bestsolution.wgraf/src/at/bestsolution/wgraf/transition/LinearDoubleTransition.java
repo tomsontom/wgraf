@@ -24,7 +24,7 @@ public class LinearDoubleTransition implements Transition<Double> {
 	@Override
 	public boolean update(long time) {
 		timePassed += time;
-		updater.updateValue(startValue + step * timePassed);
+		updater.updateValue(startValue + step * Math.min(timePassed, duration));
 		return timePassed >= duration;
 	}
 
