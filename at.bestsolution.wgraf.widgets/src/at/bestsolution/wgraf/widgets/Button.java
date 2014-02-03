@@ -36,7 +36,7 @@ import at.bestsolution.wgraf.style.Insets;
 
 public class Button extends Widget {
 
-	private final at.bestsolution.wgraf.scene.Text nodeText;
+	protected final at.bestsolution.wgraf.scene.Text nodeText;
 	
 	
 	public int tempLeftLabelOffset = 0;
@@ -118,7 +118,7 @@ public class Button extends Widget {
 		return icon;
 	}
 	
-	private void initDefaultStyle() {
+	protected void initDefaultStyle() {
 		// this should come from css:
 		
 		Insets bgInsets = new Insets(0, 0, 0, 0);

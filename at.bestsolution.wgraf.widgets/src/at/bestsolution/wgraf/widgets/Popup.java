@@ -1,7 +1,9 @@
 package at.bestsolution.wgraf.widgets;
 
 import at.bestsolution.wgraf.properties.Property;
+import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
+import at.bestsolution.wgraf.properties.simple.SimpleSignal;
 
 
 public class Popup {
@@ -12,6 +14,12 @@ public class Popup {
 		BOTTOM_CENTER,
 		CENTER
 	}
+	
+	private Signal<Void> onCancel = new SimpleSignal<Void>();
+	public Signal<Void> onCancel() {
+		return onCancel;
+	}
+	
 	
 	private Property<Boolean> squeezeViewport = null;
 	public Property<Boolean> squeezeViewport() {

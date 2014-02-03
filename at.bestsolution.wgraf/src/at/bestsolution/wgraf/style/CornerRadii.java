@@ -1,6 +1,9 @@
 package at.bestsolution.wgraf.style;
 
 public class CornerRadii {
+	
+	public static final CornerRadii NO_CORNER_RADII = new CornerRadii(0);
+	
 	public final double topLeftHorizontalRadius;
 	public final double topLeftVerticalRadius;
 	

@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.paint.LinearGradient;
+import at.bestsolution.wgraf.paint.Paint;
 import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
 import at.bestsolution.wgraf.paint.LinearGradient.Spread;
 import at.bestsolution.wgraf.paint.LinearGradient.Stop;
@@ -17,6 +18,7 @@ import at.bestsolution.wgraf.properties.binding.Setter;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.binding.Binder;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
+import at.bestsolution.wgraf.style.Background;
 import at.bestsolution.wgraf.style.Backgrounds;
 import at.bestsolution.wgraf.style.Border;
 import at.bestsolution.wgraf.style.BorderStroke;
@@ -41,6 +43,13 @@ public class ComboBox<Model> extends Widget {
 	
 	private Button okButton;
 	public Converter<Model, String> labelProvider;
+	
+	
+	private Property<String> label = new SimpleProperty<String>("");
+	public Property<String> label() {
+		return label;
+	}
+	
 	
 	private String getLabel(Model model) {
 		String label = null;
@@ -126,9 +135,13 @@ public class ComboBox<Model> extends Widget {
 		Binder.uniBind(width(), text.width());
 		
 		int hh = 40;
+		int fh = 55;
 		
-		int w = 300;
-		int h = 250;
+		int w = 400;
+		int h = 300;
+		
+		int outerPadding = 15;
+		int innerPadding = 5;
 		
 		popupPane = new AbsolutePane();
 		popupPane.area.onTap().registerSignalListener(new SignalListener<TapEvent>() {
@@ -154,7 +167,7 @@ public class ComboBox<Model> extends Widget {
 		}
 		
 		
-		popupPane.addWidget(up, w - 25 - 40, hh + 25);
+		popupPane.addWidget(up, w - outerPadding - innerPadding - 40, hh + outerPadding + innerPadding);
 
 		final Button down = new Button();
 //		down.text().set("v");
@@ -170,18 +183,18 @@ public class ComboBox<Model> extends Widget {
 		}
 		
 		
-		popupPane.addWidget(down, w - 25 - 40, h - 40 - 25 - 40);
+		popupPane.addWidget(down, w - outerPadding - innerPadding - 40, h - fh - outerPadding - innerPadding - 40);
 
 		caption = new Label();
 		caption.font().set(font);
-		// TODO bind caption to some text widget
-		caption.text().set("Caption");
+		Binder.uniBind(label(), caption.text());
 		
 		popupPane.addWidget(caption, 10, 10);
 		
 		
 		
 		popup = new Popup(popupPane);
+		
 		
 		list = new ListView<Model>();
 		list.setCellFactory(new ListView.DefaultCellFactory<Model>(new ListView.SimpleLabelProvider<Model>() {
@@ -190,8 +203,8 @@ public class ComboBox<Model> extends Widget {
 				return getLabel(value);
 			}
 		}));
-		list.area.width().set(w - 2 * 25 - 20 - 40);
-		list.area.height().set(h - 2 * 25 - 2 * hh);
+		list.area.width().set(w - 2 * outerPadding - 3 * innerPadding - 40);
+		list.area.height().set(h - 2 * outerPadding - 2 * innerPadding - hh - fh);
 		list.onTap().registerSignalListener(new SignalListener<Model>() {
 			@Override
 			public void onSignal(Model data) {
@@ -210,15 +223,88 @@ public class ComboBox<Model> extends Widget {
 			}
 		});
 		
-		popupPane.addWidget(list, 25, hh + 25);
+		popupPane.addWidget(list, outerPadding + innerPadding, hh + outerPadding + innerPadding);
 		
-		okButton = new Button();
+		okButton = new Button() {
+			@Override
+			protected void initDefaultStyle() {
+				// this should come from css:
+				
+				CornerRadii radii = new CornerRadii(3);
+				Insets insets = new Insets(0, 0, 0, 0);
+				
+				Color normalColor = new Color(60,179,113, 255);
+				Color activeColor = new Color(34,139,34, 255);
+				Color disabledColor = new Color(251, 251, 251, 255);
+				
+				final Background normalBackground = new FillBackground(normalColor, radii, insets);
+				final Background activeBackground = new FillBackground(activeColor, radii, insets);	
+				final Background disabledBackground = new FillBackground(disabledColor, radii, insets);
+				
+				final Border normalBorder = new Border(new BorderStroke(activeColor, radii, new BorderWidths(1, 1, 1, 1), insets));
+				
+				//area.border().set(normalBorder);
+				
+				Binder.uniBind(enabled(), new Setter<Boolean>() {
+					@Override
+					public void set(Boolean value) {
+						if (value) {
+							area.background().set(normalBackground);
+						}
+						else {
+							area.background().set(disabledBackground);
+						}
+					}
+				});
+				Binder.uniBind(active(), new Setter<Boolean>() {
+					@Override
+					public void set(Boolean value) {
+						if (value) {
+							area.background().set(activeBackground);
+						}
+						else {
+							area.background().set(normalBackground);
+						}
+					}
+				});
+				
+//						new FillBackground(
+//						new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
+//							new Stop(0, new Color(180, 240, 180, 255)),
+//							new Stop(1, new Color(34,139,34, 255))
+//						), 
+//						radii, insets);
+				
+				
+//				final FillBackground disabled = new FillBackground(
+//						new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
+//							new Stop(0, new Color(251, 251, 251, 255)),
+//							new Stop(1, new Color(194, 194, 194, 255))
+//						), 
+//						radii, bgInsets);
+//				
+//				
+//				final FillBackground active = new FillBackground(
+//						new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
+//							new Stop(0, new Color(34,139,34, 255)),
+//							new Stop(1, new Color(180, 240, 180, 255))
+//						), 
+//						radii, bgInsets);
+				
+				
+				// white text
+				nodeText.fill().set(new Color(255,255,255,255));
+				
+				area.cache().set(true);
+				nodeText.cache().set(true);
+			}
+		};
 		okButton.text().set("Ok");
 		okButton.font().set(font);
 		okButton.width().set(60);
 		okButton.height().set(40);
 		
-		popupPane.addWidget(okButton, w - 20 - 60, h - 10 - 40);
+		popupPane.addWidget(okButton, w - 60 - 15 , h - 40 - 15);
 		
 		
 		okButton.activated().registerSignalListener(new SignalListener<Void>() {
@@ -242,39 +328,70 @@ public class ComboBox<Model> extends Widget {
 	}
 	
 	private void initDefaultStyle() {
-		Insets listInsets = new Insets(40 + 20, 20, 40 + 20, 20);
+		
+		int hh = 40;
+		int fh = 55;
+		int outerPadding = 15;
+		int innerPadding = 5;
+		
+		Color borderColor = new Color(200, 200, 200, 255);
+		Color focusColor = new Color(255, 105, 105, 255);
+		
+		double r = 4;
+		
+		
+		Insets listInsets = new Insets(hh + outerPadding, outerPadding, fh + outerPadding, outerPadding);
 		Insets popupInsets = new Insets(0, 0, 0, 0);
-		CornerRadii radii10 = new CornerRadii(10);
-		CornerRadii radii0 = new CornerRadii(0);
+		
+		
+		CornerRadii radii10 = new CornerRadii(4);
+		
+		
+		LinearGradient focus = new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
+						new Stop(0, new Color(225,0,0,150)),
+						new Stop(0.4, new Color(255,30,30,150)),
+						new Stop(1, new Color(255,30,30,150))
+						);
 		
 		LinearGradient bg = new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
-				new Stop(0, new Color(0, 0, 0, 200)),
-				new Stop(1, new Color(50, 50, 50, 200))
+				new Stop(0, new Color(255, 255, 255, 200)),
+				new Stop(1, new Color(250, 250, 250, 200))
 			);
 		LinearGradient header = new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
 				new Stop(0, new Color(255, 105, 105, 200)),
 				new Stop(1, new Color(255, 80, 80, 200))
 			);
 		
-		CornerRadii headerRadii = new CornerRadii(10, 10, 10, 10, 0, 0, 0, 0);
-		Insets headerInsets = new Insets(0, 0, 250 - 40, 0);
+		Paint headerPaint = new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
+				new Stop(0, new Color(220,220,220,150)),
+				new Stop(0.4, new Color(250,250,250,150)),
+				new Stop(1, new Color(250,250,250,150))
+				);
 		
-		Color border = new Color(200, 200, 200, 255);
-		Color white = new Color(255, 255, 255, 255);
-		BorderWidths bw = new BorderWidths(3);
+		CornerRadii headerRadii = new CornerRadii(r, r, r, r, 0, 0, 0, 0);
+		Insets headerInsets = new Insets(0, 0, 300 - 40, 0);
+		
 		
 		popupPane.area.background().set(new Backgrounds(
-				new FillBackground(header, headerRadii, headerInsets),
-				new FillBackground(white, radii0, listInsets),
+				new FillBackground(headerPaint, headerRadii, headerInsets),
+				new FillBackground(headerPaint, radii10, listInsets),
 				new FillBackground(bg, radii10, popupInsets))
 				);
+		
+		
 		popupPane.area.border().set(new Border(
-				new BorderStroke(border, radii0, bw, listInsets),
-				new BorderStroke(border, radii10, bw, popupInsets)
+				new BorderStroke(borderColor, radii10, new BorderWidths(2), Insets.NO_INSETS),
+				new BorderStroke(borderColor, CornerRadii.NO_CORNER_RADII, new BorderWidths(1), listInsets)
 				));
 		
 		
-		caption.text.fill().set(white);
+//		popupPane.area.border().set(new Border(
+////				new BorderStroke(border, radii0, bw, listInsets),
+//				new BorderStroke(focusColor, radii10, bw, popupInsets)
+//				));
+		
+		
+		caption.text.fill().set(focusColor);
 		
 	}
 	

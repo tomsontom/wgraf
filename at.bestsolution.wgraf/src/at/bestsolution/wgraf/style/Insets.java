@@ -3,6 +3,8 @@ package at.bestsolution.wgraf.style;
 
 public class Insets {
 
+	public static final Insets NO_INSETS = new Insets(0);
+	
 	public final double top;
 	public final double left;
 	public final double right;

@@ -2,6 +2,7 @@ package at.bestsolution.wgraf.backend.qt.scene;
 
 import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.backend.qt.QtBinder;
+import at.bestsolution.wgraf.backend.qt.QtBinder.QtSetter;
 import at.bestsolution.wgraf.events.FlingEvent;
 import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.ScrollEvent;
@@ -143,6 +144,21 @@ public abstract class QtNode<N extends QGraphicsItemInterfaceWithTapEventReceive
 		return y;
 	}
 	
+	
+	private DoubleTransitionProperty opacity = null;
+	@Override
+	public DoubleTransitionProperty opacity() {
+		if (opacity == null) {
+			opacity = new SimpleDoubleTransitionProperty(node.opacity());
+			QtBinder.uniBind(opacity, new QtBinder.QtSetter<Double>() {
+				@Override
+				public void doSet(Double value) {
+					node.setOpacity(value);
+				}
+			});
+		}
+		return opacity;
+	}
 	
 	@Override
 	public void setParent(final BackingContainer parent) {

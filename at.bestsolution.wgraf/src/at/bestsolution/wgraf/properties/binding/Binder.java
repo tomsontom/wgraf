@@ -10,6 +10,7 @@ import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.DoubleProperty;
 import at.bestsolution.wgraf.properties.InvalidValueException;
 import at.bestsolution.wgraf.properties.Property;
+import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.SignalListener;
 
@@ -187,7 +188,7 @@ public class Binder {
 		};
 	}
 	
-	public static <Type> Binding uniBind(final Property<Type> property, final Setter<Type> setter) {
+	public static <Type> Binding uniBind(final ReadOnlyProperty<Type> property, final Setter<Type> setter) {
 		final ChangeListener<Type> listener = new ChangeListener<Type>() {
 			@Override
 			public void onChange(Type oldValue, Type newValue) {

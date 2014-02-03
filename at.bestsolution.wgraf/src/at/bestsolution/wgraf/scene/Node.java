@@ -76,6 +76,7 @@ public abstract class Node<Backend extends BackingNode> extends Frontend<Backend
 	public final DoubleTransitionProperty x() { return backend.x(); }
 	public final DoubleTransitionProperty y() { return backend.y(); }
 	
+	public final DoubleTransitionProperty opacity() { return backend.opacity(); }
 	
 	public final Property<Boolean> acceptTapEvents() { return backend.acceptTapEvents(); }
 	

@@ -17,6 +17,8 @@ public interface BackingNode {
 	DoubleTransitionProperty x();
 	DoubleTransitionProperty y();
 	
+	DoubleTransitionProperty opacity();
+	
 	Property<Shape> clippingShape();
 	
 	void setParent(BackingContainer parent);
