@@ -11,6 +11,7 @@ import at.bestsolution.wgraf.properties.binding.GroupBinding;
 import at.bestsolution.wgraf.properties.binding.Setter;
 import at.bestsolution.wgraf.properties.binding.Binding;
 import at.bestsolution.wgraf.scene.Container;
+import at.bestsolution.wgraf.transition.LinearDoubleTransition;
 import at.bestsolution.wgraf.widgets.Popup.PopupPosition;
 
 
@@ -88,6 +89,8 @@ public class PopupPane extends AbsolutePane {
 			Setter<Double> ySetter = new Setter<Double>() {
 				@Override
 				public void set(Double value) {
+					pop.y().setTransition(new LinearDoubleTransition(300));
+					pop.y().set(target.height().get());
 					pop.y().setDynamic(target.height().get() - pop.height().get());
 				}
 			};
