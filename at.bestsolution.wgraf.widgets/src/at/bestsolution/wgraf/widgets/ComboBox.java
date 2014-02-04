@@ -85,7 +85,7 @@ public class ComboBox<Model> extends Widget {
 		
 		text.editable().set(false);
 		
-		final TextButton popbutton = text.addButton(ButtonPosition.RIGHT);
+		final TextButton popbutton = text.addButton(ButtonPosition.RIGHT, true);
 		try {
 			popbutton.icon().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowdown-black.png")));
 		} catch (URISyntaxException e) {

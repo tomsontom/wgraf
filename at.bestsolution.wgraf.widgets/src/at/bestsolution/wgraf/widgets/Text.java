@@ -92,14 +92,7 @@ public class Text extends Widget {
 				public void onSignal(TapEvent data) {
 					if (!enabled().get()) return;
 					
-					active.set(true);
-					Sync.get().execLaterOnUIThread(new Runnable() {
-						@Override
-						public void run() {
-							active.set(false);
-						}
-					}, 100);
-					activated.signal(null);
+					triggerActivated();
 					data.consume();
 				}
 			});
@@ -145,6 +138,17 @@ public class Text extends Widget {
 			});
 			
 		}
+
+		public void triggerActivated() {
+			active.set(true);
+			Sync.get().execLaterOnUIThread(new Runnable() {
+				@Override
+				public void run() {
+					active.set(false);
+				}
+			}, 100);
+			activated.signal(null);
+		}
 		
 	}
 	
@@ -156,7 +160,19 @@ public class Text extends Widget {
 	}
 	
 	public TextButton addButton(ButtonPosition pos) {
+		return addButton(pos, false);
+	}
+	
+	public TextButton addButton(ButtonPosition pos, boolean expandOverText) {
+		if (expandOverText) {
+			if (expandButton != null) {
+				throw new IllegalStateException("only one button may expand over the text!");
+			}
+		}
 		TextButton btn = new TextButton();
+		if (expandOverText) {
+			expandButton = btn;
+		}
 		if (pos == ButtonPosition.LEFT) {
 			leftButtons.add(btn);
 			// fix left
@@ -189,6 +205,8 @@ public class Text extends Widget {
 		resize();
 		return btn;
 	}
+	
+	private TextButton expandButton = null;
 	
 	private static final String BACKSPACE = "\u0008";
 	private static final String DELETE = "\u007F";
@@ -437,6 +455,14 @@ public class Text extends Widget {
 		area.onTap().registerSignalListener(new SignalListener<TapEvent>() {
 			@Override
 			public void onSignal(TapEvent data) {
+				
+				if (expandButton != null) {
+					expandButton.triggerActivated();
+					data.consume();
+					return;
+				}
+				
+				
 				if (!editable().get()) return;
 				
 				final Font currentFont = font().get();
@@ -575,6 +601,8 @@ public class Text extends Widget {
 				}
 			}
 		});
+		
+		
 	}
 	
 	private double calcTextWidth() {

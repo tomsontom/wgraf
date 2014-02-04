@@ -14,13 +14,17 @@ import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.geom.shape.Shape;
 import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.properties.ChangeListener;
+import at.bestsolution.wgraf.properties.Converter;
 import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
+import at.bestsolution.wgraf.properties.ListProperty;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.style.Effect;
+import at.bestsolution.wgraf.util.FilterNodeIterator;
+import at.bestsolution.wgraf.util.NodeIterator;
 
 public abstract class Node<Backend extends BackingNode> extends Frontend<Backend>{
 
@@ -110,6 +114,13 @@ public abstract class Node<Backend extends BackingNode> extends Frontend<Backend
 	
 	public Vec2d computePreferredSize() {
 		return new Vec2d(10, 10);
+	}
+	
+	public NodeIterator iterator() {
+		return iterator(null);
+	}
+	public NodeIterator iterator(Converter<Node<?>, Boolean> filter) {
+		return new FilterNodeIterator(this, filter);
 	}
 	
 	public final Property<Boolean> cache() { return backend.cache(); }

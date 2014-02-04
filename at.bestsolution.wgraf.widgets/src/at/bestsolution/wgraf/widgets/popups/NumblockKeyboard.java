@@ -154,6 +154,38 @@ public class NumblockKeyboard extends Popup {
 		pane.addWidget(bE, 10 + 2 * 50, 10 + 3 * 50);
 		
 		
+		{
+			Button next = createButton(70, 40);
+			next.text().set("next");
+			next.font().set(font);
+			pane.addWidget(next, 160, 10);
+//			up.parent().set(area);
+//			up.x().set(150+500);
+//			up.y().set(120);
+			next.activated().registerSignalListener(new SignalListener<Void>() {
+				@Override
+				public void onSignal(Void data) {
+					Application.get().focusNextNode();
+				}
+			});
+		}
+		
+		{
+			Button prev = createButton(70, 40);
+			prev.text().set("prev");
+			prev.font().set(font);
+			pane.addWidget(prev, 160, 60);
+//			up.parent().set(area);
+//			up.x().set(150+500);
+//			up.y().set(120);
+			prev.activated().registerSignalListener(new SignalListener<Void>() {
+				@Override
+				public void onSignal(Void data) {
+					Application.get().focusPrevNode();
+				}
+			});
+		}
+		
 		updateButtons();
 		
 	}
@@ -168,7 +200,7 @@ public class NumblockKeyboard extends Popup {
 		
 		AbsolutePane pane = (AbsolutePane) getContent();
 		
-		area.width().set(160);
+		area.width().set(240);
 		area.height().set(210);
 		
 		area.onTap().registerSignalListener(new SignalListener<TapEvent>() {

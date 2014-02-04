@@ -10,6 +10,7 @@ import at.bestsolution.wgraf.paint.LinearGradient;
 import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
 import at.bestsolution.wgraf.paint.LinearGradient.Spread;
 import at.bestsolution.wgraf.paint.LinearGradient.Stop;
+import at.bestsolution.wgraf.paint.Paint;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.Property;
@@ -121,45 +122,53 @@ public class Button extends Widget {
 	protected void initDefaultStyle() {
 		// this should come from css:
 		
-		Insets bgInsets = new Insets(0, 0, 0, 0);
-		final FillBackground normal = new FillBackground(
-				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
-					new Stop(0, new Color(181, 181, 181, 255)),
-					new Stop(1, new Color(124, 124, 124, 255))
-				), 
-				new CornerRadii(4), bgInsets);
+		final CornerRadii cr = new CornerRadii(4);
+		final Paint normalPaint = new Color(124, 124, 124, 255);
+		final Paint disabledPaint = new Color(251, 251, 251, 255);
+		final Paint activePaint = new Color(181, 181, 181, 255);
 		
-		final FillBackground disabled = new FillBackground(
-				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
-					new Stop(0, new Color(251, 251, 251, 255)),
-					new Stop(1, new Color(194, 194, 194, 255))
-				), 
-				new CornerRadii(4), bgInsets);
+		final Background normal = new FillBackground(normalPaint, cr, Insets.NO_INSETS);
+		final Background disabled = new FillBackground(disabledPaint, cr, Insets.NO_INSETS);
+		final Background active = new FillBackground(activePaint, cr, Insets.NO_INSETS);
 		
-		final Background normalWithFocus = new Backgrounds(
-			normal,
-			new FillBackground(new Color(255, 255, 255, 255), new CornerRadii(4), bgInsets),
-			new FillBackground(new Color(255, 255, 0, 144), new CornerRadii(4), new Insets(0, 0, 0, 0))
-			
-		);
+//		final FillBackground normal = new FillBackground(
+//				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
+//					new Stop(0, new Color(181, 181, 181, 255)),
+//					new Stop(1, new Color(124, 124, 124, 255))
+//				), 
+//				new CornerRadii(4), bgInsets);
 		
-		final FillBackground active = new FillBackground(
-				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
-						new Stop(0, new Color(124, 124, 124, 255)),
-						new Stop(1, new Color(181, 181, 181, 255))
-					), 
-					new CornerRadii(4), bgInsets);
+//		final FillBackground disabled = new FillBackground(
+//				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
+//					new Stop(0, new Color(251, 251, 251, 255)),
+//					new Stop(1, new Color(194, 194, 194, 255))
+//				), 
+//				new CornerRadii(4), bgInsets);
 		
-		final Background activeWithFocus = new Backgrounds(
-				active,
-				new FillBackground(new Color(255, 255, 255, 255), new CornerRadii(4), bgInsets),
-				new FillBackground(new Color(255, 255, 0, 144), new CornerRadii(4), new Insets(0, 0, 0, 0))
-			);
+//		final Background normalWithFocus = new Backgrounds(
+//			normal,
+//			new FillBackground(new Color(255, 255, 255, 255), new CornerRadii(4), bgInsets),
+//			new FillBackground(new Color(255, 255, 0, 144), new CornerRadii(4), new Insets(0, 0, 0, 0))
+//			
+//		);
+		
+//		final FillBackground active = new FillBackground(
+//				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
+//						new Stop(0, new Color(124, 124, 124, 255)),
+//						new Stop(1, new Color(181, 181, 181, 255))
+//					), 
+//					new CornerRadii(4), bgInsets);
+		
+//		final Background activeWithFocus = new Backgrounds(
+//				active,
+//				new FillBackground(new Color(255, 255, 255, 255), new CornerRadii(4), bgInsets),
+//				new FillBackground(new Color(255, 255, 0, 144), new CornerRadii(4), new Insets(0, 0, 0, 0))
+//			);
 		
 		
 		area.background().set(normal);
 		
-		area.border().set(new Border(new BorderStroke(new Color(100,100,100,100), new CornerRadii(4), new BorderWidths(1, 1, 1, 1), new Insets(0, 0, 0, 0))));
+//		area.border().set(new Border(new BorderStroke(new Color(100,100,100,100), cr, new BorderWidths(1, 1, 1, 1), Insets.NO_INSETS)));
 		
 //		focus().registerChangeListener(new ChangeListener<Boolean>() {
 //			@Override
@@ -188,9 +197,13 @@ public class Button extends Widget {
 			public void set(Boolean value) {
 				if (value) {
 					area.background().set(normal);
+					area.border().set(null);
+					nodeText.fill().set(new Color(255,255,255,255));
 				}
 				else {
 					area.background().set(disabled);
+					area.border().set(new Border(new BorderStroke(normalPaint, cr, new BorderWidths(1, 1, 1, 1), Insets.NO_INSETS)));
+					nodeText.fill().set(new Color(200,200,200,255));
 				}
 			}
 		});
@@ -221,14 +234,17 @@ public class Button extends Widget {
 		
 //		area.effect().set(new DropShadow());
 		area.cache().set(true);
-		nodeText.fill().set(new Color(255,255,255,255));
+		
+		
+		
+		
 		
 //		nodeText.effect().set(new DropShadow());
 		
 		nodeText.cache().set(true);
 	}
 	
-	private void triggerActivated() {
+	public void triggerActivated() {
 		active.set(true);
 //		Sync.get().asyncExecOnUIThread(new Runnable() {
 //			@Override

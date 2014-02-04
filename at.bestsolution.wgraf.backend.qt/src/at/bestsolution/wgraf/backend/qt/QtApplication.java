@@ -91,7 +91,7 @@ public class QtApplication implements BackingApplication {
 	@Override
 	public void start(String[] args) {
 		QApplication.initialize(args);
-		
+
 		QtSync.init();
 		
 		if (init != null) {

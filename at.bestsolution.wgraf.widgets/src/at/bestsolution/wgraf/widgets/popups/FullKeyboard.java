@@ -14,6 +14,7 @@ import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
 import at.bestsolution.wgraf.paint.LinearGradient.Spread;
 import at.bestsolution.wgraf.paint.LinearGradient.Stop;
 import at.bestsolution.wgraf.properties.ChangeListener;
+import at.bestsolution.wgraf.properties.Converter;
 import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.scene.Container;
 import at.bestsolution.wgraf.scene.Node;
@@ -24,6 +25,7 @@ import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.style.Insets;
+import at.bestsolution.wgraf.util.NodeIterator;
 import at.bestsolution.wgraf.widgets.AbsolutePane;
 import at.bestsolution.wgraf.widgets.Button;
 import at.bestsolution.wgraf.widgets.Popup;
@@ -256,14 +258,14 @@ public class FullKeyboard extends Popup {
 	public FullKeyboard() {
 		super(new AbsolutePane(), false);
 		
-		position().set(PopupPosition.BOTTOM_CENTER);
+		position().set(PopupPosition.BOTTOM_RIGHT);
 		squeezeViewport().set(true);
 		
 		Container area = getContent().getAreaNode();
 		
 		AbsolutePane pane = (AbsolutePane) getContent();
 		
-		area.width().set(700);
+		area.width().set(750);
 		area.height().set(240);
 		area.x().set(50);
 		
@@ -382,10 +384,44 @@ public class FullKeyboard extends Popup {
 		
 		
 		{
+			Button next = createButton(70, 40);
+			next.text().set("next");
+			next.font().set(font);
+			pane.addWidget(next, 150+500 + 20, 10);
+//			up.parent().set(area);
+//			up.x().set(150+500);
+//			up.y().set(120);
+			next.activated().registerSignalListener(new SignalListener<Void>() {
+				@Override
+				public void onSignal(Void data) {
+					Application.get().focusNextNode();
+				}
+			});
+		}
+		
+		{
+			Button prev = createButton(70, 40);
+			prev.text().set("prev");
+			prev.font().set(font);
+			pane.addWidget(prev, 150+500 + 20, 60);
+//			up.parent().set(area);
+//			up.x().set(150+500);
+//			up.y().set(120);
+			prev.activated().registerSignalListener(new SignalListener<Void>() {
+				@Override
+				public void onSignal(Void data) {
+					Application.get().focusPrevNode();
+				}
+			});
+		}
+		
+		
+		
+		{
 			Button up = createButton(40, 40);
 			up.text().set("^");
 			up.font().set(font);
-			pane.addWidget(up, 150+500, 120);
+			pane.addWidget(up, 150+500 + 10, 120 + 25);
 //			up.parent().set(area);
 //			up.x().set(150+500);
 //			up.y().set(120);
@@ -403,7 +439,7 @@ public class FullKeyboard extends Popup {
 			Button down = createButton(40, 40);
 			down.text().set("v");
 			down.font().set(font);
-			pane.addWidget(down, 150+500, 162);
+			pane.addWidget(down, 150+500 + 10, 162 + 25);
 //			down.parent().set(area);
 //			down.x().set(150+500);
 //			down.y().set(162);
@@ -421,7 +457,7 @@ public class FullKeyboard extends Popup {
 			Button left = createButton(40, 40);
 			left.text().set("<");
 			left.font().set(font);
-			pane.addWidget(left, 150+458, 162);
+			pane.addWidget(left, 150+458 + 10, 162 + 25);
 //			left.parent().set(area);
 //			left.x().set(150+458);
 //			left.y().set(162);
@@ -440,7 +476,7 @@ public class FullKeyboard extends Popup {
 			Button right = createButton(40, 40);
 			right.text().set(">");
 			right.font().set(font);
-			pane.addWidget(right, 150+542, 162);
+			pane.addWidget(right, 150+542 + 10, 162 + 25);
 //			right.parent().set(area);
 //			right.x().set(150+542);
 //			right.y().set(162);

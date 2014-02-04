@@ -1,10 +1,12 @@
 package at.bestsolution.wgraf;
 
 import at.bestsolution.wgraf.properties.ChangeListener;
+import at.bestsolution.wgraf.properties.Converter;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.scene.Container;
 import at.bestsolution.wgraf.scene.Node;
+import at.bestsolution.wgraf.util.NodeIterator;
 
 public class Application extends Frontend<BackingApplication> {
 	
@@ -52,11 +54,39 @@ public class Application extends Frontend<BackingApplication> {
 	}
 	
 	public void focusNextNode() {
-		// TODO 
+		Node<?> focusNode = Application.get().focusNode().get();
+		System.err.println("Current Focus node: " + focusNode);
+		
+		NodeIterator it = focusNode.iterator(new Converter<Node<?>, Boolean>() {
+			@Override
+			public Boolean convert(Node<?> value) {
+				return value.acceptFocus().get();
+			}
+		});
+		
+		if (it.hasNext()) {
+			Node<?> next = it.next();
+			System.err.println("NExt Focus node: " + next);
+			next.requestFocus();
+		}
 	}
 	
 	public void focusPrevNode() {
-		// TODO
+		Node<?> focusNode = Application.get().focusNode().get();
+		System.err.println("Current Focus node: " + focusNode);
+		
+		NodeIterator it = focusNode.iterator(new Converter<Node<?>, Boolean>() {
+			@Override
+			public Boolean convert(Node<?> value) {
+				return value.acceptFocus().get();
+			}
+		});
+		
+		if (it.hasPrev()) {
+			Node<?> next = it.prev();
+			System.err.println("PRev Focus node: " + next);
+			next.requestFocus();
+		}
 	}
 	
 	@Override

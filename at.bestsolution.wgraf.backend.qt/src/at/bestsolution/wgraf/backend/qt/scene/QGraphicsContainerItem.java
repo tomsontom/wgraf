@@ -140,6 +140,8 @@ public class QGraphicsContainerItem extends QGraphicsRectItem implements QGraphi
 	
 	@Override
 	public void paint(QPainter painter, QStyleOptionGraphicsItem option, QWidget widget) {
+	
+//		System.err.println("pet: "+painter.paintEngine().type()+" / colorCount: " + painter.device().colorCount() + " / depth: " + painter.device().depth());
 //		painter.setBrush(brush());
 //		painter.setPen(pen());
 //		painter.drawRoundedRect(rect(), xRadius, yRadius);
