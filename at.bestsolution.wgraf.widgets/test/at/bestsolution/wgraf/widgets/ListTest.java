@@ -33,7 +33,7 @@ public class ListTest extends Application {
 		pane.getAreaNode().width().set(400d);
 		pane.getAreaNode().height().set(500d);
 	
-		Font font = new Font("Sans", 22);
+		Font font = Font.UBUNTU.resize(22);
 		
 		{
 			final ListView<String> myFirstList = new ListView<String>();

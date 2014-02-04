@@ -4,9 +4,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import at.bestsolution.wgraf.Application;
 import at.bestsolution.wgraf.Sync;
+import at.bestsolution.wgraf.events.InputMethod;
+import at.bestsolution.wgraf.events.KeyCode;
+import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.paint.LinearGradient;
@@ -15,8 +19,10 @@ import at.bestsolution.wgraf.paint.LinearGradient.Spread;
 import at.bestsolution.wgraf.paint.LinearGradient.Stop;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.Converter;
+import at.bestsolution.wgraf.properties.InvalidValueException;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.SignalListener;
+import at.bestsolution.wgraf.properties.ValueUpdate;
 import at.bestsolution.wgraf.properties.binding.Binder;
 import at.bestsolution.wgraf.properties.binding.Binding;
 import at.bestsolution.wgraf.properties.binding.Setter;
@@ -40,7 +46,7 @@ import at.bestsolution.wgraf.widgets.VirtualFlow.Factory;
 public class TreeView<Model> extends Widget {
 
 	public static class DefaultCellFactory<Model> extends ListView.DefaultCellFactory<Model> {
-		private TreeView<Model> treeView;
+		protected TreeView<Model> treeView;
 		public void setTreeView(TreeView<Model> treeView) {
 			this.treeView = treeView;
 		}
@@ -230,7 +236,7 @@ public class TreeView<Model> extends Widget {
 				label = new Text();
 				label.parent().set(cell);
 				label.x().set(10);
-				label.font().set(new Font("Sans", 20));
+				label.font().set(Font.UBUNTU.resize(20));
 				Binder.uniBind(cell.height(), new Setter<Double>() {
 					@Override
 					public void set(Double value) {
@@ -494,7 +500,11 @@ public class TreeView<Model> extends Widget {
 				internalSetCurrent(value);
 			}
 		});
+		
 	}
+	
+	
+	
 	
 	private Property<SingleSelectionModel<Model>> selection = new SimpleProperty<SingleSelectionModel<Model>>(new SimpleSelectionModel<Model>());
 	public Property<SingleSelectionModel<Model>> selection() {

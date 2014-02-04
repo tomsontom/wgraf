@@ -95,7 +95,7 @@ public class CheckBox extends Widget {
 		// init state
 		slider.x().set(maxPos);
 		
-		Font font = new Font("Sans", 20);
+		Font font = Font.UBUNTU.resize(20);
 		
 		Vec2d onExtent = font.stringExtent(TEXT_ON);
 		Vec2d offExtent = font.stringExtent(TEXT_OFF);

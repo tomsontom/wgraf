@@ -35,7 +35,7 @@ public class WidgetTest extends Application {
 	
 		KeyboardSupport keyboardSupport = new KeyboardSupport(pane);
 		
-		Font font = new Font("Sans", 22);
+		Font font = Font.UBUNTU.resize(22);
 		
 		double yOffset = 30;
 		{

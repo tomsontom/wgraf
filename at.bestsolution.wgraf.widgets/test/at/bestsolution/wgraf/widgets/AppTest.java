@@ -11,7 +11,7 @@ public class AppTest extends Application {
 	protected void initialize() {
 		title().set("Hallo Touch App");
 		
-		final Font defaultFont = new Font("Sans", 22);
+		final Font defaultFont = Font.UBUNTU.resize(22);
 		
 		final KeyboardPane rootPane = new KeyboardPane();
 		rootPane.area.width().set(800);

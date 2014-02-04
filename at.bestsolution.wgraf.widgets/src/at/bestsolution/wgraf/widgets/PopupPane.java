@@ -112,6 +112,8 @@ public class PopupPane extends AbsolutePane {
 	@Override
 	public void showPopup(final Popup popup) {
 		System.err.println("showing popup");
+		if (activePopups.contains(popup)) return;
+		
 		activePopups.add(popup);
 		
 		final Container pop = popup.getContent().area;

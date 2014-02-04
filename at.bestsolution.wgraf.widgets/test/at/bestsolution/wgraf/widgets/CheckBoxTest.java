@@ -31,7 +31,7 @@ public class CheckBoxTest extends Application {
 		pane.getAreaNode().width().set(800);
 		pane.getAreaNode().height().set(600);
 	
-		final Font font = new Font("Sans", 22);
+		final Font font = Font.UBUNTU.resize(22);
 		
 		double yOffset = 10;
 		{

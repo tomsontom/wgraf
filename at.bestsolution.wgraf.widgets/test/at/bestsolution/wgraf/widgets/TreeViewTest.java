@@ -54,7 +54,6 @@ public class TreeViewTest extends Application {
 		pane.getAreaNode().width().set(400d);
 		pane.getAreaNode().height().set(500d);
 	
-		Font font = new Font("Sans", 22);
 		
 		{
 			final TreeView<SimpleModel> myFirstTree = new TreeView<SimpleModel>();

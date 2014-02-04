@@ -128,7 +128,7 @@ public class TouchKeyboard extends Widget {
 	
 	private Button e;
 	
-	private Font font = new Font("Sans", 16);
+	private Font font = Font.UBUNTU.resize(16);
 	
 	private Button createButton(double width, double height) {
 		Button b = new Button();

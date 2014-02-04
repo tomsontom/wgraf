@@ -128,7 +128,7 @@ public class TestIt {
 				}
 				
 				{
-					Font myFont = new Font("Arial", 20);
+					Font myFont = Font.UBUNTU.resize(20);
 					Vec2d stringExtent = myFont.stringExtent("Hallo yj");
 					
 					Container r = new Container();

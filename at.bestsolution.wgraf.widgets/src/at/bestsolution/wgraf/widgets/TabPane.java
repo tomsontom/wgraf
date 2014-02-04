@@ -58,7 +58,7 @@ public class TabPane extends StackPane {
 	}
 	
 	private void updateTabs() {
-		Font font = new Font("Sans", 18);
+		Font font = Font.UBUNTU;
 		double maxW = 0;
 		for (Widget w : tabs) {
 			String label = labels.get(w);

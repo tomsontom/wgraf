@@ -292,7 +292,7 @@ public class VirtualFlow<Model> extends Widget {
 		}
 		else {
 			final Text text = new Text();
-			text.font().set(new Font("Sans", 30));
+			text.font().set(Font.UBUNTU.resize(30));
 			text.text().set("No cell Factory!");
 			newNode = new Cell<Node<?>, Model>() {
 				@Override
@@ -403,7 +403,7 @@ public class VirtualFlow<Model> extends Widget {
 					System.err.println(data.velocityY);
 					if (Math.abs(data.velocityY) > 500) {
 						// DO THE FLING!
-						verticalRange.offset.updateDynamic(new ClampedDoubleIncrement(-data.velocityY * 10, 0, calculateMaxYOffset()));
+						verticalRange.offset.updateDynamic(new ClampedDoubleIncrement(-data.velocityY, 0, calculateMaxYOffset()));
 					}
 				}
 			}

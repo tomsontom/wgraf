@@ -26,7 +26,7 @@ public class TextNode extends Application {
 		String text2 = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 		
 		{
-			Font font0 = new Font("Sans", 60);
+			Font font0 = Font.UBUNTU.resize(60);
 		
 			{
 				Vec2d stringExtent = font0.stringExtent(text0);

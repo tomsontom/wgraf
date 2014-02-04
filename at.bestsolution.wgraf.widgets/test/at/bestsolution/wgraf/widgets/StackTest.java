@@ -16,8 +16,6 @@ public class StackTest extends Application {
 	protected void initialize() {
 		title().set("Hallo StackPane");
 		
-		final Font defaultFont = new Font("Sans", 22);
-		
 		final PopupPane rootPane = new PopupPane();
 		rootPane.width().set(800);
 		rootPane.height().set(600);

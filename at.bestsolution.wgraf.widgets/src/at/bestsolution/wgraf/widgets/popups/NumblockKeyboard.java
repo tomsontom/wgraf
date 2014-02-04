@@ -45,7 +45,7 @@ public class NumblockKeyboard extends Popup {
 	
 	private List<NumKey> keys = new ArrayList<NumKey>();
 	
-	private Font font = new Font("Sans", 16);
+	private Font font = Font.UBUNTU.resize(16);
 	
 	private Button createButton(double width, double height) {
 		Button b = new Button();

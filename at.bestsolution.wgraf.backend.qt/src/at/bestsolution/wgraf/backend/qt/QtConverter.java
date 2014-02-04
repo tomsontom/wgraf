@@ -1,5 +1,10 @@
 package at.bestsolution.wgraf.backend.qt;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+
+import at.bestsolution.wgraf.backend.qt.internal.util.QtDataLoader;
 import at.bestsolution.wgraf.events.KeyCode;
 import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.paint.LinearGradient;
@@ -11,11 +16,13 @@ import at.bestsolution.wgraf.style.DropShadow;
 import at.bestsolution.wgraf.style.Effect;
 import at.bestsolution.wgraf.style.Font;
 
+import com.trolltech.qt.core.QByteArray;
 import com.trolltech.qt.core.Qt;
 import com.trolltech.qt.core.Qt.BrushStyle;
 import com.trolltech.qt.gui.QBrush;
 import com.trolltech.qt.gui.QColor;
 import com.trolltech.qt.gui.QFont;
+import com.trolltech.qt.gui.QFontDatabase;
 import com.trolltech.qt.gui.QGraphicsDropShadowEffect;
 import com.trolltech.qt.gui.QGraphicsEffect;
 import com.trolltech.qt.gui.QGradient.CoordinateMode;
@@ -90,9 +97,18 @@ public class QtConverter {
 
 	public static QFont convert(Font font) {
 		if (font == null) return null;
-		QFont f = new QFont(font.name);
-		f.setPointSizeF(font.pointSize);
-		return f;
+		if (font.name != null) {
+			QFont f = new QFont(font.name);
+			f.setPointSizeF(font.pointSize);
+			return f;
+		}
+		else {
+			int handle = QtDataLoader.loadFont(font.source);
+			List<String> loadedFonts = QFontDatabase.applicationFontFamilies(handle);
+			QFont f =  new QFont(loadedFonts.get(0));
+			f.setPointSizeF(font.pointSize);
+			return f;
+		}
 	}
 	
 	public static QGraphicsEffect convert(Effect effect) {

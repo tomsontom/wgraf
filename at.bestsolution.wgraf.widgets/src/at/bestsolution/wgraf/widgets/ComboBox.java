@@ -72,7 +72,7 @@ public class ComboBox<Model> extends Widget {
 	}
 	
 	public ComboBox() {
-		final Font font = new Font("Sans", 20);
+		final Font font = Font.UBUNTU;
 		
 		area.width().set(200);
 		area.height().set(40);

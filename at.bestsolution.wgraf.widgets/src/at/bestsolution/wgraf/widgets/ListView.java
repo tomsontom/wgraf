@@ -112,7 +112,7 @@ public class ListView<Model> extends VirtualFlow<Model> {
 //			nfo.text().set("" + (++cellIdCounter) + " birth: " + System.currentTimeMillis());
 //			nfo.parent().set(cell);
 			label = new Text();
-			label.font().set(new Font("Sans", 20));
+			label.font().set(Font.UBUNTU.resize(20));
 			label.parent().set(cell);
 			label.x().set(20);
 			Binder.uniBind(cell.height(), new Setter<Double>() {

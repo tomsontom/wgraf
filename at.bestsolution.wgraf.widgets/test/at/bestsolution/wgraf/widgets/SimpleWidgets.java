@@ -8,7 +8,7 @@ public class SimpleWidgets extends AbsolutePane {
 
 	
 	public SimpleWidgets() {
-		Font font = new Font("Sans", 22);
+		Font font = Font.UBUNTU.resize(22);
 		
 		{
 			Label test = new Label();
