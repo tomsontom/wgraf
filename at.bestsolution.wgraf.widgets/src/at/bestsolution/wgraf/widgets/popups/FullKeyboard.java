@@ -24,6 +24,7 @@ import at.bestsolution.wgraf.style.BorderWidths;
 import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
+import at.bestsolution.wgraf.style.FontAwesome;
 import at.bestsolution.wgraf.style.Insets;
 import at.bestsolution.wgraf.util.NodeIterator;
 import at.bestsolution.wgraf.widgets.AbsolutePane;
@@ -58,6 +59,19 @@ public class FullKeyboard extends Popup {
 			this.toggle = toggle;
 		}
 	}
+	
+	private static class AKey extends Key {
+
+		public AKey(String lower, String upper, KeyCode special, double width) {
+			super(FontAwesome.MAP.get(lower), FontAwesome.MAP.get(upper), special, width);
+		}
+
+		public AKey(String lower, String upper, KeyCode special, double width,
+				boolean toggle) {
+			super(FontAwesome.MAP.get(lower), FontAwesome.MAP.get(upper), special, width, toggle);
+		}
+		
+	}
 
 	private java.util.List<Integer> rows = Arrays.asList(14, 14, 13, 13, 6);
 
@@ -75,7 +89,7 @@ public class FullKeyboard extends Popup {
 			new Key("0", "=", null, 40),
 			new Key("\u00df", "?", null, 40),
 			new Key("\u00b4", "`", null, 40),
-			new Key("<--", "<--", KeyCode.BACKSPACE, 80),
+			new AKey("fa-long-arrow-left", "fa-long-arrow-left", KeyCode.BACKSPACE, 80),
 
 			new Key("TAB", "TAB", KeyCode.TAB, 60),
 			new Key("q", "Q", null, 40),
@@ -90,9 +104,9 @@ public class FullKeyboard extends Popup {
 			new Key("p", "P", null, 40),
 			new Key("\u00fc", "\u00dc", null, 40),
 			new Key("+", "*", null, 40),
-			new Key("Enter", "Enter", KeyCode.ENTER, 60),
+			new Key("", "", KeyCode.ENTER, 60),
 
-			new Key("CAPS", "CAPS", KeyCode.CAPS, 70, true),
+			new AKey("fa-arrow-circle-up", "fa-arrow-circle-up", KeyCode.CAPS, 70, true),
 			new Key("a", "A", null, 40),
 			new Key("s", "S", null, 40),
 			new Key("d", "D", null, 40),
@@ -106,7 +120,7 @@ public class FullKeyboard extends Popup {
 			new Key("\u00e4", "\u00c4", null, 40),
 			new Key("#", "'", null, 40),
 
-			new Key("SHIFT", "SHIFT", KeyCode.SHIFT, 50),
+			new AKey("fa-arrow-circle-o-up", "fa-arrow-circle-o-up", KeyCode.SHIFT, 50),
 			new Key("<", ">", null, 40),
 			new Key("y", "Y", null, 40),
 			new Key("x", "X", null, 40),
@@ -118,14 +132,14 @@ public class FullKeyboard extends Popup {
 			new Key(",", ";", null, 40),
 			new Key(".", ":", null, 40),
 			new Key("-", "_", null, 40),
-			new Key("SHIFT", "SHIFT", KeyCode.SHIFT, 90),
+			new AKey("fa-arrow-circle-o-up", "fa-arrow-circle-o-up", KeyCode.SHIFT, 90),
 
-			new Key("CTRL", "CTRL", KeyCode.TAB, 50),
-			new Key("OS", "OS", KeyCode.TAB, 50),
-			new Key("ALT", "ALT", KeyCode.TAB, 40),
+			new Key("", "", KeyCode.TAB, 50),
+			new Key("", "", KeyCode.TAB, 50),
+			new Key("", "", KeyCode.TAB, 40),
 			new Key(" ", " ", null, 270),
-			new Key("ALT", "ALT", KeyCode.TAB, 40),
-			new Key("CTRL", "CTRL", KeyCode.TAB, 50)
+			new Key("", "", KeyCode.TAB, 40),
+			new Key("", "", KeyCode.TAB, 50)
 			);
 
 
@@ -136,7 +150,8 @@ public class FullKeyboard extends Popup {
 	private Button e;
 
 	private Font font = Font.UBUNTU.resize(16);
-
+	private Font fontawesome = new Font(FontAwesome.FONTAWESOME, 16);
+	
 	private Button createButton(double width, double height) {
 		Button b = new Button();
 		b.width().set(width);
@@ -205,7 +220,13 @@ public class FullKeyboard extends Popup {
 					b.width().set(key.width);
 					b.height().set(40);
 					b.acceptFocus().set(false);
-					b.font().set(font);
+					
+					if (key instanceof AKey) {
+						b.font().set(fontawesome);
+					}
+					else {
+						b.font().set(font);
+					}
 
 					pane.addWidget(b, x, y);
 //					b.x().set(x);
@@ -228,6 +249,13 @@ public class FullKeyboard extends Popup {
 				else {
 					Button b = createButton(key.width, 40);
 
+					if (key instanceof AKey) {
+						b.font().set(fontawesome);
+					}
+					else {
+						b.font().set(font);
+					}
+					
 					pane.addWidget(b, x, y);
 //					b.x().set(x);
 //					b.y().set(y);
@@ -419,8 +447,8 @@ public class FullKeyboard extends Popup {
 
 		{
 			Button up = createButton(40, 40);
-			up.text().set("^");
-			up.font().set(font);
+			up.text().set(FontAwesome.MAP.get("fa-arrow-up"));
+			up.font().set(fontawesome);
 			pane.addWidget(up, 150+500 + 10, 120 + 25);
 //			up.parent().set(area);
 //			up.x().set(150+500);
@@ -437,8 +465,8 @@ public class FullKeyboard extends Popup {
 		}
 		{
 			Button down = createButton(40, 40);
-			down.text().set("v");
-			down.font().set(font);
+			down.text().set(FontAwesome.MAP.get("fa-arrow-down"));
+			down.font().set(fontawesome);
 			pane.addWidget(down, 150+500 + 10, 162 + 25);
 //			down.parent().set(area);
 //			down.x().set(150+500);
@@ -455,8 +483,8 @@ public class FullKeyboard extends Popup {
 		}
 		{
 			Button left = createButton(40, 40);
-			left.text().set("<");
-			left.font().set(font);
+			left.text().set(FontAwesome.MAP.get("fa-arrow-left"));
+			left.font().set(fontawesome);
 			pane.addWidget(left, 150+458 + 10, 162 + 25);
 //			left.parent().set(area);
 //			left.x().set(150+458);
@@ -474,8 +502,8 @@ public class FullKeyboard extends Popup {
 
 		{
 			Button right = createButton(40, 40);
-			right.text().set(">");
-			right.font().set(font);
+			right.text().set(FontAwesome.MAP.get("fa-arrow-right"));
+			right.font().set(fontawesome);
 			pane.addWidget(right, 150+542 + 10, 162 + 25);
 //			right.parent().set(area);
 //			right.x().set(150+542);

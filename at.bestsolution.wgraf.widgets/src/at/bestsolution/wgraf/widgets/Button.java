@@ -31,6 +31,7 @@ import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.DropShadow;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
+import at.bestsolution.wgraf.style.FontAwesome;
 import at.bestsolution.wgraf.style.ImageSource;
 import at.bestsolution.wgraf.style.Insets;
 
@@ -119,6 +120,36 @@ public class Button extends Widget {
 		return icon;
 	}
 	
+	private Property<String> awesomeIcon = null;
+	public Property<String> awesomeIcon() {
+		if (awesomeIcon == null) {
+			awesomeIcon = new SimpleProperty<String>();
+			final at.bestsolution.wgraf.scene.Text img = new at.bestsolution.wgraf.scene.Text();
+			img.font().set(new Font(FontAwesome.FONTAWESOME, 40));
+			img.parent().set(area);
+			Binder.uniBind(nodeText.fill(), img.fill());
+			Binder.uniBind(awesomeIcon, new Setter<String>() {
+				@Override
+				public void set(String value) {
+					if (value != null) {
+						String string = FontAwesome.MAP.get(value);
+						img.text().set(string);
+						Vec2d ex = img.font().get().stringExtent(string);
+						img.x().set(tempLeftLabelOffset / 2 - ex.x/2);
+						img.y().set(height().get() / 2 - ex.y/2);
+					}
+					else {
+						img.text().set("");
+					}
+				}
+			});
+			// TODO this is only a quick hack to get an icon in here
+			img.x().set(10);
+			img.y().set(10);
+		}
+		return awesomeIcon;
+	}
+	
 	protected void initDefaultStyle() {
 		// this should come from css:
 		
@@ -192,6 +223,20 @@ public class Button extends Widget {
 //				}
 //			}
 //		});
+		Binder.uniBind(active(), new Setter<Boolean>() {
+			@Override
+			public void set(Boolean value) {
+				if (value) {
+					area.background().set(active);
+					nodeText.fill().set(normalPaint);
+				}
+				else {
+					area.background().set(normal);
+					nodeText.fill().set(new Color(255,255,255,255));
+				}
+			}
+		});
+		
 		Binder.uniBind(enabled(), new Setter<Boolean>() {
 			@Override
 			public void set(Boolean value) {
@@ -207,30 +252,18 @@ public class Button extends Widget {
 				}
 			}
 		});
-		active().registerChangeListener(new ChangeListener<Boolean>() {
-			@Override
-			public void onChange(Boolean oldValue, Boolean newValue) {
-//				area.x().increment(newValue ? 2 : -2);
-//				area.y().increment(newValue ? 2 : -2);
-				if (newValue) {
-//					if (focus().get()) {
-//						area.background().set(activeWithFocus);
-//					}
-//					else {
-						area.background().set(active);
-//					}
-				}
-				else {
-//					if (focus().get()) {
-//						area.background().set(normalWithFocus);
-//					}
-//					else {
-						area.background().set(normal);
-//					}
-				}
-			}
-			
-		});
+//		active().registerChangeListener(new ChangeListener<Boolean>() {
+//			@Override
+//			public void onChange(Boolean oldValue, Boolean newValue) {
+//				if (newValue) {
+//					area.background().set(active);
+//				}
+//				else {
+//					area.background().set(normal);
+//				}
+//			}
+//			
+//		});
 		
 //		area.effect().set(new DropShadow());
 		area.cache().set(true);

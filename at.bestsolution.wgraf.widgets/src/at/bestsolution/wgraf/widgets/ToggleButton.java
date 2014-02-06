@@ -6,17 +6,21 @@ import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.paint.LinearGradient;
+import at.bestsolution.wgraf.paint.Paint;
 import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
 import at.bestsolution.wgraf.paint.LinearGradient.Spread;
 import at.bestsolution.wgraf.paint.LinearGradient.Stop;
+import at.bestsolution.wgraf.properties.binding.Binder;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.ReadOnlyProperty;
 import at.bestsolution.wgraf.properties.Signal;
 import at.bestsolution.wgraf.properties.SignalListener;
+import at.bestsolution.wgraf.properties.binding.Setter;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleSignal;
+import at.bestsolution.wgraf.style.Background;
 import at.bestsolution.wgraf.style.Backgrounds;
 import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.DropShadow;
@@ -156,52 +160,31 @@ public class ToggleButton extends Widget {
 	private void initDefaultStyle() {
 		// this should come from css:
 		
-		Insets bgInsets = new Insets(0, 0, 0, 0);
-		final FillBackground normal = new FillBackground(
-				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
-					new Stop(0, new Color(181, 181, 181, 255)),
-					new Stop(1, new Color(124, 124, 124, 255))
-				), 
-				new CornerRadii(4), bgInsets);
+		final CornerRadii cr = new CornerRadii(4);
+		final Paint normalPaint = new Color(124, 124, 124, 255);
+		final Paint disabledPaint = new Color(251, 251, 251, 255);
+		final Paint activePaint = new Color(181, 181, 181, 255);
 		
+		final Background normal = new FillBackground(normalPaint, cr, Insets.NO_INSETS);
+		final Background disabled = new FillBackground(disabledPaint, cr, Insets.NO_INSETS);
+		final Background active = new FillBackground(activePaint, cr, Insets.NO_INSETS);
+
 		
-		final FillBackground active = new FillBackground(
-				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
-						new Stop(0, new Color(124, 124, 124, 255)),
-						new Stop(1, new Color(181, 181, 181, 255))
-					), 
-					new CornerRadii(4), bgInsets);
-		
-		
-		
-		area.background().set(normal);
-		active().registerChangeListener(new ChangeListener<Boolean>() {
+		Binder.uniBind(selected(), new Setter<Boolean>() {
 			@Override
-			public void onChange(Boolean oldValue, Boolean newValue) {
-				if (newValue) {
-					area.effect().set(null);
-//					if (focus().get()) {
-//						area.background().set(activeWithFocus);
-//					}
-//					else {
-						area.background().set(active);
-//					}
+			public void set(Boolean value) {
+				if (value) {
+					area.background().set(active);
+					nodeText.fill().set(normalPaint);
 				}
 				else {
-					area.effect().set(new DropShadow());
-//					if (focus().get()) {
-//						area.background().set(normalWithFocus);
-//					}
-//					else {
-						area.background().set(normal);
-//					}
+					area.background().set(normal);
+					nodeText.fill().set(new Color(255,255,255,255));
 				}
 			}
-			
 		});
 		
 		
-		nodeText.fill().set(new Color(255,255,255,255));
 	}
 	
 	private void triggerActivated() {

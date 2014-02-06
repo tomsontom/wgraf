@@ -98,6 +98,7 @@ public class QuickFilterSupport {
 						}
 					}, TIMEOUT);
 				}
+				showPopup();
 			}
 		});
 		
@@ -128,13 +129,6 @@ public class QuickFilterSupport {
 		popup.addWidget(text, 10, 30);		
 		
 		Binder.uniBind(filter(), text.text());
-		
-		Binder.uniBind(filter(), new Setter<String>() {
-			@Override
-			public void set(String value) {
-				showPopup();
-			}
-		});
 		
 		// STYLE
 		label.fill().set(new Color(255,255,255, 255));

@@ -12,6 +12,7 @@ import at.bestsolution.wgraf.events.InputMethod;
 import at.bestsolution.wgraf.events.KeyCode;
 import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.events.TapEvent;
+import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.paint.LinearGradient;
 import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
@@ -35,6 +36,7 @@ import at.bestsolution.wgraf.style.Background;
 import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
+import at.bestsolution.wgraf.style.FontAwesome;
 import at.bestsolution.wgraf.style.ImageSource;
 import at.bestsolution.wgraf.style.Insets;
 import at.bestsolution.wgraf.widgets.ListView.DefaultCell;
@@ -100,8 +102,8 @@ public class TreeView<Model> extends Widget {
 		
 		private ImageSource arrowRight;
 		
-		protected Image childIcon;
-		
+//		protected Image childIcon;
+		protected Text childIcon;
 		@Override
 		protected void init() {
 			super.init();
@@ -111,14 +113,17 @@ public class TreeView<Model> extends Widget {
 			
 			
 			// TODO platform uri will not work outside osgi
-			try {
-				childIcon = new Image();
-				
-				if (arrowRight == null) {
-					arrowRight = new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/treearrow.png"));
-				}
-				
-				childIcon.image().set(arrowRight);
+//			try {
+				childIcon = new Text();
+				childIcon.font().set(new Font(FontAwesome.FONTAWESOME, 16));
+				childIcon.text().set("fa-chevron-right");
+//				childIcon = new Image();
+//				
+//				if (arrowRight == null) {
+//					arrowRight = new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/treearrow.png"));
+//				}
+//				
+//				childIcon.image().set(arrowRight);
 			
 				childIcon.parent().set(cell);
 				Binder.uniBind(cell.width(), new Setter<Double>() {
@@ -135,10 +140,10 @@ public class TreeView<Model> extends Widget {
 				});
 				
 			
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			} catch (URISyntaxException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		}
 		
 		
@@ -148,10 +153,12 @@ public class TreeView<Model> extends Widget {
 			
 			List<Model> childs = treeView.childConverter.convert(model);
 			if (childs.isEmpty()) {
-				childIcon.image().set(null);
+//				childIcon.image().set(null);
+				childIcon.text().set("");
 			}
 			else {
-				childIcon.image().set(arrowRight);
+//				childIcon.image().set(arrowRight);
+				childIcon.text().set(FontAwesome.MAP.get("fa-chevron-right"));
 			}
 			
 			
@@ -347,17 +354,25 @@ public class TreeView<Model> extends Widget {
 		});
 		
 		final Container upButtonBase = new Container();
-		final Image upButton = new Image();
-		upButton.parent().set(upButtonBase);
-		upButton.x().set(10);
-		upButton.y().set(10);
-//		upButton.font().set(new Font("Sans", 18));
-//		upButton.text().set("up");
-		try {
-			upButton.image().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowup-black.png")));
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
+		final Text upIcon = new Text();
+		upIcon.font().set(new Font(FontAwesome.FONTAWESOME, 16));
+		upIcon.text().set(FontAwesome.MAP.get("fa-chevron-up"));
+		Vec2d ex = upIcon.font().get().stringExtent(FontAwesome.MAP.get("fa-chevron-up"));
+		upIcon.x().set(40/2.0-ex.x/2);
+		upIcon.y().set(40/2.0-ex.y/2);
+		upIcon.fill().set(new Color(0,0,0,255));
+		upIcon.parent().set(upButtonBase);
+//		final Image upButton = new Image();
+//		upButton.parent().set(upButtonBase);
+//		upButton.x().set(10);
+//		upButton.y().set(10);
+////		upButton.font().set(new Font("Sans", 18));
+////		upButton.text().set("up");
+//		try {
+//			upButton.image().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowup-black.png")));
+//		} catch (URISyntaxException e) {
+//			e.printStackTrace();
+//		}
 		final Background odd = new FillBackground(
 				new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
 						new Stop(0, new Color(210,210,210,150)),
@@ -393,21 +408,23 @@ public class TreeView<Model> extends Widget {
 					}
 				}
 				upButtonBase.background().set(focus);
-				try {
-					upButton.image().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowup.png")));
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				}
+				upIcon.fill().set(new Color(255,255,255,255));
+//				try {
+//					upButton.image().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowup.png")));
+//				} catch (URISyntaxException e) {
+//					e.printStackTrace();
+//				}
 				Sync.get().execLaterOnUIThread(new Runnable() {
 					
 					@Override
 					public void run() {
 						upButtonBase.background().set(odd);
-						try {
-							upButton.image().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowup-black.png")));
-						} catch (URISyntaxException e) {
-							e.printStackTrace();
-						}
+						upIcon.fill().set(new Color(0,0,0,255));
+//						try {
+//							upButton.image().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowup-black.png")));
+//						} catch (URISyntaxException e) {
+//							e.printStackTrace();
+//						}
 					}
 				}, 100);
 				
