@@ -11,4 +11,6 @@ public interface BackingText extends BackingNode {
 	Property<Font> font();
 
 	Property<Paint> fill();
+	
+	void mirror();
 }

@@ -22,6 +22,7 @@ import com.trolltech.qt.gui.QPainter;
 import com.trolltech.qt.gui.QPainterPath;
 import com.trolltech.qt.gui.QPen;
 import com.trolltech.qt.gui.QStyleOptionGraphicsItem;
+import com.trolltech.qt.gui.QTransform;
 import com.trolltech.qt.gui.QWidget;
 
 
@@ -31,6 +32,14 @@ public class QGraphicsTextItem extends QGraphicsSimpleTextItem implements QGraph
 	
 	public void setShape(QPainterPath shape) {
 		this.shape = shape;
+	}
+	
+	public void mirror() {
+		QTransform t = new QTransform();
+		t.translate(0, boundingRect().height());
+		t.scale(1, -1);
+		
+		setTransform(t, false);
 	}
 	
 	

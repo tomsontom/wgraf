@@ -9,6 +9,10 @@ import at.bestsolution.wgraf.Sync;
 import at.bestsolution.wgraf.events.TapEvent;
 import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.paint.Color;
+import at.bestsolution.wgraf.paint.LinearGradient;
+import at.bestsolution.wgraf.paint.Paint;
+import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
+import at.bestsolution.wgraf.paint.LinearGradient.Spread;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.Converter;
 import at.bestsolution.wgraf.properties.InvalidValueException;
@@ -96,6 +100,7 @@ public class BreadCrumb<M> extends Widget {
 			Vec2d exA = arrow.font().get().stringExtent(FontAwesome.MAP.get("fa-angle-right"));
 			
 			arrow.x().set(w + 5);
+			// TODO Auto-generated method stub
 			
 			arrow.y().set(ex.y/2-exA.y/2);
 			
@@ -141,6 +146,8 @@ public class BreadCrumb<M> extends Widget {
 	private Text titleIcon;
 	private Text title;
 	
+	private Text titleIconM;
+	private Text titleM;
 	
 	public BreadCrumb() {
 		
@@ -150,7 +157,7 @@ public class BreadCrumb<M> extends Widget {
 		bigTitleIcon.text().set(FontAwesome.MAP.get("fa-globe"));
 		bigTitleIcon.y().set(-10);
 		bigTitleIcon.x().set(0);
-		bigTitleIcon.parent().set(area);
+		//bigTitleIcon.parent().set(area);
 		
 		bigTitle = new Text();
 		bigTitle.font().set(Font.UBUNTU.resize(60));
@@ -158,7 +165,8 @@ public class BreadCrumb<M> extends Widget {
 		bigTitle.text().set("Title");
 		bigTitle.y().set(-10);
 		bigTitle.x().set(70);
-		bigTitle.parent().set(area);
+		//bigTitle.parent().set(area);
+		
 		
 		titleIcon = new Text();
 		titleIcon.font().set(new Font(FontAwesome.FONTAWESOME, 35));
@@ -189,6 +197,35 @@ public class BreadCrumb<M> extends Widget {
 		title.text().set("Title");
 		title.x().set(80);
 		title.parent().set(area);
+		
+		Paint colorM = new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
+				new LinearGradient.Stop(0, new Color(255,30,30,0)),
+				new LinearGradient.Stop(1, new Color(255,90,90,60)));
+		
+		titleIconM = new Text();
+		titleIconM.font().set(new Font(FontAwesome.FONTAWESOME, 35));
+		titleIconM.text().set(FontAwesome.MAP.get("fa-globe"));
+		titleIconM.fill().set(colorM);
+		titleIconM.x().set(40);
+		titleIconM.parent().set(area);
+		titleIconM.mirror();
+		titleIconM.y().set(40);
+		titleM = new Text();
+		titleM.font().set(Font.UBUNTU.resize(35));
+		titleM.fill().set(colorM);
+		titleM.text().set("Title");
+		titleM.x().set(80);
+		titleM.parent().set(area);
+		titleM.mirror();
+		titleM.y().set(40);
+		
+		titleIconM.text().registerChangeListener(new ChangeListener<String>() {
+			@Override
+			public void onChange(String oldValue, String newValue) throws InvalidValueException {
+				double x = titleIconM.font().get().stringExtent(newValue).x;
+				titleM.x().set(40 + x + 10);
+			}
+		});
 		
 		crumbArea = new Container();
 		crumbArea.parent().set(area);
@@ -234,9 +271,15 @@ public class BreadCrumb<M> extends Widget {
  				title.text().set(label);
 				bigTitle.text().set(label);
 				
+				titleM.text().set(label);
+				
+				
 				if (icon != null) {
 					titleIcon.text().set(icon);
 					bigTitleIcon.text().set(icon);
+					
+					titleIconM.text().set(icon);
+					
 				}
 				
 				

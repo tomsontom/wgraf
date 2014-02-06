@@ -35,6 +35,7 @@ import com.trolltech.qt.gui.QFont;
 import com.trolltech.qt.gui.QGraphicsRectItem;
 import com.trolltech.qt.gui.QGraphicsSceneMouseEvent;
 import com.trolltech.qt.gui.QImage;
+import com.trolltech.qt.gui.QTransform;
 import com.trolltech.qt.gui.QImage.Format;
 import com.trolltech.qt.gui.QKeyEvent;
 import com.trolltech.qt.gui.QPainter;
@@ -60,9 +61,7 @@ public class QGraphicsContainerItem extends QGraphicsRectItem implements QGraphi
 //		setFlag(GraphicsItemFlag.ItemClipsChildrenToShape, true);
 		
 		setPen(QPen.NoPen);
-		
 	}
-	
 	
 	@Override
 	public void sendTap(TapEvent e) {

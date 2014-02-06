@@ -37,6 +37,11 @@ public class QtText extends QtNode<QGraphicsTextItem> implements BackingText {
 	}
 	
 	@Override
+	public void mirror() {
+		getNode().mirror();
+	}
+	
+	@Override
 	protected void applyClippingShape(final Shape s) {
 		QPainterPath path = null;
 		if (s instanceof Rectangle) {

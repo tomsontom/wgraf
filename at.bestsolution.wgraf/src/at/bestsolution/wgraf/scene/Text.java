@@ -20,5 +20,9 @@ public class Text extends Node<BackingText> {
 	protected Class internal_getBackendType() {
 		return BackingText.class;
 	}
+	
+	public void mirror() {
+		backend.mirror();
+	}
 
 }
