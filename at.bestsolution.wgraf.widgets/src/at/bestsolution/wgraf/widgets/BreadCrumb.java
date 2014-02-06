@@ -230,11 +230,11 @@ public class BreadCrumb<M> extends Widget {
 		crumbArea = new Container();
 		crumbArea.parent().set(area);
 		crumbArea.x().set(40);
-		crumbArea.y().set(40);
+		crumbArea.y().set(70);
 		
 		backBtnArea = new Container();
 		backBtnArea.parent().set(area);
-		backBtnArea.y().set(37);
+		backBtnArea.y().set(67);
 		backBtnArea.width().set(40);
 		backBtnArea.height().set(40);
 		
