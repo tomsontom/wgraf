@@ -1,5 +1,6 @@
 package at.bestsolution.wgraf.widgets;
 
+import at.bestsolution.wgraf.geom.shape.Rectangle;
 import at.bestsolution.wgraf.properties.binding.Binder;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
@@ -63,6 +64,7 @@ public class StackPane extends Pane {
 			@Override
 			public void set(Double value) {
 				updateChildWidth(value);
+				updateClip();
 			}
 		});
 		
@@ -70,6 +72,7 @@ public class StackPane extends Pane {
 			@Override
 			public void set(Double value) {
 				updateChildHeight(value);
+				updateClip();
 			}
 		});
 		
@@ -80,6 +83,10 @@ public class StackPane extends Pane {
 			}
 		});
 		
+	}
+	
+	private void updateClip() {
+		area.clippingShape().set(new Rectangle(0, 0, width().get(), height().get()));
 	}
 	
 //	@Override
