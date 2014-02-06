@@ -91,8 +91,6 @@ public class BreadCrumb<M> extends Widget {
 			
 			double w = ex.x;
 			
-			
-			
 			arrow = new Text();
 			arrow.font().set(new Font(FontAwesome.FONTAWESOME, 20));
 			arrow.text().set(FontAwesome.MAP.get("fa-angle-right"));
@@ -178,18 +176,14 @@ public class BreadCrumb<M> extends Widget {
 		bigTitleIcon.text().registerChangeListener(new ChangeListener<String>() {
 			@Override
 			public void onChange(String oldValue, String newValue) throws InvalidValueException {
-				double x = bigTitleIcon.font().get().stringExtent(newValue).x;
-				bigTitle.x().set(x + 10);
+				
+				double xI = bigTitleIcon.font().get().stringExtent(newValue).x;
+				
+				bigTitle.x().set(xI + 10);
 			}
 		});
 		
-		titleIcon.text().registerChangeListener(new ChangeListener<String>() {
-			@Override
-			public void onChange(String oldValue, String newValue) throws InvalidValueException {
-				double x = titleIcon.font().get().stringExtent(newValue).x;
-				title.x().set(40 + x + 10);
-			}
-		});
+		
 		
 		title = new Text();
 		title.font().set(Font.UBUNTU.resize(35));
@@ -197,6 +191,18 @@ public class BreadCrumb<M> extends Widget {
 		title.text().set("Title");
 		title.x().set(80);
 		title.parent().set(area);
+		
+		final Setter<String> update = new Setter<String>() {
+			@Override
+			public void set(String value) {
+				double x0 = title.font().get().stringExtent(title.text().get()).x;
+				double x = titleIcon.font().get().stringExtent(titleIcon.text().get()).x;
+				title.x().set(width().get() - 40 - x0);
+				titleIcon.x().set(width().get() - 40 - x0 - 10 - x);
+			}
+		};
+		Binder.uniBind(titleIcon.text(), update);
+		Binder.uniBind(title.text(), update);
 		
 		Paint colorM = new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
 				new LinearGradient.Stop(0, new Color(255,30,30,0)),
@@ -219,22 +225,34 @@ public class BreadCrumb<M> extends Widget {
 		titleM.mirror();
 		titleM.y().set(40);
 		
-		titleIconM.text().registerChangeListener(new ChangeListener<String>() {
+		final Setter<String> updateM = new Setter<String>() {
 			@Override
-			public void onChange(String oldValue, String newValue) throws InvalidValueException {
-				double x = titleIconM.font().get().stringExtent(newValue).x;
-				titleM.x().set(40 + x + 10);
+			public void set(String value) {
+				double x0 = titleM.font().get().stringExtent(titleM.text().get()).x;
+				double x = titleIconM.font().get().stringExtent(titleIconM.text().get()).x;
+				titleM.x().set(width().get() - 40 - x0);
+				titleIconM.x().set(width().get() - 40 - x0 - 10 - x);
+			}
+		};
+		Binder.uniBind(titleIconM.text(), updateM);
+		Binder.uniBind(titleM.text(), updateM);
+		
+		
+		Binder.uniBind(width(), new Setter<Double>() {
+			@Override
+			public void set(Double value) {
+				update.set(null);
+				updateM.set(null);
 			}
 		});
-		
 		crumbArea = new Container();
 		crumbArea.parent().set(area);
 		crumbArea.x().set(40);
-		crumbArea.y().set(70);
+		crumbArea.y().set(40);
 		
 		backBtnArea = new Container();
 		backBtnArea.parent().set(area);
-		backBtnArea.y().set(67);
+		backBtnArea.y().set(37);
 		backBtnArea.width().set(40);
 		backBtnArea.height().set(40);
 		
@@ -253,7 +271,7 @@ public class BreadCrumb<M> extends Widget {
 		backBtnArea.onTap().registerSignalListener(new SignalListener<TapEvent>() {
 			@Override
 			public void onSignal(TapEvent data) {
-				backActivated();
+				internalBackActivated();
 			}
 		});
 		
@@ -296,12 +314,25 @@ public class BreadCrumb<M> extends Widget {
 	
 	private void crumbActivated(M model) {
 		M cur = null;
+		int delay = 0;
 		while (!backStack.isEmpty()) {
 			cur = backStack.pop();
-			removeCrumb(cur);
+			if (delay > 0) {
+				final M rem = cur;
+				Sync.get().execLaterOnUIThread(new Runnable() {
+					@Override
+					public void run() {
+						removeCrumb(rem);
+					}
+				}, delay);;
+			}
+			else {
+				removeCrumb(cur);
+			}
 			if (cur == model) {
 				break;
 			}
+			delay += 150;
 		}
 		current.set(model);
 		
@@ -339,11 +370,12 @@ public class BreadCrumb<M> extends Widget {
 		layoutCrumbs();
 	}
 	
-	private void backActivated() {
+	private void internalBackActivated() {
 		if (!backStack.isEmpty()) {
 			M last = backStack.pop();
 			removeCrumb(last);
 			current.set(last);
+			backActivated().signal(last);
 		}
 	}
 	
@@ -357,7 +389,7 @@ public class BreadCrumb<M> extends Widget {
 	
 	public void backTo(M model) {
 		if (backStack.contains(model)) {
-			crumbActivated(model);
+			crumbActivated().signal(model);
 		}
 	}
 	
@@ -381,5 +413,10 @@ public class BreadCrumb<M> extends Widget {
 	private Signal<M> crumbActivated = new SimpleSignal<M>();
 	public Signal<M> crumbActivated() {
 		return crumbActivated;
+	}
+	
+	private Signal<M> backActivated = new SimpleSignal<M>();
+	public Signal<M> backActivated() {
+		return backActivated;
 	}
 }

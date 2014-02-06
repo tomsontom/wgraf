@@ -243,7 +243,7 @@ public class TreeView<Model> extends Widget {
 				label = new Text();
 				label.parent().set(cell);
 				label.x().set(10);
-				label.font().set(Font.UBUNTU.resize(20));
+				label.font().set(Font.UBUNTU.resize(17));
 				Binder.uniBind(cell.height(), new Setter<Double>() {
 					@Override
 					public void set(Double value) {
