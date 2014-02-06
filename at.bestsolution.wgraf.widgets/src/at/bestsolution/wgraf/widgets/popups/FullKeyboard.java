@@ -37,11 +37,11 @@ public class FullKeyboard extends Popup {
 		public final String lower;
 		public final String upper;
 		public final KeyCode special;
-		
+
 		public final double width;
-		
+
 		public final boolean toggle;
-		
+
 		public Key(String lower, String upper, KeyCode special, double width) {
 			this.lower = lower;
 			this.upper = upper;
@@ -49,7 +49,7 @@ public class FullKeyboard extends Popup {
 			this.width = width;
 			this.toggle = false;
 		}
-		
+
 		public Key(String lower, String upper, KeyCode special, double width, boolean toggle) {
 			this.lower = lower;
 			this.upper = upper;
@@ -58,14 +58,14 @@ public class FullKeyboard extends Popup {
 			this.toggle = toggle;
 		}
 	}
-	
+
 	private java.util.List<Integer> rows = Arrays.asList(14, 14, 13, 13, 6);
-	
+
 	private java.util.List<Key> keys = Arrays.asList(
-			new Key("^", "°", null, 40),
+			new Key("^", "\u00b0", null, 40),
 			new Key("1", "!", null, 40),
 			new Key("2", "\"", null, 40),
-			new Key("3", "§", null, 40),
+			new Key("3", "\u00a7", null, 40),
 			new Key("4", "$", null, 40),
 			new Key("5", "%", null, 40),
 			new Key("6", "&", null, 40),
@@ -73,10 +73,10 @@ public class FullKeyboard extends Popup {
 			new Key("8", "(", null, 40),
 			new Key("9", ")", null, 40),
 			new Key("0", "=", null, 40),
-			new Key("ß", "?", null, 40),
-			new Key("´", "`", null, 40),
+			new Key("\u00df", "?", null, 40),
+			new Key("\u00b4", "`", null, 40),
 			new Key("<--", "<--", KeyCode.BACKSPACE, 80),
-			
+
 			new Key("TAB", "TAB", KeyCode.TAB, 60),
 			new Key("q", "Q", null, 40),
 			new Key("w", "W", null, 40),
@@ -88,10 +88,10 @@ public class FullKeyboard extends Popup {
 			new Key("i", "I", null, 40),
 			new Key("o", "O", null, 40),
 			new Key("p", "P", null, 40),
-			new Key("ü", "Ü", null, 40),
+			new Key("\u00fc", "\u00dc", null, 40),
 			new Key("+", "*", null, 40),
 			new Key("Enter", "Enter", KeyCode.ENTER, 60),
-			
+
 			new Key("CAPS", "CAPS", KeyCode.CAPS, 70, true),
 			new Key("a", "A", null, 40),
 			new Key("s", "S", null, 40),
@@ -102,10 +102,10 @@ public class FullKeyboard extends Popup {
 			new Key("j", "J", null, 40),
 			new Key("k", "K", null, 40),
 			new Key("l", "L", null, 40),
-			new Key("ö", "Ö", null, 40),
-			new Key("ä", "Ä", null, 40),
+			new Key("\u00f6", "\u00d6", null, 40),
+			new Key("\u00e4", "\u00c4", null, 40),
 			new Key("#", "'", null, 40),
-			
+
 			new Key("SHIFT", "SHIFT", KeyCode.SHIFT, 50),
 			new Key("<", ">", null, 40),
 			new Key("y", "Y", null, 40),
@@ -119,7 +119,7 @@ public class FullKeyboard extends Popup {
 			new Key(".", ":", null, 40),
 			new Key("-", "_", null, 40),
 			new Key("SHIFT", "SHIFT", KeyCode.SHIFT, 90),
-			
+
 			new Key("CTRL", "CTRL", KeyCode.TAB, 50),
 			new Key("OS", "OS", KeyCode.TAB, 50),
 			new Key("ALT", "ALT", KeyCode.TAB, 40),
@@ -127,42 +127,42 @@ public class FullKeyboard extends Popup {
 			new Key("ALT", "ALT", KeyCode.TAB, 40),
 			new Key("CTRL", "CTRL", KeyCode.TAB, 50)
 			);
-	
-	
+
+
 	private Button q;
-	
+
 	private Button w;
-	
+
 	private Button e;
-	
+
 	private Font font = Font.UBUNTU.resize(16);
-	
+
 	private Button createButton(double width, double height) {
 		Button b = new Button();
 		b.width().set(width);
 		b.height().set(height);
 		b.acceptFocus().set(false);
 		b.font().set(font);
-		
+
 		return b;
 	}
-	
+
 	private Map<Key, Button> buttons = new HashMap<Key, Button>();
-	
+
 	private boolean shift = false;
 	private boolean caps = false;
-	
+
 	private void onButton(Key key) {
 		if (key.special == KeyCode.SHIFT) {
 			shift = !shift;
 			updateButtons();
 			return;
 		}
-		
+
 		boolean upper = shift || caps;
-		
-		
-		
+
+
+
 		Node<?> node = Application.get().focusNode().get();
 		if (node != null) {
 			if (key.special == null) {
@@ -172,22 +172,22 @@ public class FullKeyboard extends Popup {
 				node.onKeyPress().signal(new KeyEvent(key.special, null));
 			}
 		}
-		
+
 		shift = false;
 		updateButtons();
 	}
-	
+
 	private void updateButtons() {
 		for (Key k : keys) {
-			
+
 			Button b = buttons.get(k);
-			
+
 			if (b != null) {
 				b.text().set((shift || caps) ? k.upper : k.lower);
 			}
 		}
 	}
-	
+
 	private void initButtons() {
 		Container area = getContent().getAreaNode();
 		AbsolutePane pane = (AbsolutePane) getContent();
@@ -198,25 +198,25 @@ public class FullKeyboard extends Popup {
 			int length = rows.get(row);
 			for (int i = 0; i < length; i++) {
 				final Key key = keys.get(keyIdx);
-				
+
 				if (key.toggle) {
 					ToggleButton b = new ToggleButton();
-					
+
 					b.width().set(key.width);
 					b.height().set(40);
 					b.acceptFocus().set(false);
 					b.font().set(font);
-					
+
 					pane.addWidget(b, x, y);
 //					b.x().set(x);
 //					b.y().set(y);
 //					b.parent().set(area);
-					
+
 					getContent().addWidget(b);
-					
+
 					b.text().set(key.lower);
-					
-					
+
+
 					b.selected().registerChangeListener(new ChangeListener<Boolean>() {
 						@Override
 						public void onChange(Boolean oldValue, Boolean newValue) {
@@ -227,66 +227,66 @@ public class FullKeyboard extends Popup {
 				}
 				else {
 					Button b = createButton(key.width, 40);
-					
+
 					pane.addWidget(b, x, y);
 //					b.x().set(x);
 //					b.y().set(y);
 //					b.parent().set(area);
 					b.text().set(key.lower);
-					
-					
+
+
 					b.activated().registerSignalListener(new SignalListener<Void>() {
 						@Override
 						public void onSignal(Void data) {
 							onButton(key);
 						}
 					});
-					
+
 					buttons.put(key, b);
 				}
-				
+
 				x += key.width + 4;
 				keyIdx++;
 			}
 			y += 44;
 			x = 10;
 		}
-		
-		
+
+
 	}
-	
+
 	public FullKeyboard() {
 		super(new AbsolutePane(), false);
-		
+
 		position().set(PopupPosition.BOTTOM_RIGHT);
 		squeezeViewport().set(true);
-		
+
 		Container area = getContent().getAreaNode();
-		
+
 		AbsolutePane pane = (AbsolutePane) getContent();
-		
+
 		area.width().set(750);
 		area.height().set(240);
 		area.x().set(50);
-		
+
 		area.onTap().registerSignalListener(new SignalListener<TapEvent>() {
 			@Override
 			public void onSignal(TapEvent data) {
 				data.consume();
 			}
 		});
-		
+
 		Insets bgInsets = new Insets(0, 0, 0, 0);
 		final FillBackground bg = new FillBackground(
-				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
+				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
 					new Stop(0, new Color(0, 0, 0, 200)),
 					new Stop(1, new Color(50, 50, 50, 200))
-				), 
+				),
 				new CornerRadii(10), bgInsets);
 		area.background().set(bg);
-		
+
 		area.border().set(new Border(new BorderStroke(new Color(240, 240, 240, 255), new CornerRadii(10), new BorderWidths(3), bgInsets)));
-		
+
 		initButtons();
 //		double off = 0;
 //		tab = createButton(60, 40);
@@ -294,7 +294,7 @@ public class FullKeyboard extends Popup {
 //		tab.area.parent().set(area);
 //		tab.area.x().set(off);
 //		tab.area.y().set(40);
-//		
+//
 //		tab.activated().registerSignalListener(new SignalListener<Void>() {
 //			@Override
 //			public void onSignal(Void data) {
@@ -304,16 +304,16 @@ public class FullKeyboard extends Popup {
 //				}
 //			}
 //		});
-//		
-//		
+//
+//
 //		off += 60;
-//		
+//
 //		q = createButton(40, 40);
 //		q.text().set("q");
 //		q.area.parent().set(area);
 //		q.area.x().set(off);
 //		q.area.y().set(40);
-//		
+//
 //		q.activated().registerSignalListener(new SignalListener<Void>() {
 //			@Override
 //			public void onSignal(Void data) {
@@ -323,16 +323,16 @@ public class FullKeyboard extends Popup {
 //				}
 //			}
 //		});
-//		
+//
 //		off += 40;
-//		
+//
 //		w = createButton(40, 40);
 //		w.text().set("w");
 //		w.font().set(font);
 //		w.area.parent().set(area);
 //		w.area.x().set(off);
 //		w.area.y().set(40);
-//		
+//
 //		w.activated().registerSignalListener(new SignalListener<Void>() {
 //			@Override
 //			public void onSignal(Void data) {
@@ -342,10 +342,10 @@ public class FullKeyboard extends Popup {
 //				}
 //			}
 //		});
-//		
-//		
+//
+//
 //		off += 40;
-//		
+//
 //		e = createButton(40, 40);
 //		e.text().set("e");
 //		e.font().set(font);
@@ -362,8 +362,8 @@ public class FullKeyboard extends Popup {
 //			}
 //		});
 //		off += 40;
-//		
-//		
+//
+//
 //		{
 //			Button backspace = createButton(80, 40);
 //			backspace.text().set("<--");
@@ -381,8 +381,8 @@ public class FullKeyboard extends Popup {
 //				}
 //			});
 //		}
-		
-		
+
+
 		{
 			Button next = createButton(70, 40);
 			next.text().set("next");
@@ -398,7 +398,7 @@ public class FullKeyboard extends Popup {
 				}
 			});
 		}
-		
+
 		{
 			Button prev = createButton(70, 40);
 			prev.text().set("prev");
@@ -414,9 +414,9 @@ public class FullKeyboard extends Popup {
 				}
 			});
 		}
-		
-		
-		
+
+
+
 		{
 			Button up = createButton(40, 40);
 			up.text().set("^");
@@ -471,7 +471,7 @@ public class FullKeyboard extends Popup {
 				}
 			});
 		}
-		
+
 		{
 			Button right = createButton(40, 40);
 			right.text().set(">");
@@ -490,8 +490,8 @@ public class FullKeyboard extends Popup {
 				}
 			});
 		}
-		
+
 	}
-	
-	
+
+
 }
