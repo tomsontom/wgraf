@@ -26,6 +26,8 @@ import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleSignal;
 import at.bestsolution.wgraf.scene.Container;
 import at.bestsolution.wgraf.scene.Text;
+import at.bestsolution.wgraf.style.CornerRadii;
+import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
 import at.bestsolution.wgraf.style.FontAwesome;
 import at.bestsolution.wgraf.transition.LinearDoubleTransition;
@@ -72,7 +74,10 @@ public class BreadCrumb<M> extends Widget {
 
 	private CrumbFactory<M> crumbFactory = new DefaultCrumbFactory<M>();
 
-
+	private Container titleArea;
+	private Container hackyGradient;
+	
+	
 	private static Color fontColor = new Color(100, 100, 100, 255);
 
 	private static class DefaultCrumb<M> extends Crumb<M> {
@@ -177,7 +182,7 @@ public class BreadCrumb<M> extends Widget {
 
 
 		titleIcon = new Text();
-		titleIcon.font().set(new Font(FontAwesome.FONTAWESOME, 35));
+		titleIcon.font().set(new Font(FontAwesome.FONTAWESOME, 30));
 		titleIcon.text().set(FontAwesome.MAP.get("fa-globe"));
 		titleIcon.fill().set(new Color(0,122,255,150));
 		titleIcon.x().set(40);
@@ -196,7 +201,7 @@ public class BreadCrumb<M> extends Widget {
 
 
 		title = new Text();
-		title.font().set(Font.UBUNTU.resize(35));
+		title.font().set(Font.UBUNTU.resize(30));
 		title.fill().set(new Color(0,122,255,150));
 		title.text().set("Title");
 		title.x().set(80);
@@ -214,31 +219,43 @@ public class BreadCrumb<M> extends Widget {
 		Binder.uniBind(titleIcon.text(), update);
 		Binder.uniBind(title.text(), update);
 
-		Paint colorM = new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
-				new LinearGradient.Stop(0, new Color(190,190,190,0)),
-				new LinearGradient.Stop(0.5, new Color(190,190,190,0)),
-				new LinearGradient.Stop(1, new Color(50,50,50,60)));
+		
+		hackyGradient = new Container();
+
+		Paint hackyG = new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
+				new LinearGradient.Stop(0, new Color(245,245,245,0)),
+				new LinearGradient.Stop(0.8, new Color(245,245,245,255)),
+				new LinearGradient.Stop(1, new Color(245,245,245,255))
+				);
+		
+		hackyGradient.background().set(FillBackground.simple(hackyG, 0, 0));
+		
+//		Paint colorM = new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
+//				new LinearGradient.Stop(0, new Color(190,190,190,0)),
+//				new LinearGradient.Stop(0.5, new Color(190,190,190,0)),
+//				new LinearGradient.Stop(1, new Color(50,50,50,60)));
 
 		titleIconM = new Text();
-		titleIconM.font().set(new Font(FontAwesome.FONTAWESOME, 35));
+		titleIconM.font().set(new Font(FontAwesome.FONTAWESOME, 30));
 		titleIconM.text().set(FontAwesome.MAP.get("fa-globe"));
-		titleIconM.fill().set(colorM);
+		titleIconM.fill().set(new Color(50,50,50,60));
 		titleIconM.x().set(40);
 		titleIconM.parent().set(area);
 		titleIconM.mirror();
 		titleIconM.y().set(40);
 		titleM = new Text();
-		titleM.font().set(Font.UBUNTU.resize(35));
-		titleM.fill().set(new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
-				new LinearGradient.Stop(0, new Color(190,190,190,0)),
-				new LinearGradient.Stop(0.5, new Color(190,190,190,0)),
-				new LinearGradient.Stop(1, new Color(250,0,0,60))));
+		titleM.font().set(Font.UBUNTU.resize(30));
+		titleM.fill().set(new Color(50,50,50,60));
 		titleM.text().set("Title");
 		titleM.x().set(80);
 		titleM.parent().set(area);
 		titleM.mirror();
 		titleM.y().set(40);
 
+		hackyGradient.parent().set(area);
+		hackyGradient.y().set(40);
+		hackyGradient.height().set(30);
+		
 		final Setter<String> updateM = new Setter<String>() {
 			@Override
 			public void set(String value) {
@@ -246,6 +263,9 @@ public class BreadCrumb<M> extends Widget {
 				double x = titleIconM.font().get().stringExtent(titleIconM.text().get()).x;
 				titleM.x().set(width().get() - 40 - x0);
 				titleIconM.x().set(width().get() - 40 - x0 - 10 - x);
+				hackyGradient.x().set(titleIconM.x().get());
+				hackyGradient.width().set(x0 + x + 10);
+				
 			}
 		};
 		Binder.uniBind(titleIconM.text(), updateM);
