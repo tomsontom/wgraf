@@ -414,9 +414,11 @@ public class BreadCrumb<M> extends Widget {
 
 
 	public void addCrumb(M model) {
+		if (current.get() == model) return;
 		if (current.get() != null) {
 			addCrumbToHistory(current.get());
 		}
+		
 		current.set(model);
 	}
 
