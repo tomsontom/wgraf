@@ -16,9 +16,11 @@ import at.bestsolution.wgraf.paint.LinearGradient;
 import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
 import at.bestsolution.wgraf.paint.LinearGradient.Spread;
 import at.bestsolution.wgraf.paint.LinearGradient.Stop;
+import at.bestsolution.wgraf.paint.Paint;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.ClampedDoubleIncrement;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
+import at.bestsolution.wgraf.properties.DoubleProperty;
 import at.bestsolution.wgraf.properties.InvalidValueException;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.ReadOnlyProperty;
@@ -27,6 +29,7 @@ import at.bestsolution.wgraf.properties.SignalListener;
 import at.bestsolution.wgraf.properties.ValidState;
 import at.bestsolution.wgraf.properties.ValidationProperty;
 import at.bestsolution.wgraf.properties.binding.Binder;
+import at.bestsolution.wgraf.properties.binding.GroupBinding;
 import at.bestsolution.wgraf.properties.binding.Setter;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleSignal;
@@ -54,6 +57,7 @@ public class Text extends Widget {
 	public static class TextButton extends Widget {
 
 		private Image icon;
+		private at.bestsolution.wgraf.scene.Text tIcon;
 
 		private Property<Boolean> active = new SimpleProperty<Boolean>(false);
 		public Property<Boolean> active() {
@@ -78,6 +82,14 @@ public class Text extends Widget {
 		public Signal<Void> activated() {
 			return activated;
 		}
+		
+		private void layoutIcon() {
+			if (tIcon.font().get() != null && tIcon.text().get() != null) {
+				Vec2d ex = tIcon.font().get().stringExtent(tIcon.text().get());
+				tIcon.x().set(width().get()/2 - ex.x/2);
+				tIcon.y().set(height().get()/2 - ex.y/2);
+			}
+		}
 
 		public TextButton() {
 
@@ -86,6 +98,22 @@ public class Text extends Widget {
 			icon.y().set(10);
 			icon.parent().set(area);
 
+			tIcon = new at.bestsolution.wgraf.scene.Text();
+			tIcon.parent().set(area);
+			
+			Binder.uniBind(tIcon.font(), new Setter<Font>() {
+				@Override
+				public void set(Font value) {
+					layoutIcon();
+				}
+			});
+			Binder.uniBind(tIcon.text(), new Setter<String>() {
+				@Override
+				public void set(String value) {
+					layoutIcon();
+				}
+			});
+			
 			area.acceptTapEvents().set(true);
 			area.onTap().registerSignalListener(new SignalListener<TapEvent>() {
 				@Override
@@ -104,38 +132,92 @@ public class Text extends Widget {
 			initDefaultStyle();
 		}
 
+		protected GroupBinding skinBinding = new GroupBinding();
+		
+		protected void reSkin() {
+			skinBinding.dispose();
+			final boolean active = active().get();
+			final boolean disabled = !enabled().get();
+			System.err.println("reskin: active=" + active + " disabled=" + disabled);
+			if (disabled) {
+				area.background().set(null);
+				skinBinding.registerBindings(
+					Binder.uniBind(Skin.BUTTON_TEXT_DISABLED, tIcon.fill())
+				);
+				
+			}
+			else if (active) {
+				skinBinding.registerBindings(
+					Binder.uniBind(Skin.HIGHLIGHT, tIcon.fill()),
+					Binder.uniBind(Skin.HIGHLIGHT_30, new Setter<Paint>() {
+						@Override
+						public void set(Paint value) {
+							System.err.println("using paint " + value);
+							final Background focusRight = new FillBackground(value,new CornerRadii(0, 0, 4, 4, 0, 0, 4, 4), new Insets(1, 2, 2, 0));
+							final Background focusLeft = new FillBackground(value,new CornerRadii(4, 4, 0, 0, 4, 4, 0, 0), new Insets(1, 0, 2, 1));
+							final Background focusMiddle = new FillBackground(value,new CornerRadii(0), new Insets(1, 0, 2, 0));
+							
+							final Background bg = left.get() ? focusLeft : right.get() ? focusRight : focusMiddle;
+							System.err.println("SETTING BG TO " + bg);
+							TextButton.this.area.background().set(bg);
+						}
+					})	
+				);
+			}
+			else {
+				area.background().set(null);
+				skinBinding.registerBindings(
+					Binder.uniBind(Skin.BUTTON_TEXT_ACTIVE, tIcon.fill())
+				);
+			}
+			
+		}
+		
 		protected void initDefaultStyle() {
-			LinearGradient focusGradient = new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
-					new Stop(0, new Color(225,0,0,150)),
-					new Stop(0.4, new Color(255,30,30,150)),
-					new Stop(1, new Color(255,30,30,150))
-					);
-			final Background focusRight = new FillBackground(
-					focusGradient,
-					new CornerRadii(0, 0, 4, 4, 0, 0, 4, 4), new Insets(1, 2, 2, 0)
-					);
-			final Background focusLeft = new FillBackground(
-					focusGradient,
-					new CornerRadii(4, 4, 0, 0, 4, 4, 0, 0), new Insets(1, 0, 2, 1)
-					);
-			final Background focusMiddle = new FillBackground(
-					focusGradient,
-					new CornerRadii(0), new Insets(1, 0, 2, 0)
-					);
-
-			active.registerChangeListener(new ChangeListener<Boolean>() {
+			Binder.uniBind(TextButton.this.active, new Setter<Boolean>() {
 				@Override
-				public void onChange(Boolean oldValue, Boolean newValue) {
-					if (newValue) {
-						Background focus = left.get() ? focusLeft :
-							right.get() ? focusRight : focusMiddle;
-						area.background().set(focus);
-					}
-					else {
-						area.background().set(null);
-					}
+				public void set(Boolean value) {
+					reSkin();
 				}
 			});
+			Binder.uniBind(TextButton.this.enabled(), new Setter<Boolean>() {
+				@Override
+				public void set(Boolean value) {
+					reSkin();
+				}
+			});
+			
+//			LinearGradient focusGradient = new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
+//					new Stop(0, new Color(225,0,0,150)),
+//					new Stop(0.4, new Color(255,30,30,150)),
+//					new Stop(1, new Color(255,30,30,150))
+//					);
+//			final Background focusRight = new FillBackground(
+//					focusGradient,
+//					new CornerRadii(0, 0, 4, 4, 0, 0, 4, 4), new Insets(1, 2, 2, 0)
+//					);
+//			final Background focusLeft = new FillBackground(
+//					focusGradient,
+//					new CornerRadii(4, 4, 0, 0, 4, 4, 0, 0), new Insets(1, 0, 2, 1)
+//					);
+//			final Background focusMiddle = new FillBackground(
+//					focusGradient,
+//					new CornerRadii(0), new Insets(1, 0, 2, 0)
+//					);
+//
+//			active.registerChangeListener(new ChangeListener<Boolean>() {
+//				@Override
+//				public void onChange(Boolean oldValue, Boolean newValue) {
+//					if (newValue) {
+//						Background focus = left.get() ? focusLeft :
+//							right.get() ? focusRight : focusMiddle;
+//						area.background().set(focus);
+//					}
+//					else {
+//						area.background().set(null);
+//					}
+//				}
+//			});
 
 		}
 
@@ -145,9 +227,17 @@ public class Text extends Widget {
 				@Override
 				public void run() {
 					active.set(false);
+					activated.signal(null);
 				}
 			}, 100);
-			activated.signal(null);
+		}
+
+		public Property<Font> font() {
+			return tIcon.font();
+		}
+		
+		public Property<String> text() {
+			return tIcon.text();
 		}
 
 	}

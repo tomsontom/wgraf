@@ -410,4 +410,10 @@ public class QtApplication implements BackingApplication {
 		this.init = init;
 	}
 
+
+	@Override
+	public void stop() {
+		QApplication.exit();
+	}
+
 }

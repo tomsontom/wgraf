@@ -78,8 +78,14 @@ public class WidgetBinder {
 				double window = windowSize.get();
 				
 				double sliderSize = window / content;
-				sliderSize = Math.min(1.0, sliderSize);
-				sliderSize = Math.max(0.1, sliderSize);
+				
+				if (Double.isNaN(sliderSize)) {
+					sliderSize = 1.0;
+				}
+				else {
+					sliderSize = Math.min(1.0, sliderSize);
+					sliderSize = Math.max(0.1, sliderSize);
+				}
 				bar.sliderSizeFactor().set(sliderSize);
 				
 				offset.increment(0.000000001);

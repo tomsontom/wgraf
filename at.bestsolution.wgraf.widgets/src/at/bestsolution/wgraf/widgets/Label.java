@@ -11,6 +11,7 @@ public class Label extends Widget {
 
 	public Label() {
 		text = new Text();
+		text.font().set(Font.UBUNTU);
 		text.parent().set(area);
 		text.cache().set(true);
 		area.cache().set(true);

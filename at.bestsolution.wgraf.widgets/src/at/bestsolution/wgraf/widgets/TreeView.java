@@ -271,12 +271,16 @@ public class TreeView<Model> extends Widget {
 								new CornerRadii(0), new Insets(0)
 						);
 				
+//				final Background focus = new FillBackground(
+//						new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
+//								new Stop(0, new Color(225,0,0,150)),
+//								new Stop(0.4, new Color(255,30,30,150)),
+//								new Stop(1, new Color(255,30,30,150))
+//								),
+//								new CornerRadii(0), new Insets(0)
+//						);
 				final Background focus = new FillBackground(
-						new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
-								new Stop(0, new Color(225,0,0,150)),
-								new Stop(0.4, new Color(255,30,30,150)),
-								new Stop(1, new Color(255,30,30,150))
-								),
+								Skin.HIGHLIGHT_150.get(),
 								new CornerRadii(0), new Insets(0)
 						);
 				Binder.uniBind(active, new Setter<Boolean>() {

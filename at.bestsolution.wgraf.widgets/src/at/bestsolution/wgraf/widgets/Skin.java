@@ -24,4 +24,14 @@ public class Skin {
 //			));
 
 	public static Property<Paint> LIST_SELECTION = new SimpleProperty<Paint>(Color.rgb(220, 220, 220));
+	
+	public static final Property<Paint> BUTTON_BACKGROUND_NORMAL = new SimpleProperty<Paint>(new Color(124, 124, 124, 255));
+	public static final Property<Paint> BUTTON_BACKGROUND_ACTIVE = new SimpleProperty<Paint>(new Color(181, 181, 181, 255));
+	public static final Property<Paint> BUTTON_BACKGROUND_DISABLED = new SimpleProperty<Paint>(new Color(251, 251, 251, 255));
+	
+	public static final Property<Paint> BUTTON_TEXT_NORMAL = new SimpleProperty<Paint>(new Color(255,255,255,255));
+	public static final Property<Paint> BUTTON_TEXT_ACTIVE = new SimpleProperty<Paint>(new Color(124, 124, 124, 255));
+	public static final Property<Paint> BUTTON_TEXT_DISABLED = new SimpleProperty<Paint>(new Color(200, 200, 200, 255));
+	
+	
 }

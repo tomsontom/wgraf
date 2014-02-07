@@ -46,7 +46,13 @@ public class QtText extends QtNode<QGraphicsTextItem> implements BackingText {
 		QPainterPath path = null;
 		if (s instanceof Rectangle) {
 			path = new QPainterPath();
-			path.addRoundedRect(((Rectangle) s).x, ((Rectangle) s).y, ((Rectangle) s).width, ((Rectangle) s).height, ((Rectangle) s).r, ((Rectangle) s).r);
+			Rectangle r = (Rectangle)s;
+			if (r.r == 0) {
+				path.addRect(r.x, r.y, r.width, r.height);
+			}
+			else {
+				path.addRoundedRect(r.x, r.y, r.width,r.height,r.r, r.r);
+			}
 		}
 		node.setFlag(GraphicsItemFlag.ItemClipsToShape, path != null);
 		node.setFlag(GraphicsItemFlag.ItemClipsChildrenToShape, path != null);

@@ -107,4 +107,8 @@ public class Application extends Frontend<BackingApplication> {
 	public static Application get() {
 		return app.get();
 	}
+
+	public void stop() {
+		backend.stop();
+	}
 }

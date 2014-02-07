@@ -10,4 +10,5 @@ public interface BackingApplication {
 	Property<Boolean> fullscreen();
 	void start(String[] args);
 	void setInit(Runnable init);
+	void stop();
 }

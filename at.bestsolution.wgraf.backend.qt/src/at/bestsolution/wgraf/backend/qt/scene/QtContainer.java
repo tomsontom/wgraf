@@ -37,7 +37,14 @@ public class QtContainer extends QtNode<QGraphicsContainerItem> implements Backi
 		QPainterPath path = null;
 		if (s instanceof Rectangle) {
 			path = new QPainterPath();
-			path.addRoundedRect(((Rectangle) s).x, ((Rectangle) s).y, ((Rectangle) s).width, ((Rectangle) s).height, ((Rectangle) s).r, ((Rectangle) s).r);
+			Rectangle r = (Rectangle)s;
+			if (r.r == 0) {
+				path.addRect(r.x, r.y, r.width, r.height);
+			}
+			else {
+				path.addRoundedRect(r.x, r.y, r.width,r.height,r.r, r.r);
+			}
+//			path.addRoundedRect(((Rectangle) s).x, ((Rectangle) s).y, ((Rectangle) s).width, ((Rectangle) s).height, ((Rectangle) s).r, ((Rectangle) s).r);
 		}
 		
 		node.setFlag(GraphicsItemFlag.ItemClipsToShape, path != null);
@@ -93,6 +100,9 @@ public class QtContainer extends QtNode<QGraphicsContainerItem> implements Backi
 			QtBinder.uniBind(width, new QtBinder.QtSetter<Double>() {
 				@Override
 				public void doSet(Double value) {
+					if (value.isNaN()) {
+						throw new RuntimeException("nan value!");
+					}
 					node.setRect(0, 0, value, node.rect().height());
 				}
 			});
@@ -109,6 +119,9 @@ public class QtContainer extends QtNode<QGraphicsContainerItem> implements Backi
 			QtBinder.uniBind(height, new QtBinder.QtSetter<Double>() {
 				@Override
 				public void doSet(Double value) {
+					if (value.isNaN()) {
+						throw new RuntimeException("nan value!");
+					}
 					node.setRect(0, 0, node.rect().width(), value);
 				}
 			});

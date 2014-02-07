@@ -243,6 +243,31 @@ public class QGraphicsContainerItem extends QGraphicsRectItem implements QGraphi
 		
 		double top = stroke.insets.top;
 		double bottom = height - stroke.insets.bottom;
+		if (
+		Double.isNaN(width) ||
+		Double.isNaN(height) ||
+		Double.isNaN(left) ||
+		Double.isNaN(right) ||
+		Double.isNaN(top) ||
+		Double.isNaN(bottom)
+		) {
+			System.err.println("nan: width=" + width + ", height="+height + ", left=" + left + ", right=" + right + ", top="+top + ", bottom="+ bottom);
+			throw new RuntimeException("NaN value!");
+		}
+		
+		if (
+		Double.isNaN(stroke.cornerRadii.bottomLeftHorizontalRadius) ||
+		Double.isNaN(stroke.cornerRadii.bottomRightHorizontalRadius) ||
+		Double.isNaN(stroke.cornerRadii.topLeftHorizontalRadius) ||
+		Double.isNaN(stroke.cornerRadii.topRightHorizontalRadius) ||
+		Double.isNaN(stroke.cornerRadii.bottomLeftVerticalRadius) ||
+		Double.isNaN(stroke.cornerRadii.bottomRightVerticalRadius) ||
+		Double.isNaN(stroke.cornerRadii.topLeftVerticalRadius) ||
+		Double.isNaN(stroke.cornerRadii.topRightVerticalRadius)
+		) {
+			System.err.println("nan: " + stroke.cornerRadii);
+			throw new RuntimeException("NaN value!");
+		}
 		
 		QPainterPath path = new QPainterPath();
 		path.moveTo(left + stroke.cornerRadii.topLeftHorizontalRadius, top);
@@ -285,6 +310,32 @@ public class QGraphicsContainerItem extends QGraphicsRectItem implements QGraphi
 		
 		double top = bg.insets.top;
 		double bottom = height - bg.insets.bottom;
+		
+		if (
+		Double.isNaN(width) ||
+		Double.isNaN(height) ||
+		Double.isNaN(left) ||
+		Double.isNaN(right) ||
+		Double.isNaN(top) ||
+		Double.isNaN(bottom)
+		) {
+			System.err.println("nan: width=" + width + ", height="+height + ", left=" + left + ", right=" + right + ", top="+top + ", bottom="+ bottom);
+			throw new RuntimeException("NaN value!");
+		}
+		
+		if (
+		Double.isNaN(bg.cornerRadii.bottomLeftHorizontalRadius) ||
+		Double.isNaN(bg.cornerRadii.bottomRightHorizontalRadius) ||
+		Double.isNaN(bg.cornerRadii.topLeftHorizontalRadius) ||
+		Double.isNaN(bg.cornerRadii.topRightHorizontalRadius) ||
+		Double.isNaN(bg.cornerRadii.bottomLeftVerticalRadius) ||
+		Double.isNaN(bg.cornerRadii.bottomRightVerticalRadius) ||
+		Double.isNaN(bg.cornerRadii.topLeftVerticalRadius) ||
+		Double.isNaN(bg.cornerRadii.topRightVerticalRadius)
+		) {
+			System.err.println("nan: " + bg.cornerRadii);
+			throw new RuntimeException("NaN value!");
+		}
 		
 		QPainterPath path = new QPainterPath();
 		path.moveTo(left + bg.cornerRadii.topLeftHorizontalRadius, top);
