@@ -33,7 +33,6 @@ import at.bestsolution.wgraf.style.FontAwesome;
 import at.bestsolution.wgraf.transition.LinearDoubleTransition;
 
 public class BreadCrumb<M> extends Widget {
-
 	public static class Crumb<M> {
 		private M m;
 
@@ -76,8 +75,8 @@ public class BreadCrumb<M> extends Widget {
 
 	private Container titleArea;
 	private Container hackyGradient;
-	
-	
+
+
 	private static Color fontColor = new Color(100, 100, 100, 255);
 
 	private static class DefaultCrumb<M> extends Crumb<M> {
@@ -121,9 +120,9 @@ public class BreadCrumb<M> extends Widget {
 				@Override
 				public void set(Boolean value) {
 					if (value) {
-						lbl.fill().set(new Color(255,30,30, 150));
+						lbl.fill().set(Skin.HIGHLIGHT_150.get());
 						if( arrow != null ) {
-							arrow.fill().set(new Color(255,30,30, 150));
+							arrow.fill().set(Skin.HIGHLIGHT_150.get());
 						}
 					}
 					else {
@@ -166,7 +165,7 @@ public class BreadCrumb<M> extends Widget {
 
 		bigTitleIcon = new Text();
 		bigTitleIcon.font().set(new Font(FontAwesome.FONTAWESOME, 60));
-		bigTitleIcon.fill().set(new Color(0,122,255,30));
+		Binder.uniBind(Skin.HIGHLIGHT_30, bigTitleIcon.fill());
 		bigTitleIcon.text().set(FontAwesome.MAP.get("fa-globe"));
 		bigTitleIcon.y().set(-10);
 		bigTitleIcon.x().set(0);
@@ -174,7 +173,7 @@ public class BreadCrumb<M> extends Widget {
 
 		bigTitle = new Text();
 		bigTitle.font().set(Font.UBUNTU.resize(60));
-		bigTitle.fill().set(new Color(0,122,255,30));
+		Binder.uniBind(Skin.HIGHLIGHT_30, bigTitle.fill());
 		bigTitle.text().set("Title");
 		bigTitle.y().set(-10);
 		bigTitle.x().set(70);
@@ -184,7 +183,7 @@ public class BreadCrumb<M> extends Widget {
 		titleIcon = new Text();
 		titleIcon.font().set(new Font(FontAwesome.FONTAWESOME, 30));
 		titleIcon.text().set(FontAwesome.MAP.get("fa-globe"));
-		titleIcon.fill().set(new Color(0,122,255,150));
+		Binder.uniBind(Skin.HIGHLIGHT_150,titleIcon.fill());
 		titleIcon.x().set(40);
 		titleIcon.parent().set(area);
 
@@ -202,7 +201,7 @@ public class BreadCrumb<M> extends Widget {
 
 		title = new Text();
 		title.font().set(Font.UBUNTU.resize(30));
-		title.fill().set(new Color(0,122,255,150));
+		Binder.uniBind(Skin.HIGHLIGHT_150,title.fill());
 		title.text().set("Title");
 		title.x().set(80);
 		title.parent().set(area);
@@ -219,7 +218,7 @@ public class BreadCrumb<M> extends Widget {
 		Binder.uniBind(titleIcon.text(), update);
 		Binder.uniBind(title.text(), update);
 
-		
+
 		hackyGradient = new Container();
 
 		Paint hackyG = new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
@@ -227,9 +226,9 @@ public class BreadCrumb<M> extends Widget {
 				new LinearGradient.Stop(0.8, new Color(245,245,245,255)),
 				new LinearGradient.Stop(1, new Color(245,245,245,255))
 				);
-		
+
 		hackyGradient.background().set(FillBackground.simple(hackyG, 0, 0));
-		
+
 //		Paint colorM = new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
 //				new LinearGradient.Stop(0, new Color(190,190,190,0)),
 //				new LinearGradient.Stop(0.5, new Color(190,190,190,0)),
@@ -255,7 +254,7 @@ public class BreadCrumb<M> extends Widget {
 		hackyGradient.parent().set(area);
 		hackyGradient.y().set(40);
 		hackyGradient.height().set(30);
-		
+
 		final Setter<String> updateM = new Setter<String>() {
 			@Override
 			public void set(String value) {
@@ -265,7 +264,7 @@ public class BreadCrumb<M> extends Widget {
 				titleIconM.x().set(width().get() - 40 - x0 - 10 - x);
 				hackyGradient.x().set(titleIconM.x().get());
 				hackyGradient.width().set(x0 + x + 10);
-				
+
 			}
 		};
 		Binder.uniBind(titleIconM.text(), updateM);
