@@ -11,15 +11,15 @@ public class FontAwesome {
 	static {
 		FontSource u;
 		try {
-			u = new FontSource(new URI("platform:/plugin/at.bestsolution.wgraf/fonts/FontAwesome.otf"));
+			u = new FontSource(new URI("platform:/plugin/at.bestsolution.wgraf/fonts/fontawesome-webfont.ttf"));
 		} catch (URISyntaxException e) {
 			u = null;
 		}
 		FONTAWESOME = u;
 	}
-	
+
 	public static Map<String, String> MAP = init();
-	
+
 	private static Map<String, String> init() {
 		Map<String, String> map = new HashMap<String, String>();
 
