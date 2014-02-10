@@ -151,16 +151,20 @@ public class CheckBox extends Widget {
 		Insets bgInsets = new Insets(0, 0, 0, 0);
 		final FillBackground off = new FillBackground(
 				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
-					new Stop(0, new Color(255, 180, 180, 255)),
-					new Stop(1, new Color(255, 230, 230, 255))
+					new Stop(0, new Color(180, 180, 180, 255)),
+					new Stop(1, new Color(230, 230, 230, 255))
 				), 
 				new CornerRadii(4), bgInsets);
 		
 		final FillBackground on = new FillBackground(
+//				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
+//					new Stop(0, new Color(180, 240, 180, 255)),
+//					new Stop(1, new Color(230, 255, 230, 255))
+//				), 
 				new LinearGradient(0, 0, 0, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD, 
-					new Stop(0, new Color(180, 240, 180, 255)),
-					new Stop(1, new Color(230, 255, 230, 255))
-				), 
+				new Stop(0, (Color) Skin.HIGHLIGHT_150.get()),
+				new Stop(1, (Color) Skin.HIGHLIGHT_30.get())
+			), 
 				new CornerRadii(4), bgInsets);
 		
 		

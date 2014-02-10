@@ -49,7 +49,12 @@ public class Application extends Frontend<BackingApplication> {
 	
 	public void requestFocus(Node<?> node) {
 		if (node.acceptFocus().get()) {
-			focusNode.set(node);
+			if (node.focusProxy().get() != null) {
+				focusNode.set(node.focusProxy().get());
+			}
+			else {
+				focusNode.set(node);
+			}
 		}
 	}
 	

@@ -89,6 +89,7 @@ public class TreeView<Model> extends Widget {
 		private TreeView<Model> treeView;
 		public void setTreeView(TreeView<Model> treeView) {
 			this.treeView = treeView;
+			cell.focusProxy().set(treeView.area);
 		}
 		
 		public DefaultCell(SimpleLabelProvider<Model> p) {
@@ -97,6 +98,11 @@ public class TreeView<Model> extends Widget {
 		
 		public DefaultCell(PropertyLabelProvider<Model> p) {
 			super(p);
+		}
+		
+		@Override
+		protected double getMaxLabelWidth() {
+			return super.getMaxLabelWidth() - 80;
 		}
 		
 		
@@ -298,7 +304,18 @@ public class TreeView<Model> extends Widget {
 			@Override
 			public Binding bind(Model model) {
 				if (cellFactory instanceof DefaultCellFactory) {
-					label.text().set(((DefaultCellFactory) cellFactory).getLabel(model));
+					
+					String lbl = ((DefaultCellFactory) cellFactory).getLabel(model);
+					if (lbl == null) lbl = "";
+					lbl = lbl.trim();
+					double lblWidth = label.font().get().stringExtent(lbl).x;
+					
+					while (lblWidth > cell.width().get() - 30 && lbl.length() > 2) {
+						lbl = lbl.substring(0, lbl.length() - 2) + "\u2026";
+						lblWidth = label.font().get().stringExtent(lbl).x;
+					}
+					
+					label.text().set(lbl);
 				}
 				return null;
 			}
@@ -386,11 +403,12 @@ public class TreeView<Model> extends Widget {
 						new CornerRadii(0), new Insets(0)
 				);
 		final Background focus = new FillBackground(
-				new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
-						new Stop(0, new Color(225,0,0,150)),
-						new Stop(0.4, new Color(255,30,30,150)),
-						new Stop(1, new Color(255,30,30,150))
-						),
+//				new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
+//						new Stop(0, new Color(225,0,0,150)),
+//						new Stop(0.4, new Color(255,30,30,150)),
+//						new Stop(1, new Color(255,30,30,150))
+//						),
+				Skin.HIGHLIGHT_150.get(),
 						new CornerRadii(0), new Insets(0)
 				);
 		upButtonBase.background().set(odd);

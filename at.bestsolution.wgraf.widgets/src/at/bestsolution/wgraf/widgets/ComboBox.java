@@ -123,9 +123,10 @@ public class ComboBox<Model> extends Widget {
 
 					SimpleSelectionModel<Model> x = s == null ? new SimpleSelectionModel<Model>() : new SimpleSelectionModel<Model>(s);
 					list.selection().set(x);
-
+					list.scrollIntoView(s);
+					
 					showPopup(popup);
-
+					
 				}
 			}
 		});
@@ -158,7 +159,23 @@ public class ComboBox<Model> extends Widget {
 //		up.font().set(font);
 		up.area.width().set(40);
 		up.area.height().set(40);
+		up.area.focusProxy().set(popupPane.area);
 
+		up.activated().registerSignalListener(new SignalListener<Void>() {
+			@Override
+			public void onSignal(Void data) {
+				MultiSelectionModel<Model> cur = list.selection().get();
+				if (cur.isSingleSelection()) {
+					Model ss = cur.getSingleSelection();
+					int idx = list.model().indexOf(ss);
+					int prevIdx = Math.max(idx - 1, 0);
+					
+					Model m = list.model().get(prevIdx);
+					list.selection().set(new SimpleSelectionModel<Model>(m));
+					list.scrollIntoView(m);
+				}
+			}
+		});
 
 		try {
 			up.icon().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowup.png")));
@@ -174,8 +191,24 @@ public class ComboBox<Model> extends Widget {
 //		down.font().set(font);
 		down.area.width().set(40);
 		down.area.height().set(40);
+		down.area.focusProxy().set(popupPane.area);
 
-
+		down.activated().registerSignalListener(new SignalListener<Void>() {
+			@Override
+			public void onSignal(Void data) {
+				MultiSelectionModel<Model> cur = list.selection().get();
+				if (cur.isSingleSelection()) {
+					Model ss = cur.getSingleSelection();
+					int idx = list.model().indexOf(ss);
+					int nextIdx = Math.min(idx + 1, list.model().size()-1);
+					
+					Model m = list.model().get(nextIdx);
+					list.selection().set(new SimpleSelectionModel<Model>(m));
+					list.scrollIntoView(m);
+				}
+			}
+		});
+		
 		try {
 			down.icon().set(new ImageSource(new URI("platform:/plugin/at.bestsolution.wgraf.widgets/images/arrowdown.png")));
 		} catch (URISyntaxException e) {
@@ -403,6 +436,10 @@ public class ComboBox<Model> extends Widget {
 
 	public TextButton addButton(ButtonPosition pos) {
 		return text.addButton(pos);
+	}
+	
+	public TextButton addButton(ButtonPosition pos, Converter<Void, TextButton> factory) {
+		return text.addButton(pos, factory);
 	}
 
 }

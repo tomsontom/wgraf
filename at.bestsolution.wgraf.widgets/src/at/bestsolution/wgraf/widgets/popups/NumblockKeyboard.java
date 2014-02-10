@@ -25,6 +25,7 @@ import at.bestsolution.wgraf.style.BorderWidths;
 import at.bestsolution.wgraf.style.CornerRadii;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
+import at.bestsolution.wgraf.style.FontAwesome;
 import at.bestsolution.wgraf.style.Insets;
 import at.bestsolution.wgraf.widgets.AbsolutePane;
 import at.bestsolution.wgraf.widgets.Button;
@@ -84,7 +85,13 @@ public class NumblockKeyboard extends Popup {
 			Button b = buttons.get(k);
 			
 			if (b != null) {
-				b.text().set(k.content);
+				if (k.special != null) {
+					b.font().set(new Font(FontAwesome.FONTAWESOME, 16));
+					b.text().set(FontAwesome.MAP.get(k.content));
+				}
+				else {
+					b.text().set(k.content);
+				}
 			}
 		}
 	}
@@ -140,8 +147,9 @@ public class NumblockKeyboard extends Popup {
 		pane.addWidget(b0, 10 + 1 * 50, 10 + 3 * 50);
 		
 		// enter
-		final NumKey kE = new NumKey("<-", KeyCode.BACKSPACE);
+		final NumKey kE = new NumKey("fa-long-arrow-left", KeyCode.BACKSPACE);
 		final Button bE = createButton(40, 40);
+		
 		buttons.put(kE, bE);
 		keys.add(kE);
 		

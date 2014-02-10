@@ -1,5 +1,6 @@
 package at.bestsolution.wgraf.widgets;
 
+import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.paint.LinearGradient;
 import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
@@ -154,7 +155,7 @@ public class ListView<Model> extends VirtualFlow<Model> {
 					);
 
 			Background focus = new FillBackground(
-					Skin.LIST_SELECTION.get(),
+					Skin.HIGHLIGHT_150.get(),
 							new CornerRadii(0), new Insets(0)
 					);
 
@@ -213,9 +214,22 @@ public class ListView<Model> extends VirtualFlow<Model> {
 						label.text());
 			}
 			else {
-				label.text().set(simpleLabelProvider.convert(model));
+				String lbl = simpleLabelProvider.convert(model);
+				lbl = lbl.trim();
+				double lblWidth = label.font().get().stringExtent(lbl).x;
+				
+				while (lblWidth > getMaxLabelWidth() && lbl.length() > 2) {
+					lbl = lbl.substring(0, lbl.length() - 2) + "\u2026";
+					lblWidth = label.font().get().stringExtent(lbl).x;
+				}
+				
+				label.text().set(lbl);
 				return null;
 			}
+		}
+		
+		protected double getMaxLabelWidth() {
+			return cell.width().get();
 		}
 
 	}

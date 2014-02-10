@@ -140,6 +140,13 @@ public abstract class Node<Backend extends BackingNode> extends Frontend<Backend
 		return inputMethod;
 	}
 	
+	private Property<Node> focusProxy = null;
+	public Property<Node> focusProxy() {
+		if (focusProxy == null) {
+			focusProxy = new SimpleProperty<Node>(null);
+		}
+		return focusProxy;
+	}
 	
 	private Property<Boolean> focus = null;
 	public final ReadOnlyProperty<Boolean> focus() { 

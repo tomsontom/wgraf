@@ -55,6 +55,20 @@ public class VirtualFlow<Model> extends Widget {
 		
 	}
 	
+	public void scrollIntoView(Model m) {
+		int idx = model().indexOf(m);
+		
+		double val = 0;
+		for (int i = 0; i < idx; i++) {
+			val += cellHeight.convert(i);
+		}
+		
+		val = Math.min(val, calculateMaxYOffset());
+		val = Math.max(val, 0);
+		verticalRange.offset.setDynamic(val);
+	}
+	
+	
 	public static interface Factory<Type> {
 		Type create();
 	}
@@ -286,7 +300,7 @@ public class VirtualFlow<Model> extends Widget {
 				@Override
 				public void onSignal(TapEvent data) {
 					onCellTap(n);
-					data.consume();
+					//data.consume();
 				}
 			});
 		}

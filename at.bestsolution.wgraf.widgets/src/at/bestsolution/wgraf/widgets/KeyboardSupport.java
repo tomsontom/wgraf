@@ -116,7 +116,7 @@ public class KeyboardSupport {
 		anyPane.restrictViewport(new Rect(0, 0, anyPane.area.width().get(), anyPane.area.height().get() - kb.getContent().area.height().get()));
 	}
 	
-	private void hideKeyboard() {
+	public void hideKeyboard() {
 		if (keyboardVisible != null) {
 			anyPane.hidePopup(keyboardVisible);
 //			keyboard.area.y().setDynamic(area.height().get());

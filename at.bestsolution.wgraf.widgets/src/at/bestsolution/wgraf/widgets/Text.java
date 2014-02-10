@@ -19,6 +19,7 @@ import at.bestsolution.wgraf.paint.LinearGradient.Stop;
 import at.bestsolution.wgraf.paint.Paint;
 import at.bestsolution.wgraf.properties.ChangeListener;
 import at.bestsolution.wgraf.properties.ClampedDoubleIncrement;
+import at.bestsolution.wgraf.properties.Converter;
 import at.bestsolution.wgraf.properties.DoubleChangeListener;
 import at.bestsolution.wgraf.properties.DoubleProperty;
 import at.bestsolution.wgraf.properties.InvalidValueException;
@@ -57,7 +58,7 @@ public class Text extends Widget {
 	public static class TextButton extends Widget {
 
 		private Image icon;
-		private at.bestsolution.wgraf.scene.Text tIcon;
+		protected at.bestsolution.wgraf.scene.Text tIcon;
 
 		private Property<Boolean> active = new SimpleProperty<Boolean>(false);
 		public Property<Boolean> active() {
@@ -81,6 +82,10 @@ public class Text extends Widget {
 		private Signal<Void> activated = new SimpleSignal<Void>();
 		public Signal<Void> activated() {
 			return activated;
+		}
+		
+		public Property<Paint> fill() {
+			return tIcon.fill();
 		}
 		
 		private void layoutIcon() {
@@ -250,16 +255,34 @@ public class Text extends Widget {
 	}
 
 	public TextButton addButton(ButtonPosition pos) {
-		return addButton(pos, false);
+		return addButton(pos, new Converter<Void, Text.TextButton>() {
+			@Override
+			public TextButton convert(Void value) {
+				return new TextButton();
+			}
+		});
+	}
+	
+	public TextButton addButton(ButtonPosition pos, boolean expandOverText) {
+		return addButton(pos, expandOverText, new Converter<Void, Text.TextButton>() {
+			@Override
+			public TextButton convert(Void value) {
+				return new TextButton();
+			}
+		});
+	}
+	
+	public TextButton addButton(ButtonPosition pos, Converter<Void, TextButton> factory) {
+		return addButton(pos, false, factory);
 	}
 
-	public TextButton addButton(ButtonPosition pos, boolean expandOverText) {
+	public TextButton addButton(ButtonPosition pos, boolean expandOverText, Converter<Void, TextButton> factory) {
 		if (expandOverText) {
 			if (expandButton != null) {
 				throw new IllegalStateException("only one button may expand over the text!");
 			}
 		}
-		TextButton btn = new TextButton();
+		TextButton btn = factory.convert(null);
 		if (expandOverText) {
 			expandButton = btn;
 		}

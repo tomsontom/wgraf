@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import at.bestsolution.wgraf.events.TapEvent;
+import at.bestsolution.wgraf.math.Vec2d;
 import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.paint.LinearGradient;
 import at.bestsolution.wgraf.paint.LinearGradient.CoordMode;
@@ -24,7 +25,7 @@ import at.bestsolution.wgraf.transition.LinearDoubleTransition;
 public class TabPane extends StackPane {
 
 	
-	private double tabHeight = 50;
+	private double tabHeight = 40;
 	private double tabWidth = 100;
 	
 	private Container marker = new Container();
@@ -38,13 +39,13 @@ public class TabPane extends StackPane {
 	public TabPane() {
 		
 		marker.parent().set(area);
-		marker.x().setTransition(new LinearDoubleTransition(300));
+		marker.x().setTransition(new LinearDoubleTransition(100));
 		
 		Background focus = new FillBackground(
 				new LinearGradient(0, 0, 1, 1, CoordMode.OBJECT_BOUNDING, Spread.PAD,
-						new Stop(0, new Color(225,0,0,150)),
-						new Stop(0.4, new Color(255,30,30,150)),
-						new Stop(1, new Color(255,30,30,150))
+						new Stop(0, (Color) Skin.HIGHLIGHT_150.get()),
+						new Stop(0.6, (Color) Skin.HIGHLIGHT_30.get()),
+						new Stop(1,  (Color) Skin.HIGHLIGHT_30.get())
 						),
 						new CornerRadii(0), new Insets(0)
 				);
@@ -96,6 +97,9 @@ public class TabPane extends StackPane {
 			labelNode.width().set(20 + tabWidth);
 			labelNode.height().set(tabHeight);
 			labelNode.y().set(0);
+			Vec2d ex = labelNodesText.get(w).font().get().stringExtent(label);
+			labelNodesText.get(w).x().set((20 + tabWidth)/2 - ex.x/2);
+			labelNodesText.get(w).y().set(tabHeight/2 - ex.y/2);
 			labelNodesText.get(w).text().set(label);
 			
 			pos += 20 + tabWidth;
@@ -171,5 +175,8 @@ public class TabPane extends StackPane {
 		w.width().set(width().get());
 		w.height().set(height().get() - tabHeight);
 		setLabel(w, label);
+		// send widget offscreen 
+		w.x().set(-1000);
+		w.y().set(-1000);
 	}
 }
