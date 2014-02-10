@@ -97,20 +97,24 @@ public class BreadCrumb<M> extends Widget {
 			double w = ex.x;
 
 			if( ! "Home".equals(m+"") ) {
-				lbl.x().set(10);
+				
 				arrow = new Text();
 				arrow.font().set(new Font(FontAwesome.FONTAWESOME, 20));
 				arrow.text().set(FontAwesome.MAP.get("fa-angle-right"));
 				arrow.parent().set(area);
+				
 				Vec2d exA = arrow.font().get().stringExtent(FontAwesome.MAP.get("fa-angle-right"));
 
-				arrow.x().set(0);
+				lbl.x().set(5 + exA.x + 5);
+				
+				arrow.x().set(5);
 				// TODO Auto-generated method stub
 
-				arrow.y().set(ex.y/2-exA.y/2+3);
+				arrow.y().set(ex.y/2-exA.y/2);
+				
 				area.width().set(w + 5 + exA.x + 5);
 			} else {
-				area.width().set(w + 5);
+				area.width().set(w);
 			}
 
 			area.height().set(ex.y);
@@ -281,7 +285,7 @@ public class BreadCrumb<M> extends Widget {
 		crumbArea = new Container();
 		crumbArea.parent().set(area);
 		crumbArea.x().set(40);
-		crumbArea.y().set(27);
+		crumbArea.y().set(30);
 
 		backBtnArea = new Container();
 		backBtnArea.parent().set(area);
