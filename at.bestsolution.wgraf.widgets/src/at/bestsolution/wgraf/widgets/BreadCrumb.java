@@ -87,6 +87,8 @@ public class BreadCrumb<M> extends Widget {
 		public DefaultCrumb(M m) {
 			super(m);
 
+			double height = 40;
+			
 			lbl = new Text();
 			lbl.font().set(Font.UBUNTU.resize(22));
 			lbl.text().set("" + m);
@@ -94,12 +96,14 @@ public class BreadCrumb<M> extends Widget {
 
 			Vec2d ex = lbl.font().get().stringExtent("" + m);
 
+			lbl.y().set(height/2 - ex.y/2);
+			
 			double w = ex.x;
 
 			if( ! "Home".equals(m+"") ) {
 				
 				arrow = new Text();
-				arrow.font().set(new Font(FontAwesome.FONTAWESOME, 20));
+				arrow.font().set(new Font(FontAwesome.FONTAWESOME, 22));
 				arrow.text().set(FontAwesome.MAP.get("fa-angle-right"));
 				arrow.parent().set(area);
 				
@@ -110,7 +114,7 @@ public class BreadCrumb<M> extends Widget {
 				arrow.x().set(5);
 				// TODO Auto-generated method stub
 
-				arrow.y().set(ex.y/2-exA.y/2);
+				arrow.y().set(height/2-exA.y/2);
 				
 				area.width().set(w + 5 + exA.x + 5);
 			} else {
@@ -150,6 +154,7 @@ public class BreadCrumb<M> extends Widget {
 
 	private Container backBtnArea;
 	private Text backBtnLabel;
+	private Text backBtnLabel2;
 
 	private Map<M, Crumb<M>> crumbs = new HashMap<M, Crumb<M>>();
 	private Stack<M> backStack = new Stack<M>();
@@ -164,6 +169,8 @@ public class BreadCrumb<M> extends Widget {
 
 	private Text titleIconM;
 	private Text titleM;
+	
+	private Button back;
 
 	public BreadCrumb() {
 
@@ -284,33 +291,62 @@ public class BreadCrumb<M> extends Widget {
 		});
 		crumbArea = new Container();
 		crumbArea.parent().set(area);
-		crumbArea.x().set(40);
+		crumbArea.x().set(48);
 		crumbArea.y().set(30);
 
-		backBtnArea = new Container();
-		backBtnArea.parent().set(area);
-		backBtnArea.y().set(37);
-		backBtnArea.width().set(40);
-		backBtnArea.height().set(40);
-
-		backBtnLabel = new Text();
-		backBtnLabel.font().set(new Font(FontAwesome.FONTAWESOME, 16));
-		backBtnLabel.text().set(FontAwesome.MAP.get("fa-chevron-left"));
-		backBtnLabel.fill().set(fontColor);
-
-		Vec2d ex = backBtnLabel.font().get().stringExtent(FontAwesome.MAP.get("fa-chevron-left"));
-
-		backBtnLabel.x().set(backBtnArea.width().get()/2 - ex.x/2);
-		backBtnLabel.y().set(backBtnArea.height().get()/2 - ex.y/2 - 10);
-
-		backBtnLabel.parent().set(backBtnArea);
-
-		backBtnArea.onTap().registerSignalListener(new SignalListener<TapEvent>() {
+		back = new Button();
+		back.area.x().set(3);
+		back.area.y().set(35);
+		back.area.width().set(40);
+		back.area.height().set(30);
+		back.font().set(new Font(FontAwesome.FONTAWESOME, 16));
+		back.text().set(FontAwesome.MAP.get("fa-chevron-left"));
+		
+		back.area.parent().set(area);
+		back.activated().registerSignalListener(new SignalListener<Void>() {
 			@Override
-			public void onSignal(TapEvent data) {
+			public void onSignal(Void data) {
 				internalBackActivated();
 			}
 		});
+		back.enabled().set(false);
+		
+//		backBtnArea = new Container();
+//		backBtnArea.parent().set(area);
+//		backBtnArea.y().set(0);
+//		backBtnArea.width().set(40);
+//		backBtnArea.height().set(40);
+//
+//		backBtnLabel = new Text();
+//		backBtnLabel.font().set(new Font(FontAwesome.FONTAWESOME, 18));
+//		backBtnLabel.text().set(FontAwesome.MAP.get("fa-chevron-left"));
+//		backBtnLabel.fill().set(fontColor);
+//		
+//		backBtnLabel2 = new Text();
+//		backBtnLabel2.font().set(Font.UBUNTU.resize(20));
+//		backBtnLabel2.text().set("Back");
+//		backBtnLabel2.fill().set(fontColor);
+//
+//		Vec2d ex = backBtnLabel.font().get().stringExtent(FontAwesome.MAP.get("fa-chevron-left"));
+//		Vec2d ex2 = backBtnLabel2.font().get().stringExtent("Back");
+//
+//		backBtnLabel.x().set(40/2 - ex.x/2);
+//		backBtnLabel.y().set(backBtnArea.height().get()/2 - ex.y/2);
+//
+//		backBtnLabel2.x().set(30);
+//		backBtnLabel2.y().set(backBtnArea.height().get()/2 - ex2.y/2);
+//		backBtnArea.width().set(40 + 20 + ex2.x);
+//		//crumbArea.x().set(backBtnArea.width().get());
+//		
+//		backBtnLabel.parent().set(backBtnArea);
+//		backBtnLabel2.parent().set(backBtnArea);
+//
+//		backBtnArea.onTap().registerSignalListener(new SignalListener<TapEvent>() {
+//			@Override
+//			public void onSignal(TapEvent data) {
+//				internalBackActivated();
+//			}
+//		});
 
 		current.registerChangeListener(new ChangeListener<M>() {
 			@Override
@@ -373,6 +409,7 @@ public class BreadCrumb<M> extends Widget {
 		}
 		current.set(model);
 
+		back.enabled().set(!backStack.isEmpty());
 	}
 
 	private void removeCrumb(M model) {
@@ -405,6 +442,7 @@ public class BreadCrumb<M> extends Widget {
 		});
 		crumbs.put(model, c);
 		layoutCrumbs();
+		back.enabled().set(!backStack.isEmpty());
 	}
 
 	private void internalBackActivated() {
@@ -414,6 +452,7 @@ public class BreadCrumb<M> extends Widget {
 			current.set(last);
 			backActivated().signal(last);
 		}
+		back.enabled().set(!backStack.isEmpty());
 	}
 
 
