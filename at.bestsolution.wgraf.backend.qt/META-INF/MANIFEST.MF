@@ -9,7 +9,8 @@ Export-Package: at.bestsolution.wgraf.backend.qt,
  at.bestsolution.wgraf.backend.qt.playground,
  at.bestsolution.wgraf.backend.qt.scene
 Require-Bundle: at.bestsolution.wgraf;bundle-version="1.0.0",
- com.trolltech.qt;bundle-version="1.0.0"
+ com.trolltech.qt;bundle-version="1.0.0",
+ org.apache.commons.codec;bundle-version="1.3.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/services/factory.xml
 Bundle-ActivationPolicy: lazy
