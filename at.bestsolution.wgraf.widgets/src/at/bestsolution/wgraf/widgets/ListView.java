@@ -215,6 +215,7 @@ public class ListView<Model> extends VirtualFlow<Model> {
 			}
 			else {
 				String lbl = simpleLabelProvider.convert(model);
+				if (lbl == null) lbl = "";
 				lbl = lbl.trim();
 				double lblWidth = label.font().get().stringExtent(lbl).x;
 				
