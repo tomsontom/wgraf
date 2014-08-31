@@ -143,6 +143,11 @@ public class JavaFxApplication implements BackingApplication {
 	public void setInit(Runnable init) {
 		this.init = init;
 	}
+
+	@Override
+	public void stop() {
+		// TODO Auto-generated method stub
+	}
 	
 
 }

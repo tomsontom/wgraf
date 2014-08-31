@@ -1,10 +1,14 @@
 package at.bestsolution.wgraf.backend.javafx;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javafx.scene.effect.BlurType;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.paint.CycleMethod;
@@ -26,6 +30,7 @@ import at.bestsolution.wgraf.style.DropShadow;
 import at.bestsolution.wgraf.style.Effect;
 import at.bestsolution.wgraf.style.FillBackground;
 import at.bestsolution.wgraf.style.Font;
+import at.bestsolution.wgraf.style.ImageSource;
 import at.bestsolution.wgraf.style.Insets;
 
 public class JavaFxConverter {
@@ -161,5 +166,33 @@ public class JavaFxConverter {
 			strokes.add(convert(s));
 		}
 		return new javafx.scene.layout.Border(strokes, null);
+	}
+
+	public static Image convert(ImageSource value) {
+		if (value == null) {
+			return null;
+		}
+		System.err.println("Trying to load: " + value.source);
+		// TODO improve image conversion code
+		// at the moment some widgets try to load a platform uri - this fails in non osgi environment
+		try {
+			InputStream in = value.source.toURL().openStream();
+			try {
+				return new Image(in);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+			finally {
+				try {if (in != null) in.close();} catch (IOException e) {}
+			}
+		}
+		catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

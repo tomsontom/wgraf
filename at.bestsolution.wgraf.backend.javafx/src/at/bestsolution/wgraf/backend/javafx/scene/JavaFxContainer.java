@@ -240,4 +240,19 @@ public class JavaFxContainer extends JavaFxNode<javafx.scene.layout.Region> impl
 		return effect;
 	}
 
+	private DoubleTransitionProperty opacity = null;
+	@Override
+	public DoubleTransitionProperty opacity() {
+		if (opacity == null) {
+			opacity = new SimpleDoubleTransitionProperty();
+			JavaFxBinder.uniBind(opacity, new JavaFxBinder.JfxSetter<Double>() {
+				@Override
+				public void doSet(Double value) {
+					node.setStyle("-fx-opacity: " + value);
+				}
+			});
+		}
+		return opacity;
+	}
+	
 }

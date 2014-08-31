@@ -8,9 +8,11 @@ import at.bestsolution.wgraf.backend.javafx.JavaFxConverter;
 import at.bestsolution.wgraf.events.KeyEvent;
 import at.bestsolution.wgraf.paint.Color;
 import at.bestsolution.wgraf.paint.Paint;
+import at.bestsolution.wgraf.properties.DoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.Property;
 import at.bestsolution.wgraf.properties.Setter;
 import at.bestsolution.wgraf.properties.Signal;
+import at.bestsolution.wgraf.properties.simple.SimpleDoubleTransitionProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleProperty;
 import at.bestsolution.wgraf.properties.simple.SimpleSignal;
 import at.bestsolution.wgraf.scene.BackingText;
@@ -121,5 +123,26 @@ public class JavaFxText extends JavaFxNode<javafx.scene.text.Text> implements Ba
 			});
 		}
 		return effect;
+	}
+
+	private DoubleTransitionProperty opacity = null;
+	@Override
+	public DoubleTransitionProperty opacity() {
+		if (opacity == null) {
+			opacity = new SimpleDoubleTransitionProperty();
+			JavaFxBinder.uniBind(opacity, new JavaFxBinder.JfxSetter<Double>() {
+				@Override
+				public void doSet(Double value) {
+					node.setStyle("-fx-opacity: " + value);
+				}
+			});
+		}
+		return opacity;
+	}
+
+	@Override
+	public void mirror() {
+		// TODO Auto-generated method stub
+		// noop =?
 	}
 }
