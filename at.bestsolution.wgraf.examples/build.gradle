@@ -1,0 +1,19 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.6
+version = '0.5'
+
+jar {
+	manifest {
+		attributes 'Implementation-Title': 'WGRAF Examples', 'Implementation-Version': version
+	}
+}
+
+dependencies {
+	compile files('../at.bestsolution.wgraf/build/libs/at.bestsolution.wgraf-0.5.jar')
+}
+
+repositories {
+	mavenCentral()
+}
