@@ -1,0 +1,21 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.6
+version = '0.5'
+
+jar {
+	manifest {
+		attributes 'Implementation-Title': 'WGRAF GDX Backend', 'Implementation-Version': version
+	}
+}
+
+dependencies {
+	compile files('../at.bestsolution.wgraf/build/libs/at.bestsolution.wgraf-0.5.jar')
+	compile group: 'com.badlogicgames.gdx', name: 'gdx', version: '1.3.1'
+	compile group: 'com.badlogicgames.gdx', name: 'gdx-freetype', version: '1.3.1'
+}
+
+repositories {
+	mavenCentral()
+}
